@@ -1,6 +1,6 @@
 {
     "BarkMsg": {
-        "name": "Bark消息推送",
+        "name": "Bark訊息推送",
         "description": "支持使用Bark发送消息通知。",
         "labels": "消息通知",
         "version": "1.2",
