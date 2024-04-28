@@ -156,7 +156,7 @@ class BarkMsg(_PluginBase):
                                         'component': 'VTextField',
                                         'props': {
                                             'model': 'icon_url',
-                                            'label': '圖片網址',
+                                            'label': '圖標網址',
                                             'placeholder': '',
                                         }
                                     }
@@ -209,6 +209,48 @@ class BarkMsg(_PluginBase):
                             }
                         ]
                     },
+                    {
+                        'component': 'VRow',
+                        'content': [
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VAlert',
+                                        'props': {
+                                            'type': 'info',
+                                            'variant': 'tonal',
+                                            'text': '圖標網址可以改變Bark消息的圖標，留空則使用預設圖標。'
+                                        }
+                                    }
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        'component': 'VRow',
+                        'content': [
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VAlert',
+                                        'props': {
+                                            'type': 'info',
+                                            'variant': 'tonal',
+                                            'text': '密钥如果有多裝置可以用,隔開，例如：1234567890,1234567891，每個裝置都會收到通知。'
+                                        }
+                                    }
+                                ]
+                            },
+                        ]
+                    }
                 ]
             }
         ], {
