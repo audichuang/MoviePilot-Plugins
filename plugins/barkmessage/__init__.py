@@ -14,7 +14,7 @@ class BarkMessage(_PluginBase):
     # 插件描述
     plugin_desc = "使用Bark發送通知到ios裝置。"
     # 插件图标
-    plugin_icon = "Bark_A.png"
+    plugin_icon = "Bark.png"
     # 插件版本
     plugin_version = "1.3"
     # 插件作者
