@@ -1,5 +1,5 @@
 {
-    "BarkMessage": {
+    "BarkMsg": {
         "name": "Bark通知",
         "description": "使用Bark發送通知到ios裝置。",
         "labels": "消息通知",
