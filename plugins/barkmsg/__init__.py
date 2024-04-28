@@ -16,11 +16,11 @@ class BarkMsg(_PluginBase):
     # 插件图标
     plugin_icon = "Bark_A.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
-    plugin_author = "jxxghp"
+    plugin_author = "audichuang"
     # 作者主页
-    author_url = "https://github.com/jxxghp"
+    author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
     plugin_config_prefix = "barkmsg_"
     # 加载顺序
@@ -219,6 +219,9 @@ class BarkMsg(_PluginBase):
             sc_url = "%s/%s/%s/%s" % (self._server, self._apikey, quote_plus(title), quote_plus(text))
             if self._params:
                 sc_url = "%s?%s" % (sc_url, self._params)
+                sc_url = sc_url + "&icon=https://raw.githubusercontent.com/jxxghp/MoviePilot-Frontend/main/public/logo.png"
+            else:
+                sc_url = sc_url + "?icon=https://raw.githubusercontent.com/jxxghp/MoviePilot-Frontend/main/public/logo.png"
             res = RequestUtils().post_res(sc_url)
             if res and res.status_code == 200:
                 ret_json = res.json()
