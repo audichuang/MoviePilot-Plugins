@@ -41,7 +41,7 @@ class BarkMsg(_PluginBase):
             self._enabled = config.get("enabled")
             self._msgtypes = config.get("msgtypes") or []
             self._server = config.get("server")
-            self._apikey = config.get("apikeys")
+            self._apikey = config.get("apikey")
             self._params = config.get("params")
             self._icon_url = config.get("icon_url")
 
@@ -111,23 +111,6 @@ class BarkMsg(_PluginBase):
                                     }
                                 ]
                             },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'apikey',
-                                            'label': '密钥',
-                                            'placeholder': '',
-                                        }
-                                    }
-                                ]
-                            },
                             # {
                             #     'component': 'VCol',
                             #     'props': {
@@ -138,13 +121,30 @@ class BarkMsg(_PluginBase):
                             #         {
                             #             'component': 'VTextField',
                             #             'props': {
-                            #                 'model': 'params',
-                            #                 'label': '附加参数',
+                            #                 'model': 'apikey',
+                            #                 'label': '密钥',
                             #                 'placeholder': '',
                             #             }
                             #         }
                             #     ]
                             # },
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                    'md': 4
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VTextField',
+                                        'props': {
+                                            'model': 'params',
+                                            'label': '附加参数',
+                                            'placeholder': '',
+                                        }
+                                    }
+                                ]
+                            },
                             {
                                 'component': 'VCol',
                                 'props': {
@@ -176,9 +176,10 @@ class BarkMsg(_PluginBase):
                                     {
                                         'component': 'VTextField',
                                         'props': {
-                                            'model': 'apikeys',
+                                            'model': 'apikey',
                                             'label': '密钥',
-                                            'placeholder': '',
+                                            'rows': 2,
+                                            'placeholder': '用,隔開多個token',
                                         }
                                     }
                                 ]
