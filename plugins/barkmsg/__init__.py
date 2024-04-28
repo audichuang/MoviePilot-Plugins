@@ -14,7 +14,7 @@ class BarkMsg(_PluginBase):
     # 插件描述
     plugin_desc = "使用Bark發送通知到ios裝置。"
     # 插件图标
-    plugin_icon = "Bark.png"
+    plugin_icon = "Bark_A.png"
     # 插件版本
     plugin_version = "1.3"
     # 插件作者
@@ -33,6 +33,7 @@ class BarkMsg(_PluginBase):
     _server = None
     _apikey = None
     _params = None
+    _icon_url = None
     _msgtypes = []
 
     def init_plugin(self, config: dict = None):
@@ -42,6 +43,7 @@ class BarkMsg(_PluginBase):
             self._server = config.get("server")
             self._apikey = config.get("apikey")
             self._params = config.get("params")
+            self._icon_url = config.get("icon_url")
 
     def get_state(self) -> bool:
         return self._enabled and (True if self._server and self._apikey else False)
@@ -142,6 +144,23 @@ class BarkMsg(_PluginBase):
                                         }
                                     }
                                 ]
+                            },
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                    'md': 4
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VTextField',
+                                        'props': {
+                                            'model': 'icon_url',
+                                            'label': '圖片網址',
+                                            'placeholder': '',
+                                        }
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -219,9 +238,11 @@ class BarkMsg(_PluginBase):
             sc_url = "%s/%s/%s/%s" % (self._server, self._apikey, quote_plus(title), quote_plus(text))
             if self._params:
                 sc_url = "%s?%s" % (sc_url, self._params)
-                sc_url = sc_url + "&icon=https://raw.githubusercontent.com/jxxghp/MoviePilot-Frontend/main/public/logo.png"
+                if self._icon_url:
+                    sc_url = sc_url + f"&icon={self._icon_url}"
             else:
-                sc_url = sc_url + "?icon=https://raw.githubusercontent.com/jxxghp/MoviePilot-Frontend/main/public/logo.png"
+                if self._icon_url:
+                    sc_url = sc_url + f"?icon={self._icon_url}"
             res = RequestUtils().post_res(sc_url)
             if res and res.status_code == 200:
                 ret_json = res.json()
