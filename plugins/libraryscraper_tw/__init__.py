@@ -21,13 +21,13 @@ from app.plugins.libraryscraper_tw.media_items.tv_show import TvShow
 
 class LibraryScraper_Tw(_PluginBase):
     # 插件名称
-    plugin_name = "媒體庫刮削轉繁體"
+    plugin_name = "媒體庫刮削(繁體)"
     # 插件描述
     plugin_desc = "定時刮削媒體庫，補齊缺失資訊和圖片，使用繁體中文。"
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
