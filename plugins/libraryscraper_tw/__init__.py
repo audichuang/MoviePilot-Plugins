@@ -42,14 +42,12 @@ class LibraryScraper_Tw(_PluginBase):
     # 私有属性
     transferhis = None
     _scheduler = None
-    _scraper = None
     # 限速开关
     _enabled = False
     _onlyonce = False
     _cron = None
     _mode = ""
     _scraper_paths = ""
-    _exclude_paths = ""
     # 退出事件
     _event = Event()
 
@@ -60,7 +58,7 @@ class LibraryScraper_Tw(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._cron = config.get("cron")
             self._scraper_paths = config.get("scraper_paths") or ""
-            self._exclude_paths = config.get("exclude_paths") or ""
+
 
         # 停止现有任务
         self.stop_service()
@@ -81,8 +79,7 @@ class LibraryScraper_Tw(_PluginBase):
                     "onlyonce": False,
                     "enabled": self._enabled,
                     "cron": self._cron,
-                    "scraper_paths": self._scraper_paths,
-                    "exclude_paths": self._exclude_paths
+                    "scraper_paths": self._scraper_paths
                 })
                 if self._scheduler.get_jobs():
                     # 启动服务
