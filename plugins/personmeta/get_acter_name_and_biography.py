@@ -1,9 +1,18 @@
 import requests
-from media_item import MediaItem
 import zhconv
 
-mediaItem = MediaItem()
 
+headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NTZhNDFlODE2NTkxMzNjM2M5OTJjZGFiMzZkYjMyMSIsInN1YiI6IjY1ODViMWQ2NzFmMDk1NTdjNTIzZjdjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Yafqg4nwY-i3mdhinliUOsS9MIKBGeCg2oEIG7y4wuk"
+    }
+
+def _get_person_details(person_id, language='zh-TW'):
+    url = f"https://api.themoviedb.org/3/person/{person_id}?language={language}"
+
+    response = requests.get(url, headers=headers)
+    return response.json()
+    
 def _get_actor_traditional_chinese_name(tmdb_id):
     response = requests.get(f"https://actor.audiweb.uk/actors/{tmdb_id}")
     if response.status_code == 200:
@@ -13,22 +22,19 @@ def _get_actor_traditional_chinese_name(tmdb_id):
     else:
         return None
 def _get_biography(tmdb_id):
-    tmdb_instances = [mediaItem._tmdb, mediaItem._tmdb_cn]
-    for tmdb_instance in tmdb_instances:
-        details = tmdb_instance.person(tmdb_id).details()
-        if details and details.biography:
-            if tmdb_instance == mediaItem._tmdb_cn:
-                return zhconv.convert(details.biography, "zh-tw")
+    tmdb_languages = ["zh-TW", "zh-CN"]
+    for tmdb_language in tmdb_languages:
+        details = _get_person_details(tmdb_id, tmdb_language)
+        print(details)
+        if details and details["biography"]:
+            if tmdb_language == "zh-CN":
+                return zhconv.convert(details["biography"], "zh-tw")
             else:
-                return details.biography
+                return details["biography"]
     return None
     
 # zhconv.convert(name, "zh-tw")
-# if __name__ == "__main__":
+if __name__ == "__main__":
 #     print(_get_actor_traditional_chinese_name(2644771))
 #     mediaItem = MediaItem()
-#     details_tw = mediaItem._tmdb.person(4690).details()
-#     details_cn = mediaItem._tmdb_cn.person(4690).details()
-#     print(details_tw.biography)
-#     print(details_cn.biography)
-#     print(_get_biography(1196101))
+    # print(_get_biography(500))
