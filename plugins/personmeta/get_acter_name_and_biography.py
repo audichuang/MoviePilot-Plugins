@@ -39,6 +39,6 @@ def _get_biography(tmdb_id):
     
 # zhconv.convert(name, "zh-tw")
 # if __name__ == "__main__":
-#     print(_get_actor_traditional_chinese_name(2644771))
+#     print(_get_actor_traditional_chinese_name(2808137))
 #     mediaItem = MediaItem()
     # print(_get_biography(500))

@@ -517,8 +517,8 @@ class PersonMeta(_PluginBase):
                 if person_detail:
                     try:
                         cn_name = self.__get_chinese_name(person_detail, int(person_tmdbid))
-                    except Exception as err:
-                        logger.error(f"获取 {person_tmdbid} {people.get('Name')} 的中文名失败：{str(err)}")
+                    except Exception as error:
+                        logger.error(f"获取 {person_tmdbid} {people.get('Name')} 的中文名失败：{str(error)}")
                         cn_name = None
                     if cn_name:
                         # 更新中文名
@@ -1022,7 +1022,6 @@ class PersonMeta(_PluginBase):
                 for name in also_known_as:
                     if name and StringUtils.is_chinese(name):
                         # 使用cn2an将簡體字轉成為繁體
-                        logger.info(f"從TMDB查詢人物別名成功獲取繁體中文名：{person_tmdbid} {zhconv.convert(name, "zh-tw")}")
                         return zhconv.convert(name, "zh-tw")
         except Exception as err:
             logger.error(f"获取人物中文名失败：{err}")
