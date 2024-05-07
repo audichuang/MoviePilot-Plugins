@@ -185,3 +185,11 @@ class NfoFileManager:
 #     # NfoFileManager.modify_nfo_file(nfo_file_path, dict)
 #     dict = Movie.get_movie_nfo_update_dict(937249, zhconv)
 #     NfoFileManager.modify_nfo_file(nfo_file_path, dict)
+    # tree = ET.parse("/home/audichuang/media_4/測試/电视剧/七人的复活 (2024)/Season 1/七人的复活 - S01E01 - 第 1 集.nfo")
+    # root = tree.getroot()
+    # properties = {}
+    # for child in root:
+    #     tag = child.tag
+    #     text = child.text.strip() if child.text else ""
+    #     properties[tag] = text
+    # print(properties)
