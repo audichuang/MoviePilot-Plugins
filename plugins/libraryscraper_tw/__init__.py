@@ -302,7 +302,7 @@ class LibraryScraper_Tw(_PluginBase):
                             tmdb_id = properties.get("tmdbid")
                             season_number = properties.get("season")
                             episode_number = properties.get("episode")
-                            update_dict = NfoFileManager.get_episode_nfo_update_dict(tmdb_id, season_number, episode_number, zhconv)
+                            update_dict = TvShow.get_episode_nfo_update_dict(tmdb_id, season_number, episode_number, zhconv)
 
                         if update_dict:
                             NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
