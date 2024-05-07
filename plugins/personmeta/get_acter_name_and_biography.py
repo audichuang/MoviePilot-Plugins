@@ -17,7 +17,9 @@ def _get_actor_traditional_chinese_name(tmdb_id):
     response = requests.get(f"https://actor.audiweb.uk/actors/{int(tmdb_id)}")
     if response.status_code == 200:
         result = response.json()["name"]
-        if result != "error":
+        if result is None:
+            return ""
+        elif result != "error":
             return str(result)
         else:
             return ""

@@ -1013,7 +1013,7 @@ class PersonMeta(_PluginBase):
         chinese_name = _get_actor_traditional_chinese_name(person_tmdbid)
         logger.info(f"從資料庫查詢人物中文名：{person_tmdbid} : {chinese_name}")
         if chinese_name != "":
-            logger.info(f"從資料庫成功獲取人物中文名：{err}")
+            logger.info(f"從資料庫成功獲取人物中文名：{chinese_name}")
             return str(chinese_name)
         logger.info(f"從TMDB查詢人物別名獲取繁體中文名：{person_tmdbid}")
         try:
@@ -1022,6 +1022,7 @@ class PersonMeta(_PluginBase):
                 for name in also_known_as:
                     if name and StringUtils.is_chinese(name):
                         # 使用cn2an将簡體字轉成為繁體
+                        logger.info(f"從TMDB查詢人物別名成功獲取繁體中文名：{person_tmdbid} {zhconv.convert(name, "zh-tw")}")
                         return zhconv.convert(name, "zh-tw")
         except Exception as err:
             logger.error(f"获取人物中文名失败：{err}")
