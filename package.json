@@ -12,7 +12,7 @@
         "name": "演員刮削",
         "description": "刮削演員圖片和中文名稱。",
         "labels": "媒体库,刮削",
-        "version": "1.4",
+        "version": "1.5",
         "icon": "actor.png",
         "author": "audichuang",
         "level": 1,
