@@ -20,6 +20,7 @@ def _get_actor_traditional_chinese_name(tmdb_id):
         if result != "error":
             return str(result)
     return None
+    
 def _get_biography(tmdb_id):
     tmdb_languages = ["zh-TW", "zh-CN"]
     for tmdb_language in tmdb_languages:
