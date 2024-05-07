@@ -1,5 +1,4 @@
 import requests
-import zhconv
 
 
 headers = {
@@ -25,7 +24,7 @@ def _get_actor_traditional_chinese_name(tmdb_id):
             return ""
     return ""
     
-def _get_biography(tmdb_id):
+def _get_biography(tmdb_id, zhconv):
     tmdb_languages = ["zh-TW", "zh-CN"]
     for tmdb_language in tmdb_languages:
         details = _get_person_details(tmdb_id, tmdb_language)

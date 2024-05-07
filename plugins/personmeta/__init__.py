@@ -523,9 +523,10 @@ class PersonMeta(_PluginBase):
                         ret_people["Name"] = cn_name
                         updated_name = True
                         # 更新中文描述
-                        if _get_biography(person_detail.id) is not None:
+                        biography = _get_biography(person_detail.id, zhconv)
+                        if biography is not None:
                             logger.info(f"{people.get('Name')} 从TMDB_API获取到繁體中文描述")
-                            personinfo["Overview"] = _get_biography(person_detail.id)
+                            personinfo["Overview"] = biography
                             updated_overview = True
                         else:
                             biography = person_detail.biography
