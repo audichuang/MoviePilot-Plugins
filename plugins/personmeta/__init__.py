@@ -42,7 +42,7 @@ class PersonMeta(_PluginBase):
     # 插件图标
     plugin_icon = "actor.png"
     # 插件版本
-    plugin_version = "1.4"
+    plugin_version = "1.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -1017,7 +1017,8 @@ class PersonMeta(_PluginBase):
             if also_known_as:
                 for name in also_known_as:
                     if name and StringUtils.is_chinese(name):
-                        # zhconv.convert.convert(name, "zh-tw")
+                        # 使用cn2an将簡體字轉成為繁體
+                        return zhconv.convert(name, "zh-tw")
         except Exception as err:
             logger.error(f"获取人物中文名失败：{err}")
         return ""
