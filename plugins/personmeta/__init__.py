@@ -517,8 +517,8 @@ class PersonMeta(_PluginBase):
                 if person_detail:
                     try:
                         cn_name = self.__get_chinese_name(person_detail, int(person_tmdbid))
-                    except Exception as error:
-                        logger.error(f"获取 {person_tmdbid} {people.get('Name')} 的中文名失败：{str(error)}")
+                    except Exception as err:
+                        logger.error(f"获取 {person_tmdbid} {people.get('Name')} 的中文名失败：{str(err)}")
                         cn_name = None
                     if cn_name:
                         # 更新中文名
