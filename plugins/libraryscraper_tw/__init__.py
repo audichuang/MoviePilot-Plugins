@@ -265,7 +265,7 @@ class LibraryScraper_Tw(_PluginBase):
                     file_name = os.path.basename(nfo_file_path)
                     folder_path = os.path.dirname(nfo_file_path)
                     # 判斷是否為電影
-                    is_movie_folder = "/电影/" in folder_path
+                    is_movie_folder = "/电影" in folder_path
                     # 跳過 BDMV 和 CERTIFICATE 文件夹 (針對原盤)
                     if "/BDMV/" in folder_path or "/CERTIFICATE/" in folder_path:
                         logger.info(f"跳過原盤檔案: {nfo_file_path}")  
