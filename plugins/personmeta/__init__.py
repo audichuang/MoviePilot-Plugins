@@ -38,7 +38,7 @@ class PersonMeta(_PluginBase):
     # 插件名称
     plugin_name = "演員刮削"
     # 插件描述
-    plugin_desc = "刮削演員圖片、名字、介紹等信息。"
+    plugin_desc = "刮削演員圖片和繁體中文名字、介紹等信息。"
     # 插件图标
     plugin_icon = "actor.png"
     # 插件版本
@@ -89,7 +89,7 @@ class PersonMeta(_PluginBase):
                                     run_date=datetime.datetime.now(
                                         tz=pytz.timezone(settings.TZ)) + datetime.timedelta(seconds=3)
                                     )
-            logger.info(f"演职人员刮削服务启动，立即运行一次")
+            logger.info(f"演員刮削服務啟動，立即運行一次")
             # 关闭一次性开关
             self._onlyonce = False
             # 保存配置
@@ -136,7 +136,7 @@ class PersonMeta(_PluginBase):
         if self._enabled and self._cron:
             return [{
                 "id": "PersonMeta",
-                "name": "演职人员刮削服务",
+                "name": "演員刮削服務",
                 "trigger": CronTrigger.from_crontab(self._cron),
                 "func": self.scrap_library,
                 "kwargs": {}
@@ -266,6 +266,27 @@ class PersonMeta(_PluginBase):
                                     }
                                 ]
                             }
+                        ]
+                    },
+                    {
+                        'component': 'VRow',
+                        'content': [
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VAlert',
+                                        'props': {
+                                            'type': 'info',
+                                            'variant': 'tonal',
+                                            'text': '此為官方插件修改，演員名稱和描述會自動翻譯成繁體中文，查詢自建的資料庫，慎用！'
+                                        }
+                                    }
+                                ]
+                            },
                         ]
                     }
                 ]
@@ -574,14 +595,14 @@ class PersonMeta(_PluginBase):
                         # 名称
                         if not updated_name:
                             logger.debug(f"{people.get('Name')} 从豆瓣中获取到中文名：{douban_actor.get('name')}")
-                            personinfo["Name"] = douban_actor.get("name")
-                            ret_people["Name"] = douban_actor.get("name")
+                            personinfo["Name"] = zhconv.convert(douban_actor.get("name"), "zh-tw")
+                            ret_people["Name"] = zhconv.convert(douban_actor.get("name"), "zh-tw")
                             updated_name = True
                         # 描述
                         if not updated_overview:
                             if douban_actor.get("title"):
                                 logger.debug(f"{people.get('Name')} 从豆瓣中获取到中文描述：{douban_actor.get('title')}")
-                                personinfo["Overview"] = douban_actor.get("title")
+                                personinfo["Overview"] = zhconv.convert(douban_actor.get("title"), "zh-tw")
                                 updated_overview = True
                         # 饰演角色
                         if not update_character:
@@ -593,7 +614,7 @@ class PersonMeta(_PluginBase):
                                                    character)
                                 if character:
                                     logger.debug(f"{people.get('Name')} 从豆瓣中获取到饰演角色：{character}")
-                                    ret_people["Role"] = character
+                                    ret_people["Role"] = zhconv.convert(character, "zh-tw")
                                     update_character = True
                         # 图片
                         if not profile_path:
