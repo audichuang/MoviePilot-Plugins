@@ -14,7 +14,7 @@ def _get_person_details(person_id, language='zh-TW'):
     return response.json()
     
 def _get_actor_traditional_chinese_name(tmdb_id):
-    response = requests.get(f"https://actor.audiweb.uk/actors/{tmdb_id}")
+    response = requests.get(f"https://actor.audiweb.uk/actors/{int(tmdb_id)}")
     if response.status_code == 200:
         result = response.json()["name"]
         if result != "error":
