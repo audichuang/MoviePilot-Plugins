@@ -10,20 +10,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from app.core.config import settings
-from app.core.metainfo import MetaInfoPath
 from app.db.transferhistory_oper import TransferHistoryOper
-from app.helper.nfo import NfoReader
 from app.log import logger
 from app.plugins import _PluginBase
-from app.schemas import MediaType
-from app.utils.system import SystemUtils
 
 from app.plugins.libraryscraper_tw.nfo_file_manager import NfoFileManager
-from app.plugins.media_items.movie import Movie
-from app.plugins.media_items.tv_show import TvShow
-# from libraryscraper_tw.nfo_file_manager import NfoFileManager
-# from media_items.movie import Movie
-# from media_items.tv_show import TvShow
+from app.plugins.libraryscraper_tw.media_items.movie import Movie
+from app.plugins.libraryscraper_tw.media_items.tv_show import TvShow
 
 
 class LibraryScraper_Tw(_PluginBase):
