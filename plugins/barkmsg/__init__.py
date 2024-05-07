@@ -22,7 +22,7 @@ class BarkMsg(_PluginBase):
     # 作者主页
     author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
-    plugin_config_prefix = "barkmsg_"
+    plugin_config_prefix = "barkmsg_"   
     # 加载顺序
     plugin_order = 27
     # 可使用的用户级别
