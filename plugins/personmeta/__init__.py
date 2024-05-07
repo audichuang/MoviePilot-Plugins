@@ -517,8 +517,8 @@ class PersonMeta(_PluginBase):
                 if person_detail:
                     try:
                         cn_name = self.__get_chinese_name(person_detail, int(person_tmdbid))
-                    except Exception as error:
-                        logger.error(f"获取 {person_tmdbid} {people.get('Name')} 的中文名失败：{str(error)}")
+                    except Exception as err:
+                        logger.error(f"获取 {person_tmdbid} {people.get('Name')} 的中文名失败：{str(err)}")
                         cn_name = None
                     if cn_name:
                         # 更新中文名
@@ -1012,7 +1012,7 @@ class PersonMeta(_PluginBase):
         """
         chinese_name = _get_actor_traditional_chinese_name(person_tmdbid)
         logger.info(f"從資料庫查詢人物中文名：{person_tmdbid} : {chinese_name}")
-        if chinese_name is not None:
+        if chinese_name != "":
             logger.info(f"從資料庫成功獲取人物中文名：{err}")
             return str(chinese_name)
         logger.info(f"從TMDB查詢人物別名獲取繁體中文名：{person_tmdbid}")

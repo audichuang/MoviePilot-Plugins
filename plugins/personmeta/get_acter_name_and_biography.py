@@ -19,7 +19,9 @@ def _get_actor_traditional_chinese_name(tmdb_id):
         result = response.json()["name"]
         if result != "error":
             return str(result)
-    return None
+        else:
+            return ""
+    return ""
     
 def _get_biography(tmdb_id):
     tmdb_languages = ["zh-TW", "zh-CN"]
