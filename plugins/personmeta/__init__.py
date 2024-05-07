@@ -42,7 +42,7 @@ class PersonMeta(_PluginBase):
     # 插件图标
     plugin_icon = "actor.png"
     # 插件版本
-    plugin_version = "1.4"
+    plugin_version = "1.41"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
