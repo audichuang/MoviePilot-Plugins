@@ -27,7 +27,7 @@ class LibraryScraper_Tw(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -276,15 +276,15 @@ class LibraryScraper_Tw(_PluginBase):
                         # 電影
                         tmdb_id = properties.get("tmdbid")
                         update_dict = Movie.get_movie_nfo_update_dict(tmdb_id, zhconv)
-                        logger.info(f"開始刮削 {tmdb_id} 電影：{nfo_file_path} ...")
-                        if update_dict:
-                            NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
+                        logger.info(f"開始刮削tmdbid: {tmdb_id} 電影：{nfo_file_path} ...")
+                        NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
+                        
                     elif not is_movie_folder:
                         # 電視節目
                         if file_name == "tvshow.nfo" and NfoFileManager.has_tag(nfo_file_path, "<tvshow>"):
                             # tvshow
                             tmdb_id = properties.get("tmdbid")
-                            logger.info(f"開始刮削 {tmdb_id} 電視劇：{nfo_file_path} ...")
+                            logger.info(f"開始刮削tmdbid: {tmdb_id} 電視劇：{nfo_file_path} ...")
                             update_dict = TvShow.get_tvshow_nfo_update_dict(tmdb_id, zhconv)
 
                         elif file_name == "season.nfo" and NfoFileManager.has_tag(nfo_file_path, "<season>"):
@@ -294,7 +294,7 @@ class LibraryScraper_Tw(_PluginBase):
                             tv_show_properties = NfoFileManager.get_property(root)
                             tmdb_id = tv_show_properties.get("tmdbid")
                             season_number = properties.get("seasonnumber")
-                            logger.info(f"開始刮削 {tmdb_id} 第 {season_number} 季：{nfo_file_path} ...")
+                            logger.info(f"開始刮削tmdbid: {tmdb_id} 第 {season_number} 季：{nfo_file_path} ...")
                             update_dict = TvShow.get_season_nfo_update_dict(tmdb_id, season_number, zhconv)
 
                         elif NfoFileManager.has_tag(nfo_file_path, "<episodedetails>"):
@@ -302,6 +302,7 @@ class LibraryScraper_Tw(_PluginBase):
                             tmdb_id = properties.get("tmdbid")
                             season_number = properties.get("season")
                             episode_number = properties.get("episode")
+                            logger.info(f"開始刮削tmdbid: {tmdb_id} 第 {season_number} 季第 {episode_number} 集：{nfo_file_path} ...")
                             update_dict = TvShow.get_episode_nfo_update_dict(tmdb_id, season_number, episode_number, zhconv)
 
                         if update_dict:
