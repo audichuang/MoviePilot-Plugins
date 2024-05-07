@@ -42,7 +42,7 @@ class PersonMeta(_PluginBase):
     # 插件图标
     plugin_icon = "actor.png"
     # 插件版本
-    plugin_version = "1.4"
+    plugin_version = "1.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -1002,12 +1002,12 @@ class PersonMeta(_PluginBase):
         return None
 
     @staticmethod
-    def __get_chinese_name(personinfo: schemas.MediaPerson, person_tmdb_id: int) -> str:
+    def __get_chinese_name(personinfo: schemas.MediaPerson, person_tmdbid: int) -> str:
         """
         先從資料庫查看是否有中文名，如果有，直接返回；如果没有，再從TMDB別名查詢
         """
-        chinese_name = _get_actor_traditional_chinese_name(person_tmdb_id)
-        logger.info(f"從資料庫查詢人物中文名：{person_tmdb_id}")
+        chinese_name = _get_actor_traditional_chinese_name(person_tmdbid)
+        logger.info(f"從資料庫查詢人物中文名：{person_tmdbid}")
         if chinese_name is not None:
             logger.info(f"從資料庫成功獲取人物中文名：{err}")
             return chinese_name
