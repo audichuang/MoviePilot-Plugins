@@ -27,7 +27,7 @@ class LibraryScraper_Tw(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -224,7 +224,7 @@ class LibraryScraper_Tw(_PluginBase):
                                         'props': {
                                             'type': 'info',
                                             'variant': 'tonal',
-                                            'text': '刮削路径后拼接#电视剧/电影，强制指定该媒体路径媒体类型。'
+                                            'text': '不刮削原盤影片。'
                                                     '不加默认根据文件名自动识别媒体类型。'
                                         }
                                     }
@@ -265,14 +265,14 @@ class LibraryScraper_Tw(_PluginBase):
                     file_name = os.path.basename(nfo_file_path)
                     folder_path = os.path.dirname(nfo_file_path)
                     # 判斷是否為電影
-                    is_movie_folder = "/电影" in folder_path
+                    is_movie_folder = "/电影/" in nfo_file_path
                     # 跳過 BDMV 和 CERTIFICATE 文件夹 (針對原盤)
                     if "/BDMV/" in folder_path or "/CERTIFICATE/" in folder_path:
                         logger.info(f"跳過原盤檔案: {nfo_file_path}")  
                         continue
                     root = NfoFileManager.read_nfo_file(nfo_file_path)
                     properties = NfoFileManager.get_property(root)
-                    if is_movie_folder and file_name != "season.nfo" and NfoFileManager.has_tag(nfo_file_path, "<movie>"):
+                    if NfoFileManager.has_tag(nfo_file_path, "<movie>"):
                         # 電影
                         tmdb_id = properties.get("tmdbid")
                         update_dict = Movie.get_movie_nfo_update_dict(tmdb_id, zhconv)
