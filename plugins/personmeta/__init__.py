@@ -1017,8 +1017,7 @@ class PersonMeta(_PluginBase):
             if also_known_as:
                 for name in also_known_as:
                     if name and StringUtils.is_chinese(name):
-                        # 使用cn2an将簡體字轉成為繁體
-                        return zhconv.convert(name, "zh-tw")
+                        # zhconv.convert.convert(name, "zh-tw")
         except Exception as err:
             logger.error(f"获取人物中文名失败：{err}")
         return ""
