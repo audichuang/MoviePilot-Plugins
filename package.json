@@ -18,7 +18,19 @@
         "level": 1,
         "history": {
             "v1.4": "新增繁體中文語言支援。",
-            "v1.5": "新增刮削演員圖片功能。"
+            "v1.5": "豆瓣資訊轉成繁體中文。"
+        }
+    },
+    "LibraryScraper_Tw": {
+        "name": "媒體庫刮削轉繁體",
+        "description": "定時刮削媒體庫，補齊缺失資訊和圖片，使用繁體中文。",
+        "labels": "刮削",
+        "version": "1.0",
+        "icon": "scraper.png",
+        "author": "audichuang",
+        "level": 1,
+        "history": {
+            "v1.0": "新增繁體中文語言支援。"
         }
     }
 }
