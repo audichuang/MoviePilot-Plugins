@@ -31,7 +31,7 @@ from app.utils.common import retry
 from app.utils.http import RequestUtils
 from app.utils.string import StringUtils
 
-from get_acter_name_and_biography import _get_actor_traditional_chinese_name, _get_biography
+from app.plugins.personmeta.get_acter_name_and_biography import _get_actor_traditional_chinese_name, _get_biography
 
 
 class PersonMeta(_PluginBase):
