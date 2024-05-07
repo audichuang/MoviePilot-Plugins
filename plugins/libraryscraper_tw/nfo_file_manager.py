@@ -54,10 +54,14 @@ class NfoFileManager:
         Returns:
             Dict[str, str]: 包含标签及其内容的字典。
         """
-        NfoFileManager.process_nfo_empty_tags(file_path)
-        tree = ET.parse(file_path)
-        logger.info(f"讀取 NFO 文件 {file_path}")
-        return tree.getroot()
+        try:
+            NfoFileManager.process_nfo_empty_tags(file_path)
+            tree = ET.parse(file_path)
+            logger.info(f"讀取 NFO 文件 {file_path}")
+            return tree.getroot()
+        except Exception as e:
+            logger.error(f"讀取 NFO 文件 {file_path} 失敗: {e}")
+        
 
     def get_property(root):
         """
@@ -69,12 +73,15 @@ class NfoFileManager:
         Returns:
             Dict[str, str]: 包含标签及其内容的字典。
         """
-        properties = {}
-        for child in root:
-            tag = child.tag
-            text = child.text.strip() if child.text else ""
-            properties[tag] = text
-        return properties
+        try:
+            properties = {}
+            for child in root:
+                tag = child.tag
+                text = child.text.strip() if child.text else ""
+                properties[tag] = text
+            return properties
+        except Exception as e:
+            logger.error(f"獲取標籤內容 {root} 失敗: {e}")
 
     def season_nfo_find_tvshow_nfo(nfo_file_path: str):
         """
@@ -86,14 +93,18 @@ class NfoFileManager:
         Returns:
             Optional[str]: tvshow.nfo 文件的完整路径,如果找不到则返回 None。
         """
-        logger.info(f"查找 {nfo_file_path}  的tvshow.nfo 文件")
-        directory = os.path.dirname(nfo_file_path)
-        last_sep_index = directory.rfind(os.path.sep)
-        tvshow_nfo_path = os.path.join(directory[:last_sep_index], "tvshow.nfo")
-        if os.path.exists(tvshow_nfo_path):
-            logger.info(f"找到 {nfo_file_path}  的tvshow.nfo 文件: {tvshow_nfo_path}")
-            return tvshow_nfo_path
-        return None
+        try:
+            logger.info(f"查找 {nfo_file_path}  的tvshow.nfo 文件")
+            directory = os.path.dirname(nfo_file_path)
+            last_sep_index = directory.rfind(os.path.sep)
+            tvshow_nfo_path = os.path.join(directory[:last_sep_index], "tvshow.nfo")
+            if os.path.exists(tvshow_nfo_path):
+                logger.info(f"找到 {nfo_file_path}  的tvshow.nfo 文件: {tvshow_nfo_path}")
+                return tvshow_nfo_path
+            return None
+        except Exception as e:
+            logger.error(f"查找 {nfo_file_path}  的tvshow.nfo 文件失败: {e}")
+            return None
 
     def process_nfo_empty_tags(nfo_file_path):
         """

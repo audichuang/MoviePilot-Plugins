@@ -260,51 +260,54 @@ class LibraryScraper_Tw(_PluginBase):
             # 查找目標目錄中的所有 .nfo 文件
             nfo_files = NfoFileManager.find_nfo_files(path)
             for nfo_file_path in nfo_files:
-                logger.info(f"開始刮削檔案：{nfo_file_path} ...")
-                file_name = os.path.basename(nfo_file_path)
-                folder_path = os.path.dirname(nfo_file_path)
-                # 判斷是否為電影
-                is_movie_folder = "/电影/" in folder_path
-                # 跳過 BDMV 和 CERTIFICATE 文件夹 (針對原盤)
-                if "/BDMV/" in folder_path or "/CERTIFICATE/" in folder_path:
-                    logger.info(f"跳過原盤檔案: {nfo_file_path}")  
-                    continue
-                root = NfoFileManager.read_nfo_file(nfo_file_path)
-                properties = NfoFileManager.get_property(root)
-                if is_movie_folder and file_name != "season.nfo" and NfoFileManager.has_tag(nfo_file_path, "<movie>"):
-                    # 電影
-                    tmdb_id = properties.get("tmdbid")
-                    update_dict = Movie.get_movie_nfo_update_dict(tmdb_id, zhconv)
-                    logger.info(f"開始刮削 {tmdb_id} 電影：{nfo_file_path} ...")
-                    if update_dict:
-                        NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
-                elif not is_movie_folder:
-                    # 電視節目
-                    if file_name == "tvshow.nfo" and NfoFileManager.has_tag(nfo_file_path, "<tvshow>"):
-                        # tvshow
+                try:
+                    logger.info(f"開始刮削檔案：{nfo_file_path} ...")
+                    file_name = os.path.basename(nfo_file_path)
+                    folder_path = os.path.dirname(nfo_file_path)
+                    # 判斷是否為電影
+                    is_movie_folder = "/电影/" in folder_path
+                    # 跳過 BDMV 和 CERTIFICATE 文件夹 (針對原盤)
+                    if "/BDMV/" in folder_path or "/CERTIFICATE/" in folder_path:
+                        logger.info(f"跳過原盤檔案: {nfo_file_path}")  
+                        continue
+                    root = NfoFileManager.read_nfo_file(nfo_file_path)
+                    properties = NfoFileManager.get_property(root)
+                    if is_movie_folder and file_name != "season.nfo" and NfoFileManager.has_tag(nfo_file_path, "<movie>"):
+                        # 電影
                         tmdb_id = properties.get("tmdbid")
-                        logger.info(f"開始刮削 {tmdb_id} 電視劇：{nfo_file_path} ...")
-                        update_dict = TvShow.get_tvshow_nfo_update_dict(tmdb_id, zhconv)
+                        update_dict = Movie.get_movie_nfo_update_dict(tmdb_id, zhconv)
+                        logger.info(f"開始刮削 {tmdb_id} 電影：{nfo_file_path} ...")
+                        if update_dict:
+                            NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
+                    elif not is_movie_folder:
+                        # 電視節目
+                        if file_name == "tvshow.nfo" and NfoFileManager.has_tag(nfo_file_path, "<tvshow>"):
+                            # tvshow
+                            tmdb_id = properties.get("tmdbid")
+                            logger.info(f"開始刮削 {tmdb_id} 電視劇：{nfo_file_path} ...")
+                            update_dict = TvShow.get_tvshow_nfo_update_dict(tmdb_id, zhconv)
 
-                    elif file_name == "season.nfo" and NfoFileManager.has_tag(nfo_file_path, "<season>"):
-                        # season
-                        tvshow_nfo_path = NfoFileManager.season_nfo_find_tvshow_nfo(nfo_file_path)
-                        root = NfoFileManager.read_nfo_file(tvshow_nfo_path)
-                        tv_show_properties = NfoFileManager.get_property(root)
-                        tmdb_id = tv_show_properties.get("tmdbid")
-                        season_number = properties.get("seasonnumber")
-                        logger.info(f"開始刮削 {tmdb_id} 第 {season_number} 季：{nfo_file_path} ...")
-                        update_dict = TvShow.get_season_nfo_update_dict(tmdb_id, season_number, zhconv)
+                        elif file_name == "season.nfo" and NfoFileManager.has_tag(nfo_file_path, "<season>"):
+                            # season
+                            tvshow_nfo_path = NfoFileManager.season_nfo_find_tvshow_nfo(nfo_file_path)
+                            root = NfoFileManager.read_nfo_file(tvshow_nfo_path)
+                            tv_show_properties = NfoFileManager.get_property(root)
+                            tmdb_id = tv_show_properties.get("tmdbid")
+                            season_number = properties.get("seasonnumber")
+                            logger.info(f"開始刮削 {tmdb_id} 第 {season_number} 季：{nfo_file_path} ...")
+                            update_dict = TvShow.get_season_nfo_update_dict(tmdb_id, season_number, zhconv)
 
-                    elif NfoFileManager.has_tag(nfo_file_path, "<episodedetails>"):
-                        # episode
-                        tmdb_id = properties.get("tmdbid")
-                        season_number = properties.get("season")
-                        episode_number = properties.get("episode")
-                        update_dict = NfoFileManager.get_episode_nfo_update_dict(tmdb_id, season_number, episode_number, zhconv)
+                        elif NfoFileManager.has_tag(nfo_file_path, "<episodedetails>"):
+                            # episode
+                            tmdb_id = properties.get("tmdbid")
+                            season_number = properties.get("season")
+                            episode_number = properties.get("episode")
+                            update_dict = NfoFileManager.get_episode_nfo_update_dict(tmdb_id, season_number, episode_number, zhconv)
 
-                    if update_dict:
-                        NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
+                        if update_dict:
+                            NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
+                except Exception as e:
+                    logger.error(f"刮削 {nfo_file_path} 發生錯誤：{str(e)}")
    
             logger.info(f"媒體庫 {path} 刮削完成")
         logger.info(f"媒體庫刮削服務(繁體) 運行完畢")
