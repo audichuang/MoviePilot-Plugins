@@ -44,8 +44,8 @@ class Movie:
 
         if overview is None:
             overview = ""
-        else:
-            overview = overview.replace("\n", "")
+        # else:
+        #     overview = overview.replace("\n", "")
         logger.info(f"電影 {title} 繁體中文概要: {overview}")
         original_title = _get_movie_details(tmdb_id, language="en-US")["title"]
 
