@@ -158,7 +158,7 @@ class NfoFileManager:
                 element = modified_root.find(tag_name)
                 if expected_text != "":
                     if element is None or element.text != expected_text:
-                        logger.warning(
+                        logger.error(
                             f"修改标签 '{tag_name}' 失败, 预期值为 '{expected_text}', 实际值为 '{element.text if element is not None else 'None'}'"
                         )
                         return False
