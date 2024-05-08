@@ -33,9 +33,9 @@ class TvShow:
         if details["overview"] == "":
             translate = 1
             details = _get_tv_details(tmdb_id, language="zh-CN")
-            if details["overview"] == "":
-                translate = 2
-                details = _get_tv_details(tmdb_id, language="en-US")
+            # if details["overview"] == "":
+            #     translate = 2
+            #     details = _get_tv_details(tmdb_id, language="en-US")
 
         if translate == 0:
             logger.info(f"電視劇 {details['name']} 取得繁體中文資訊")
@@ -45,16 +45,16 @@ class TvShow:
             logger.info(f"電視劇 {details['name']} 取得簡體中文資訊，將翻譯成繁體中文")
             overview = zhconv.convert(details["overview"], "zh-tw")
             title = zhconv.convert(details["name"], "zh-tw")
-        elif translate == 2:
-            logger.info(f"電視劇 {details['name']} 取得英文資訊，將用Google翻譯成繁體中文")
-            # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
-            # title = translat_en_zh_text(details["name"], zhconv=zhconv)
-            if details["overview"] == "":
-                overview = ""
-                logger.info(f"電視劇 {details['name']} 沒有英文overview")
-            else:
-                overview = translat_en_zh_tw_text(details["overview"])
-            title = translat_en_zh_tw_text(details["name"])
+        # elif translate == 2:
+        #     logger.info(f"電視劇 {details['name']} 取得英文資訊，將用Google翻譯成繁體中文")
+        #     # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
+        #     # title = translat_en_zh_text(details["name"], zhconv=zhconv)
+        #     if details["overview"] == "":
+        #         overview = ""
+        #         logger.info(f"電視劇 {details['name']} 沒有英文overview")
+        #     else:
+        #         overview = translat_en_zh_tw_text(details["overview"])
+        #     title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""
@@ -85,11 +85,11 @@ class TvShow:
         if details["overview"] == "":
             translate = 1
             details = _get_tv_season_details(tmdb_id, season_number, language="zh-CN")
-            if details["overview"] == "":
-                translate = 2
-                details = _get_tv_season_details(
-                    tmdb_id, season_number, language="en-US"
-                )
+            # if details["overview"] == "":
+            #     translate = 2
+            #     details = _get_tv_season_details(
+            #         tmdb_id, season_number, language="en-US"
+            #     )
 
         if translate == 0:
             logger.info(f"電視劇 {details['name']} 第 {season_number} 季取得繁體中文資訊")
@@ -101,27 +101,27 @@ class TvShow:
             )
             overview = zhconv.convert(details["overview"], "zh-tw")
             title = zhconv.convert(details["name"], "zh-tw")
-        elif translate == 2:
-            logger.info(
-                f"電視劇 {details['name']} 第 {season_number} 季取得英文資訊，將用Googles翻譯成繁體中文"
-            )
-            # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
-            # title = translat_en_zh_text(details["name"], zhconv=zhconv)
-            try:
-                if details["overview"] == "":
-                    overview = ""
-                    logger.info(f"電視劇 {details['name']} 第 {season_number} 季沒有英文overview")
-                else:
-                    overview = translat_en_zh_tw_text(details["overview"])
-                    logger.info(f"電視劇 {details['name']} 第 {season_number} 季取得英文overview: {overview}")
-            except Exception as e:
-                logger.error(f"取得英文翻譯 {details['name']} 第 {season_number} 季 overview 失敗: {e}")
-                overview = ""
+        # elif translate == 2:
+        #     logger.info(
+        #         f"電視劇 {details['name']} 第 {season_number} 季取得英文資訊，將用Googles翻譯成繁體中文"
+        #     )
+        #     # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
+        #     # title = translat_en_zh_text(details["name"], zhconv=zhconv)
+        #     try:
+        #         if details["overview"] == "":
+        #             overview = ""
+        #             logger.info(f"電視劇 {details['name']} 第 {season_number} 季沒有英文overview")
+        #         else:
+        #             overview = translat_en_zh_tw_text(details["overview"])
+        #             logger.info(f"電視劇 {details['name']} 第 {season_number} 季取得英文overview: {overview}")
+        #     except Exception as e:
+        #         logger.error(f"取得英文翻譯 {details['name']} 第 {season_number} 季 overview 失敗: {e}")
+        #         overview = ""
             
-            if  "Season" in details["name"]:
-                title = _get_tv_season_details(tmdb_id, season_number)["name"]
-            else:
-                title = translat_en_zh_tw_text(details["name"])
+        #     if  "Season" in details["name"]:
+        #         title = _get_tv_season_details(tmdb_id, season_number)["name"]
+        #     else:
+        #         title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""
@@ -154,11 +154,11 @@ class TvShow:
             details = _get_tv_episode_details(
                 tmdb_id, season_number, episode_number, language="zh-CN"
             )
-            if details["overview"] == "":
-                translate = 2
-                details = _get_tv_episode_details(
-                    tmdb_id, season_number, episode_number, language="en-US"
-                )
+            # if details["overview"] == "":
+            #     translate = 2
+            #     details = _get_tv_episode_details(
+            #         tmdb_id, season_number, episode_number, language="en-US"
+            #     )
 
         if translate == 0:
             logger.info(
@@ -172,30 +172,29 @@ class TvShow:
             )
             overview = zhconv.convert(details["overview"], "zh-tw")
             title = zhconv.convert(details["name"], "zh-tw")
-        elif translate == 2:
-            logger.info(
-                f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集取得英文資訊，將用Google翻譯成繁體中文"
-            )
-            # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
-            # title = translat_en_zh_text(details["name"], zhconv=zhconv)
-            try:
-                if details["overview"] == "":
-                    overview = ""
-                    logger.info(f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集沒有英文overview")
-                else:
-                    overview = translat_en_zh_tw_text(details["overview"])
-                    logger.info(f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集取得英文overview: {overview}")
-            except Exception as e:
-                logger.error(f"取得英文翻譯 {details['name']} 第 {season_number} 季第 {episode_number} 集 overview 失敗: {e}")
-                overview = ""
-            if  "Episode" in details["name"]:
-                title = _get_tv_episode_details(tmdb_id, season_number, episode_number)["name"]
-            else:
-                title = translat_en_zh_tw_text(details["name"])
+        # elif translate == 2:
+        #     logger.info(
+        #         f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集取得英文資訊，將用Google翻譯成繁體中文"
+        #     )
+        #     # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
+        #     # title = translat_en_zh_text(details["name"], zhconv=zhconv)
+        #     try:
+        #         if details["overview"] == "":
+        #             overview = ""
+        #             logger.info(f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集沒有英文overview")
+        #         else:
+        #             overview = translat_en_zh_tw_text(details["overview"])
+        #             logger.info(f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集取得英文overview: {overview}")
+        #     except Exception as e:
+        #         logger.error(f"取得英文翻譯 {details['name']} 第 {season_number} 季第 {episode_number} 集 overview 失敗: {e}")
+        #         overview = ""
+        #     if  "Episode" in details["name"]:
+        #         title = _get_tv_episode_details(tmdb_id, season_number, episode_number)["name"]
+        #     else:
+        #         title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""
-        else:
         return {
             "title": title,
             "plot": overview,

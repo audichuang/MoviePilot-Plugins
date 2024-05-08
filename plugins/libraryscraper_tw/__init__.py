@@ -3,6 +3,7 @@ from pathlib import Path
 from threading import Event
 from typing import List, Tuple, Dict, Any
 
+import time
 import pytz
 import os
 import zhconv
@@ -28,7 +29,7 @@ class LibraryScraper_Tw(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -271,17 +272,19 @@ class LibraryScraper_Tw(_PluginBase):
             return
         # 已选择的目录
         paths = self._scraper_paths.split("\n")
+        total_paths = len(paths)
         logger.info(f"處理通知 {self._notify}")
         if self._notify:
             self.post_message(
                 mtype=NotificationType.MediaServer,
                 title="【媒體庫開始刮削】",
-                text=f"總共 {len(paths)} 個路徑"
+                text=f"總共 {total_paths} 個路徑"
             )
             logger.info(f"成功發送通知")
         for path in paths:
             if not path:
                 continue
+            total_paths -= 1
             if self._notify:
                 self.post_message(
                     mtype=NotificationType.MediaServer,
@@ -290,6 +293,10 @@ class LibraryScraper_Tw(_PluginBase):
                 )
 
             logger.info(f"開始刮削媒體庫路徑：{path} ...")
+            start_time = time.time()  # 紀錄開始時間
+            self.__scraper_path(path)
+            end_time = time.time()  # 紀錄結束時間
+
             # 查找目標目錄中的所有 .nfo 文件
             nfo_files = NfoFileManager.find_nfo_files(path)
             for nfo_file_path in nfo_files:
@@ -342,7 +349,14 @@ class LibraryScraper_Tw(_PluginBase):
                             NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
                 except Exception as e:
                     logger.error(f"刮削 {nfo_file_path} 發生錯誤：{str(e)}")
-   
+            end_time = time.time()  # 记录结束时间
+            logger.info(f"刮削 {path} 完成，耗時 {end_time - start_time:.2f} 秒")
+            if self._notify:
+                self.post_message(
+                    mtype=NotificationType.MediaServer,
+                    title="【媒體庫刮削】",
+                    text=f"刮削 {path} 完成，耗時 {end_time - start_time:.2f} 秒"
+                )
             logger.info(f"媒體庫 {path} 刮削完成")
         logger.info(f"媒體庫刮削服務(繁體) 運行完畢")
         if self._notifiy:
