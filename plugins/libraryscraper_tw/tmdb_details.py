@@ -42,10 +42,10 @@ def _get_tv_episode_details(tv_id, season_number, episode_number, language="zh-T
     return response.json()
 
 
-# if __name__ == "__main__":
-#     tmdb_id = 1421
-#     result = _get_movie_details(850888)
-#     print(result)
+if __name__ == "__main__":
+    # tmdb_id = 1421
+    result = _get_movie_details(15515, "zh-CN")
+    print(result)
     # result = _get_tv_details(tmdb_id)
     # print(result)
     # result = _get_tv_season_details(tmdb_id, 11)
