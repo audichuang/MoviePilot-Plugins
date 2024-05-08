@@ -19,6 +19,6 @@ def translat_en_zh_tw_text(text):
 
 #     text = translat_en_zh_text(text, from_lang, zhconv)
 #     print(text)
-    text_to_translate = "Your English text here"
-    print(translat_en_zh_tw_text(text_to_translate))
+    # text_to_translate = ""
+    # print(translat_en_zh_tw_text(text_to_translate))
 

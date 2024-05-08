@@ -104,11 +104,16 @@ class TvShow:
             # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
             # title = translat_en_zh_text(details["name"], zhconv=zhconv)
             try:
-                overview = translat_en_zh_tw_text(details["overview"])
+                if details["overview"] == "":
+                    overview = ""
+                    logger.info(f"電視劇 {details['name']} 第 {season_number} 季沒有英文overview")
+                else:
+                    overview = translat_en_zh_tw_text(details["overview"])
+                    logger.info(f"電視劇 {details['name']} 第 {season_number} 季取得英文overview: {overview}")
             except Exception as e:
-                logger.error(f"翻譯 {details['name']} 第 {season_number} 季 overview 失敗: {e}")
+                logger.error(f"取得英文翻譯 {details['name']} 第 {season_number} 季 overview 失敗: {e}")
                 overview = ""
-            logger.info(f"電視劇 {details['name']} 第 {season_number} 季取得英文overview: {overview}")
+            
             if  "Season" in details["name"]:
                 title = _get_tv_season_details(tmdb_id, season_number)["name"]
             else:
