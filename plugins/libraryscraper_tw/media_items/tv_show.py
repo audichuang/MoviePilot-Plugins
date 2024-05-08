@@ -3,7 +3,7 @@ from app.plugins.libraryscraper_tw.tmdb_details import (
     _get_tv_season_details,
     _get_tv_episode_details,
 )
-from app.plugins.libraryscraper_tw.utils import translat_en_zh_text
+from app.plugins.libraryscraper_tw.utils import translat_en_zh_text, translat_en_zh_tw_text
 from app.log import logger
 
 import zhconv
@@ -47,8 +47,10 @@ class TvShow:
             title = zhconv.convert(details["name"], "zh-tw")
         elif translate == 2:
             logger.info(f"電視劇 {details['name']} 取得英文資訊，將翻譯成繁體中文")
-            overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
-            title = translat_en_zh_text(details["name"], zhconv=zhconv)
+            # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
+            # title = translat_en_zh_text(details["name"], zhconv=zhconv)
+            overview = translat_en_zh_tw_text(details["overview"])
+            title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""
@@ -99,8 +101,10 @@ class TvShow:
             logger.info(
                 f"電視劇 {details['name']} 第 {season_number} 季取得英文資訊，將翻譯成繁體中文"
             )
-            overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
-            title = translat_en_zh_text(details["name"], zhconv=zhconv)
+            # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
+            # title = translat_en_zh_text(details["name"], zhconv=zhconv)
+            overview = translat_en_zh_tw_text(details["overview"])
+            title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""
@@ -155,8 +159,10 @@ class TvShow:
             logger.info(
                 f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集取得英文資訊，將翻譯成繁體中文"
             )
-            overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
-            title = translat_en_zh_text(details["name"], zhconv=zhconv)
+            # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
+            # title = translat_en_zh_text(details["name"], zhconv=zhconv)
+            overview = translat_en_zh_tw_text(details["overview"])
+            title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""

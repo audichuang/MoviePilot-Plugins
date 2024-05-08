@@ -1,5 +1,5 @@
 from app.plugins.libraryscraper_tw.tmdb_details import _get_movie_details
-from app.plugins.libraryscraper_tw.utils import translat_en_zh_text
+from app.plugins.libraryscraper_tw.utils import translat_en_zh_text, translat_en_zh_tw_text
 from app.log import logger
 # from plugins.libraryscraper_tw.tmdb_details import _get_movie_details
 # from plugins.libraryscraper_tw.utils import translat_en_zh_text
@@ -39,8 +39,10 @@ class Movie:
         elif translate == 2:
             logger.info(f"電影 {details['title']} 取得英文資訊，將翻譯成繁體中文")
             # print(f"電影 {details['title']} 取得英文資訊，將翻譯成繁體中文")
-            overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
-            title = translat_en_zh_text(details["title"], zhconv=zhconv)
+            # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
+            # title = translat_en_zh_text(details["title"], zhconv=zhconv)
+            overview = translat_en_zh_tw_text(details["overview"])
+            title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""
