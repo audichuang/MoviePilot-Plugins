@@ -243,8 +243,7 @@ class LibraryScraper_Tw(_PluginBase):
                                         'props': {
                                             'type': 'info',
                                             'variant': 'tonal',
-                                            'text': '不刮削原盤影片。'
-                                                    '不加默认根据文件名自动识别媒体类型。'
+                                            'text': '不刮削原盤影片，請注意目錄結構。'
                                         }
                                     }
                                 ]
