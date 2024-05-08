@@ -25,7 +25,7 @@
         "name": "媒體庫刮削(繁體)",
         "description": "定時刮削媒體庫，補齊缺失資訊和圖片，使用繁體中文。",
         "labels": "刮削",
-        "version": "1.0",
+        "version": "1.2",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1
