@@ -13,6 +13,7 @@ from app.core.config import settings
 from app.db.transferhistory_oper import TransferHistoryOper
 from app.log import logger
 from app.plugins import _PluginBase
+from app.schemas import NotificationType
 
 from app.plugins.libraryscraper_tw.nfo_file_manager import NfoFileManager
 from app.plugins.libraryscraper_tw.media_items.movie import Movie
@@ -27,7 +28,7 @@ class LibraryScraper_Tw(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -55,6 +56,7 @@ class LibraryScraper_Tw(_PluginBase):
         # 读取配置
         if config:
             self._enabled = config.get("enabled")
+            self._notify = config.get("notifiy")
             self._onlyonce = config.get("onlyonce")
             self._cron = config.get("cron")
             self._scraper_paths = config.get("scraper_paths") or ""
@@ -77,6 +79,7 @@ class LibraryScraper_Tw(_PluginBase):
                 self._onlyonce = False
                 self.update_config({
                     "onlyonce": False,
+                    "notifiy": self._notify,
                     "enabled": self._enabled,
                     "cron": self._cron,
                     "scraper_paths": self._scraper_paths
@@ -137,14 +140,29 @@ class LibraryScraper_Tw(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     'cols': 12,
-                                    'md': 6
+                                    'md': 4
                                 },
                                 'content': [
                                     {
                                         'component': 'VSwitch',
                                         'props': {
                                             'model': 'enabled',
-                                            'label': '启用插件',
+                                            'label': '啟用插件',
+                                        }
+                                    }
+                                ]
+                            },{
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                    'md': 4
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VSwitch',
+                                        'props': {
+                                            'model': 'notifiy',
+                                            'label': '發送通知',
                                         }
                                     }
                                 ]
@@ -153,14 +171,14 @@ class LibraryScraper_Tw(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     'cols': 12,
-                                    'md': 6
+                                    'md': 4
                                 },
                                 'content': [
                                     {
                                         'component': 'VSwitch',
                                         'props': {
                                             'model': 'onlyonce',
-                                            'label': '立即运行一次',
+                                            'label': '立刻運行一次',
                                         }
                                     }
                                 ]
@@ -253,9 +271,21 @@ class LibraryScraper_Tw(_PluginBase):
             return
         # 已选择的目录
         paths = self._scraper_paths.split("\n")
+        self.post_message(
+            mtype=NotificationType.SiteMessage,
+            title="【媒體庫開始刮削】",
+            text=f"總共 {len(paths)} 個路徑"
+        )
         for path in paths:
             if not path:
                 continue
+            if self._notify:
+                self.post_message(
+                    mtype=NotificationType.SiteMessage,
+                    title="【媒體庫刮削】",
+                    text=f"開始刮削 {path}"
+                )
+
             logger.info(f"開始刮削媒體庫路徑：{path} ...")
             # 查找目標目錄中的所有 .nfo 文件
             nfo_files = NfoFileManager.find_nfo_files(path)
@@ -312,6 +342,11 @@ class LibraryScraper_Tw(_PluginBase):
    
             logger.info(f"媒體庫 {path} 刮削完成")
         logger.info(f"媒體庫刮削服務(繁體) 運行完畢")
+        self.post_message(
+            mtype=NotificationType.SiteMessage,
+            title="【媒體庫刮削】",
+            text=f"刮削完成"
+        )
 
     def stop_service(self):
         """
