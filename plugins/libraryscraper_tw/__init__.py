@@ -13,7 +13,7 @@ from app.core.config import settings
 from app.db.transferhistory_oper import TransferHistoryOper
 from app.log import logger
 from app.plugins import _PluginBase
-from app.schemas import NotificationType
+from app.schemas.types import NotificationType
 
 from app.plugins.libraryscraper_tw.nfo_file_manager import NfoFileManager
 from app.plugins.libraryscraper_tw.media_items.movie import Movie
@@ -28,7 +28,7 @@ class LibraryScraper_Tw(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -272,18 +272,20 @@ class LibraryScraper_Tw(_PluginBase):
             return
         # 已选择的目录
         paths = self._scraper_paths.split("\n")
+        logger.info(f"處理通知 {self._notify}")
         if self._notify:
             self.post_message(
-                mtype=NotificationType.SiteMessage,
+                mtype=NotificationType.MediaServer,
                 title="【媒體庫開始刮削】",
                 text=f"總共 {len(paths)} 個路徑"
             )
+            logger.info(f"成功發送通知")
         for path in paths:
             if not path:
                 continue
             if self._notify:
                 self.post_message(
-                    mtype=NotificationType.SiteMessage,
+                    mtype=NotificationType.MediaServer,
                     title="【媒體庫刮削】",
                     text=f"開始刮削 {path}"
                 )
@@ -346,7 +348,7 @@ class LibraryScraper_Tw(_PluginBase):
         logger.info(f"媒體庫刮削服務(繁體) 運行完畢")
         if self._notifiy:
             self.post_message(
-                mtype=NotificationType.SiteMessage,
+                mtype=NotificationType.MediaServer,
                 title="【媒體庫刮削】",
                 text=f"刮削完成"
             )
