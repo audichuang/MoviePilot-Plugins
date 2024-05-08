@@ -104,7 +104,10 @@ class TvShow:
             # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
             # title = translat_en_zh_text(details["name"], zhconv=zhconv)
             overview = translat_en_zh_tw_text(details["overview"])
-            title = translat_en_zh_tw_text(details["name"])
+            if  "Season" in details["name"]:
+                title = _get_tv_season_details(tmdb_id, season_number)["name"]
+            else:
+                title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""
@@ -162,7 +165,10 @@ class TvShow:
             # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
             # title = translat_en_zh_text(details["name"], zhconv=zhconv)
             overview = translat_en_zh_tw_text(details["overview"])
-            title = translat_en_zh_tw_text(details["name"])
+            if  "Episode" in details["name"]:
+                title = _get_tv_episode_details(tmdb_id, season_number, episode_number)["name"]
+            else:
+                title = translat_en_zh_tw_text(details["name"])
 
         if overview is None:
             overview = ""
