@@ -105,7 +105,7 @@ class TvShow:
         if overview is None:
             overview = ""
         else:
-            overview = overview.replace("\n", " ")
+            overview = overview.replace("\n", "")
         return {
             "title": title,
             "plot": overview,

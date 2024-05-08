@@ -271,11 +271,12 @@ class LibraryScraper_Tw(_PluginBase):
             return
         # 已选择的目录
         paths = self._scraper_paths.split("\n")
-        self.post_message(
-            mtype=NotificationType.SiteMessage,
-            title="【媒體庫開始刮削】",
-            text=f"總共 {len(paths)} 個路徑"
-        )
+        if self._notify:
+            self.post_message(
+                mtype=NotificationType.SiteMessage,
+                title="【媒體庫開始刮削】",
+                text=f"總共 {len(paths)} 個路徑"
+            )
         for path in paths:
             if not path:
                 continue
