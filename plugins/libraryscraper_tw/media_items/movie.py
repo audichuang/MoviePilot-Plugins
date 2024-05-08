@@ -41,11 +41,12 @@ class Movie:
             # print(f"電影 {details['title']} 取得英文資訊，將翻譯成繁體中文")
             # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
             # title = translat_en_zh_text(details["title"], zhconv=zhconv)
-            overview = translat_en_zh_tw_text(details["overview"])
+            if overview is None:
+                overview = ""
+            if overview != "":
+                overview = translat_en_zh_tw_text(details["overview"])
             title = translat_en_zh_tw_text(details["name"])
 
-        if overview is None:
-            overview = ""
         overview = overview.strip().replace("\r", "").replace("\n", "")
         logger.error(f"得到電影 {title} 繁體中文概要: {overview}")
         original_title = _get_movie_details(tmdb_id, language="en-US")["title"]

@@ -44,10 +44,10 @@ def _get_tv_episode_details(tv_id, season_number, episode_number, language="zh-T
 
 if __name__ == "__main__":
     # tmdb_id = 1421
-    result = _get_tv_episode_details(248347,1,1, "en-US")
+    result = _get_tv_season_details(112486,2, "en-US")
     print(result)
     print(result["name"])
-    print(result["overview"])
+    print(len(result["overview"]))
     # result = _get_tv_details(tmdb_id)
     # print(result)
     # result = _get_tv_season_details(tmdb_id, 11)
