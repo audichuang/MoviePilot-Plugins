@@ -57,7 +57,7 @@ class LibraryScraper_Tw(_PluginBase):
         # 读取配置
         if config:
             self._enabled = config.get("enabled")
-            self._notify = config.get("notifiy")
+            self._notify = config.get("notify")
             self._onlyonce = config.get("onlyonce")
             self._cron = config.get("cron")
             self._scraper_paths = config.get("scraper_paths") or ""
@@ -80,7 +80,7 @@ class LibraryScraper_Tw(_PluginBase):
                 self._onlyonce = False
                 self.update_config({
                     "onlyonce": False,
-                    "notifiy": self._notify,
+                    "notify": self._notify,
                     "enabled": self._enabled,
                     "cron": self._cron,
                     "scraper_paths": self._scraper_paths
