@@ -28,7 +28,7 @@ class LibraryScraper_Tw(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -45,6 +45,7 @@ class LibraryScraper_Tw(_PluginBase):
     _scheduler = None
     # 限速开关
     _enabled = False
+    _notifiy = False
     _onlyonce = False
     _cron = None
     _mode = ""
@@ -161,7 +162,7 @@ class LibraryScraper_Tw(_PluginBase):
                                     {
                                         'component': 'VSwitch',
                                         'props': {
-                                            'model': 'notifiy',
+                                            'model': 'notify',
                                             'label': '發送通知',
                                         }
                                     }
@@ -343,11 +344,12 @@ class LibraryScraper_Tw(_PluginBase):
    
             logger.info(f"媒體庫 {path} 刮削完成")
         logger.info(f"媒體庫刮削服務(繁體) 運行完畢")
-        self.post_message(
-            mtype=NotificationType.SiteMessage,
-            title="【媒體庫刮削】",
-            text=f"刮削完成"
-        )
+        if self._notifiy:
+            self.post_message(
+                mtype=NotificationType.SiteMessage,
+                title="【媒體庫刮削】",
+                text=f"刮削完成"
+            )
 
     def stop_service(self):
         """
