@@ -46,7 +46,7 @@ class TvShow:
             overview = zhconv.convert(details["overview"], "zh-tw")
             title = zhconv.convert(details["name"], "zh-tw")
         elif translate == 2:
-            logger.info(f"電視劇 {details['name']} 取得英文資訊，將翻譯成繁體中文")
+            logger.info(f"電視劇 {details['name']} 取得英文資訊，將用Google翻譯成繁體中文")
             # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
             # title = translat_en_zh_text(details["name"], zhconv=zhconv)
             overview = translat_en_zh_tw_text(details["overview"])
@@ -99,7 +99,7 @@ class TvShow:
             title = zhconv.convert(details["name"], "zh-tw")
         elif translate == 2:
             logger.info(
-                f"電視劇 {details['name']} 第 {season_number} 季取得英文資訊，將翻譯成繁體中文"
+                f"電視劇 {details['name']} 第 {season_number} 季取得英文資訊，將用Google翻譯成繁體中文"
             )
             # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
             # title = translat_en_zh_text(details["name"], zhconv=zhconv)
@@ -160,7 +160,7 @@ class TvShow:
             title = zhconv.convert(details["name"], "zh-tw")
         elif translate == 2:
             logger.info(
-                f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集取得英文資訊，將翻譯成繁體中文"
+                f"電視劇 {details['name']} 第 {season_number} 季第 {episode_number} 集取得英文資訊，將用Google翻譯成繁體中文"
             )
             # overview = translat_en_zh_text(details["overview"], zhconv=zhconv)
             # title = translat_en_zh_text(details["name"], zhconv=zhconv)
