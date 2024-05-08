@@ -48,7 +48,7 @@ class Movie:
             title = translat_en_zh_tw_text(details["name"])
 
         overview = overview.strip().replace("\r", "").replace("\n", "")
-        logger.error(f"得到電影 {title} 繁體中文概要: {overview}")
+        logger.info(f"得到電影 {title} 繁體中文概要: {overview}")
         original_title = _get_movie_details(tmdb_id, language="en-US")["title"]
 
         return {
