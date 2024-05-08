@@ -29,7 +29,7 @@ class LibraryScraper_Tw(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.2"
+    plugin_version = "1.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -294,8 +294,6 @@ class LibraryScraper_Tw(_PluginBase):
 
             logger.info(f"開始刮削媒體庫路徑：{path} ...")
             start_time = time.time()  # 紀錄開始時間
-            self.__scraper_path(path)
-            end_time = time.time()  # 紀錄結束時間
 
             # 查找目標目錄中的所有 .nfo 文件
             nfo_files = NfoFileManager.find_nfo_files(path)
@@ -349,7 +347,7 @@ class LibraryScraper_Tw(_PluginBase):
                             NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
                 except Exception as e:
                     logger.error(f"刮削 {nfo_file_path} 發生錯誤：{str(e)}")
-            end_time = time.time()  # 记录结束时间
+            end_time = time.time()  # 紀錄結束時間
             logger.info(f"刮削 {path} 完成，耗時 {end_time - start_time:.2f} 秒")
             if self._notify:
                 self.post_message(
