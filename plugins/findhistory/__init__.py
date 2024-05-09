@@ -31,13 +31,11 @@ class FindHistory(_PluginBase):
 
     _onlyonce: bool = False
     _day: int = 5
-    _link_dirs: str = None
 
     def init_plugin(self, config: dict = None):
         if config:
             self._onlyonce = config.get("onlyonce")
             self._day = config.get("day")
-            self._link_dirs = config.get("link_dirs")
 
         if self._onlyonce:
             # 执行替换
@@ -112,22 +110,6 @@ class FindHistory(_PluginBase):
         finally:
             gradedb.close()
             logger.info(f"关闭数据库 {db_path}")
-
-        # for history in transfer_history:
-        #     src = history[0]
-        #     dest = history[1]
-        #     # 判断源文件是否存在
-        #     if Path(src).exists():
-        #         logger.warn(f"源文件{src}已存在，跳过处理")
-        #         continue
-        #     # 源文件不存在，目标文件也不存在，跳过
-        #     if not Path(dest).exists():
-        #         logger.warn(f"源文件{src}不存在且硬链文件{dest}不存在，跳过处理")
-        #         continue
-        #     # 目标文件硬链回源文件
-        #     Path(src).hardlink_to(dest)
-        #     logger.info(f"硬链文件{dest}重新链接回源文件{src}")
-
         logger.info("全部处理完成")
 
     @staticmethod
@@ -164,7 +146,7 @@ class FindHistory(_PluginBase):
         return folderpath_to_process
 
     def __update_config(self):
-        self.update_config({"onlyonce": self._onlyonce, "link_dirs": self._link_dirs})
+        self.update_config({"onlyonce": self._onlyonce, "day": self._day})
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
@@ -209,28 +191,6 @@ class FindHistory(_PluginBase):
                                             "model": "day",
                                             "label": "幾天的歷史記錄",
                                             "placeholder": "請輸入天數",
-                                        },
-                                    }
-                                ],
-                            }
-                        ],
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextarea",
-                                        "props": {
-                                            "model": "link_dirs",
-                                            "label": "需要恢复的硬链接目录",
-                                            "rows": 5,
-                                            "placeholder": "硬链接目录 （一行一个）",
                                         },
                                     }
                                 ],

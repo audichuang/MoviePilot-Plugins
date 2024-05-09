@@ -30,6 +30,15 @@
         "author": "audichuang",
         "level": 1
     },
+    "LibraryScraper_Day": {
+        "name": "根據歷史記錄刮削媒體庫(繁體)",
+        "description": "依歷史記錄天數刮削媒體庫。",
+        "labels": "刮削",
+        "version": "1.0",
+        "icon": "scraper.png",
+        "author": "audichuang",
+        "level": 1
+    },
     "FindHistory": {
         "name": "尋找歷史文件",
         "description": "尋找歷史文件",
