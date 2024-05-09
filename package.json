@@ -31,10 +31,10 @@
         "level": 1
     },
     "LibraryScraper_Day": {
-        "name": "根據歷史記錄刮削媒體庫(繁體)",
-        "description": "依歷史記錄天數刮削媒體庫。",
+        "name": "歷史記錄刮削媒體庫(繁體)",
+        "description": "使用繁體中文依歷史記錄天數刮削媒體庫。",
         "labels": "刮削",
-        "version": "1.0",
+        "version": "1.1",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1

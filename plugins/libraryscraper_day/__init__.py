@@ -25,13 +25,13 @@ from app.plugins.libraryscraper_tw.media_items.tv_show import TvShow
 
 class LibraryScraper_Day(_PluginBase):
     # 插件名称
-    plugin_name = "根據歷史記錄刮削媒體庫(繁體)"
+    plugin_name = "歷史記錄刮削媒體庫(繁體)"
     # 插件描述
-    plugin_desc = "依歷史記錄天數刮削媒體庫。"
+    plugin_desc = "使用繁體中文依歷史記錄天數刮削媒體庫。"
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -265,10 +265,9 @@ class LibraryScraper_Day(_PluginBase):
         """
         开始刮削媒体库
         """
-        if not self._scraper_paths:
-            return
-        # 已选择的目录
+        # 獲取歷史記錄路徑
         paths = self.get_library_scraper_path()
+        logger.info(f"成功獲取歷史記錄路徑")
         total_paths = len(paths)
         logger.info(f"處理通知 {self._notify}")
         if self._notify:
@@ -380,7 +379,7 @@ class LibraryScraper_Day(_PluginBase):
                 title="【媒體庫刮削】",
                 text=f"刮削完成",
             )
-    
+
     def get_library_scraper_path(self):
         db_path = Settings().CONFIG_PATH / "user.db"
         logger.info(f"数据库文件路径：{db_path}")
@@ -450,8 +449,7 @@ class LibraryScraper_Day(_PluginBase):
             gradedb.close()
             logger.info(f"关闭数据库 {db_path}")
             logger.info("獲取到需要刮削的資料夾")
-        
-    
+
     @staticmethod
     def get_process_path_list(transfer_history_list):
         def is_subpath(path, potential_parent):
@@ -484,6 +482,7 @@ class LibraryScraper_Day(_PluginBase):
                     folderpath_to_process.pop(j)
                     break
         return folderpath_to_process
+
     def stop_service(self):
         """
         退出插件
