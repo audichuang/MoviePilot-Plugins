@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Time_machine_A.png"
     # 插件版本
-    plugin_version = "0.1"
+    plugin_version = "0.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -108,6 +108,11 @@ class FindHistory(_PluginBase):
 
         logger.info("全部处理完成")
 
+    def __update_config(self):
+        self.update_config({
+            "onlyonce": self._onlyonce,
+            "link_dirs": self._link_dirs
+        })
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
