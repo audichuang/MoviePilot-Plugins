@@ -2,6 +2,7 @@ import sqlite3
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
 
+import os
 import datetime
 from app.core.config import Settings
 from app.log import logger
@@ -16,7 +17,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -29,11 +30,13 @@ class FindHistory(_PluginBase):
     auth_level = 1
 
     _onlyonce: bool = False
+    _day: int = 5
     _link_dirs: str = None
 
     def init_plugin(self, config: dict = None):
         if config:
             self._onlyonce = config.get("onlyonce")
+            self._day = config.get("day")
             self._link_dirs = config.get("link_dirs")
 
         if self._onlyonce:
@@ -58,18 +61,18 @@ class FindHistory(_PluginBase):
             # 获取当前日期
             today = datetime.date.today()
 
-            # 计算5天前的日期
-            five_days_ago = today - datetime.timedelta(days=5)
+            # 计算指定天數前的日期
+            several_days_ago = today - datetime.timedelta(days=self._day)
 
             # 将日期格式化为字符串
-            five_days_ago_str = five_days_ago.strftime("%Y-%m-%d")
+            several_days_ago_str = several_days_ago.strftime("%Y-%m-%d")
 
             sql = f"""
             SELECT src, dest, type, category, tmdbid, year, date
             FROM transferhistory
             WHERE src IS NOT NULL
             AND dest IS NOT NULL
-            AND date >= '{five_days_ago_str}'
+            AND date >= '{several_days_ago_str}'
             """
             cursor.execute(sql)
             transfer_history += cursor.fetchall()
@@ -94,9 +97,15 @@ class FindHistory(_PluginBase):
                 logger.info(f"查询到历史记录{transfer_dict}")
                 transfer_history_list.append(transfer_dict)
             logger.info(f"查询到历史记录list共{len(transfer_history_list)}条")
-            # 使用logger.info逐行输出查询结果
-            for row_data in transfer_history_list:
-                logger.info(row_data)
+            try:
+                folderpath_to_libraryscraper = self.get_process_path_list(
+                    transfer_history_list
+                )
+                logger.info(f"需要刮削的資料夾：{folderpath_to_libraryscraper}")
+                logger.info(f"共{len(folderpath_to_libraryscraper)}个需要刮削的資料夾")
+            except Exception as e:
+                logger.error(f"获取需要刮削的資料夾失败：{str(e)}")
+                return
         except Exception as e:
             logger.error(f"查询历史记录失败：{str(e)}")
             return
@@ -120,6 +129,39 @@ class FindHistory(_PluginBase):
         #     logger.info(f"硬链文件{dest}重新链接回源文件{src}")
 
         logger.info("全部处理完成")
+
+    @staticmethod
+    def get_process_path_list(transfer_history_list):
+        def is_subpath(path, potential_parent):
+            path = os.path.normpath(path)
+            potential_parent = os.path.normpath(potential_parent)
+            return os.path.commonprefix([path, potential_parent]) == potential_parent
+
+        folderpath_to_process = []
+        for history in transfer_history_list:
+            dest = history["dest"]
+            folder_path = os.path.dirname(dest)
+
+            # 检查是否为已有目录的子目录
+            is_child = False
+            for existing_path in folderpath_to_process:
+                if is_subpath(folder_path, existing_path):
+                    is_child = True
+                    break
+
+            if not is_child:
+                folderpath_to_process.append(folder_path)
+
+        # 从最长的路径开始遍历,删除被其他路径包含的路径
+        folderpath_to_process.sort(key=len, reverse=True)
+        for i in range(len(folderpath_to_process)):
+            for j in range(len(folderpath_to_process)):
+                if i != j and is_subpath(
+                    folderpath_to_process[j], folderpath_to_process[i]
+                ):
+                    folderpath_to_process.pop(j)
+                    break
+        return folderpath_to_process
 
     def __update_config(self):
         self.update_config({"onlyonce": self._onlyonce, "link_dirs": self._link_dirs})
@@ -148,6 +190,25 @@ class FindHistory(_PluginBase):
                                         "props": {
                                             "model": "onlyonce",
                                             "label": "立即运行一次",
+                                        },
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "component": "VRow",
+                        "content": [
+                            {
+                                "component": "VCol",
+                                "props": {"cols": 12},
+                                "content": [
+                                    {
+                                        "component": "VTextField",
+                                        "props": {
+                                            "model": "day",
+                                            "label": "幾天的歷史記錄",
+                                            "placeholder": "請輸入天數",
                                         },
                                     }
                                 ],
