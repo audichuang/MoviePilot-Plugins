@@ -16,7 +16,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -75,6 +75,7 @@ class FindHistory(_PluginBase):
             transfer_history += cursor.fetchall()
 
             logger.info(f"查询到历史记录{len(transfer_history)}条")
+            logger.info(f"{transfer_history}")
 
             if not transfer_history:
                 logger.error("未获取到历史记录，停止处理")
@@ -90,6 +91,7 @@ class FindHistory(_PluginBase):
                     "year": row[5],
                     "date": row[6],
                 }
+                logger.info(f"查询到历史记录{transfer_dict}")
                 transfer_history_list.append(transfer_dict)
             logger.info(f"查询到历史记录list共{len(transfer_history_list)}条")
             # 使用logger.info逐行输出查询结果
