@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.1"
+    plugin_version = "0.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -68,7 +68,7 @@ class FindHistory(_PluginBase):
                     WHERE
                         src IS NOT NULL
                         AND dest IS NOT NULL
-                        AND date >= DATE_SUB(NOW(), INTERVAL 5 DAY);
+                        AND date >= DATE_SUB(NOW(), INTERVAL 5 DAY)
                         '''
             cursor.execute(sql)
             transfer_history += cursor.fetchall()
