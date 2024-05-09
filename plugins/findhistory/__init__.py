@@ -16,7 +16,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.1"
+    plugin_version = "0.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -91,6 +91,7 @@ class FindHistory(_PluginBase):
                     "date": row[6],
                 }
                 transfer_history.append(transfer_dict)
+            logger.info(f"查询到历史记录list共{len(transfer_history)}条")
             # 使用logger.info逐行输出查询结果
             for row_data in transfer_history:
                 logger.info(row_data)
@@ -99,6 +100,7 @@ class FindHistory(_PluginBase):
             return
         finally:
             gradedb.close()
+            logger.info(f"关闭数据库 {db_path}")
 
         # for history in transfer_history:
         #     src = history[0]
