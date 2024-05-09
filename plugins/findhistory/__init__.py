@@ -17,7 +17,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -36,7 +36,7 @@ class FindHistory(_PluginBase):
     def init_plugin(self, config: dict = None):
         if config:
             self._onlyonce = config.get("onlyonce")
-            self._day = config.get("day")
+            self._day = int(config.get("day"))
             self._link_dirs = config.get("link_dirs")
 
         if self._onlyonce:
