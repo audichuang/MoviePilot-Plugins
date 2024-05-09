@@ -28,11 +28,11 @@ class LibraryScraper_Day(_PluginBase):
     # 插件名称
     plugin_name = "歷史記錄刮削媒體庫"
     # 插件描述
-    plugin_desc = "使用繁體中文依歷史記錄天數刮削媒體庫。"
+    plugin_desc = "使用繁體中文依歷史記錄天數刮削媒體庫,替換原本的簡體中文。"
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -281,14 +281,6 @@ class LibraryScraper_Day(_PluginBase):
         for path in paths:
             if not path:
                 continue
-            total_paths -= 1
-            if self._notify:
-                self.post_message(
-                    mtype=NotificationType.MediaServer,
-                    title="【媒體庫刮削】",
-                    text=f"開始刮削 {path}",
-                )
-
             logger.info(f"開始刮削媒體庫路徑：{path} ...")
             start_time = time.time()  # 紀錄開始時間
 
@@ -366,12 +358,6 @@ class LibraryScraper_Day(_PluginBase):
                     logger.error(f"刮削 {nfo_file_path} 發生錯誤：{str(e)}")
             end_time = time.time()  # 紀錄結束時間
             logger.info(f"刮削 {path} 完成，耗時 {end_time - start_time:.2f} 秒")
-            if self._notify:
-                self.post_message(
-                    mtype=NotificationType.MediaServer,
-                    title="【媒體庫刮削】",
-                    text=f"刮削 {path} 完成，耗時 {end_time - start_time:.2f} 秒",
-                )
             logger.info(f"媒體庫 {path} 刮削完成")
         logger.info(f"媒體庫刮削服務(繁體) 運行完畢")
         if self._notifiy:
@@ -437,8 +423,9 @@ class LibraryScraper_Day(_PluginBase):
                 folderpath_to_libraryscraper = self.get_process_path_list(
                     transfer_history_list
                 )
-                logger.info(f"需要刮削的資料夾：{folderpath_to_libraryscraper}")
-                logger.info(f"共{len(folderpath_to_libraryscraper)}个需要刮削的資料夾")
+                logger.info(
+                    f"需要刮削的資料夾共{len(folderpath_to_libraryscraper)}个需要刮削的資料夾"
+                )
                 return folderpath_to_libraryscraper
             except Exception as e:
                 logger.error(f"获取需要刮削的資料夾失败：{str(e)}")
@@ -471,7 +458,8 @@ class LibraryScraper_Day(_PluginBase):
                     break
 
             if not is_child:
-                folderpath_to_process.append(folder_path)
+                if folder_path != "":
+                    folderpath_to_process.append(folder_path)
 
         # 从最长的路径开始遍历,删除被其他路径包含的路径
         folderpath_to_process.sort(key=len, reverse=True)

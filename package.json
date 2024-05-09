@@ -1,6 +1,6 @@
 {
-    "BarkMsg": {
-        "name": "Bark通知",
+    "BarkNotify": {
+        "name": "Bark發送通知",
         "description": "使用Bark發送通知到ios裝置。",
         "labels": "消息通知",
         "version": "1.4",
@@ -10,7 +10,7 @@
     },
     "PersonMeta": {
         "name": "演員刮削",
-        "description": "刮削演員圖片和中文名稱。",
+        "description": "刮削演員圖片和繁體中文名稱。",
         "labels": "媒体库,刮削",
         "version": "1.5",
         "icon": "actor.png",
@@ -34,17 +34,8 @@
         "name": "歷史記錄刮削媒體庫",
         "description": "使用繁體中文依歷史記錄天數刮削媒體庫。",
         "labels": "刮削",
-        "version": "1.1",
+        "version": "1.2",
         "icon": "scraper.png",
-        "author": "audichuang",
-        "level": 1
-    },
-    "FindHistory": {
-        "name": "尋找歷史文件",
-        "description": "尋找歷史文件",
-        "labels": "文件整理",
-        "version": "0.3",
-        "icon": "Bookstack_A.png",
         "author": "audichuang",
         "level": 1
     }

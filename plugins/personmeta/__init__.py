@@ -31,7 +31,10 @@ from app.utils.common import retry
 from app.utils.http import RequestUtils
 from app.utils.string import StringUtils
 
-from app.plugins.personmeta.get_acter_name_and_biography import _get_actor_traditional_chinese_name, _get_biography
+from app.plugins.personmeta.get_acter_name_and_biography import (
+    _get_actor_traditional_chinese_name,
+    _get_biography,
+)
 
 
 class PersonMeta(_PluginBase):
@@ -85,10 +88,12 @@ class PersonMeta(_PluginBase):
         # 启动服务
         if self._onlyonce:
             self._scheduler = BackgroundScheduler(timezone=settings.TZ)
-            self._scheduler.add_job(func=self.scrap_library, trigger='date',
-                                    run_date=datetime.datetime.now(
-                                        tz=pytz.timezone(settings.TZ)) + datetime.timedelta(seconds=3)
-                                    )
+            self._scheduler.add_job(
+                func=self.scrap_library,
+                trigger="date",
+                run_date=datetime.datetime.now(tz=pytz.timezone(settings.TZ))
+                + datetime.timedelta(seconds=3),
+            )
             logger.info(f"演員刮削服務啟動，立即運行一次")
             # 关闭一次性开关
             self._onlyonce = False
@@ -103,14 +108,16 @@ class PersonMeta(_PluginBase):
         """
         更新配置
         """
-        self.update_config({
-            "enabled": self._enabled,
-            "onlyonce": self._onlyonce,
-            "cron": self._cron,
-            "type": self._type,
-            "delay": self._delay,
-            "remove_nozh": self._remove_nozh
-        })
+        self.update_config(
+            {
+                "enabled": self._enabled,
+                "onlyonce": self._onlyonce,
+                "cron": self._cron,
+                "type": self._type,
+                "delay": self._delay,
+                "remove_nozh": self._remove_nozh,
+            }
+        )
 
     def get_state(self) -> bool:
         return self._enabled
@@ -134,13 +141,15 @@ class PersonMeta(_PluginBase):
         }]
         """
         if self._enabled and self._cron:
-            return [{
-                "id": "PersonMeta",
-                "name": "演員刮削服務",
-                "trigger": CronTrigger.from_crontab(self._cron),
-                "func": self.scrap_library,
-                "kwargs": {}
-            }]
+            return [
+                {
+                    "id": "PersonMeta",
+                    "name": "演員刮削服務",
+                    "trigger": CronTrigger.from_crontab(self._cron),
+                    "func": self.scrap_library,
+                    "kwargs": {},
+                }
+            ]
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         """
@@ -148,148 +157,136 @@ class PersonMeta(_PluginBase):
         """
         return [
             {
-                'component': 'VForm',
-                'content': [
+                "component": "VForm",
+                "content": [
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'enabled',
-                                            'label': '启用插件',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "enabled",
+                                            "label": "启用插件",
+                                        },
                                     }
-                                ]
+                                ],
                             },
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'onlyonce',
-                                            'label': '立即运行一次',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "onlyonce",
+                                            "label": "立即运行一次",
+                                        },
                                     }
-                                ]
-                            }
-                        ]
+                                ],
+                            },
+                        ],
                     },
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
+                                "content": [
                                     {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'cron',
-                                            'label': '媒体库扫描周期',
-                                            'placeholder': '5位cron表达式'
-                                        }
+                                        "component": "VTextField",
+                                        "props": {
+                                            "model": "cron",
+                                            "label": "媒体库扫描周期",
+                                            "placeholder": "5位cron表达式",
+                                        },
                                     }
-                                ]
+                                ],
                             },
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
+                                "content": [
                                     {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'delay',
-                                            'label': '入库延迟时间（秒）',
-                                            'placeholder': '30'
-                                        }
+                                        "component": "VTextField",
+                                        "props": {
+                                            "model": "delay",
+                                            "label": "入库延迟时间（秒）",
+                                            "placeholder": "30",
+                                        },
                                     }
-                                ]
+                                ],
                             },
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
+                                "content": [
                                     {
-                                        'component': 'VSelect',
-                                        'props': {
-                                            'model': 'type',
-                                            'label': '刮削条件',
-                                            'items': [
-                                                {'title': '全部', 'value': 'all'},
-                                                {'title': '演员非中文', 'value': 'name'},
-                                                {'title': '角色非中文', 'value': 'role'},
-                                            ]
-                                        }
+                                        "component": "VSelect",
+                                        "props": {
+                                            "model": "type",
+                                            "label": "刮削条件",
+                                            "items": [
+                                                {"title": "全部", "value": "all"},
+                                                {
+                                                    "title": "演员非中文",
+                                                    "value": "name",
+                                                },
+                                                {
+                                                    "title": "角色非中文",
+                                                    "value": "role",
+                                                },
+                                            ],
+                                        },
                                     }
-                                ]
-                            }
-                        ]
+                                ],
+                            },
+                        ],
                     },
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'remove_nozh',
-                                            'label': '删除非中文演员',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "remove_nozh",
+                                            "label": "删除非中文演员",
+                                        },
                                     }
-                                ]
+                                ],
                             }
-                        ]
+                        ],
                     },
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
+                                "component": "VCol",
+                                "props": {
+                                    "cols": 12,
                                 },
-                                'content': [
+                                "content": [
                                     {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '此為官方插件修改，演員名稱和描述會自動翻譯成繁體中文，查詢自建的資料庫，慎用！'
-                                        }
+                                        "component": "VAlert",
+                                        "props": {
+                                            "type": "info",
+                                            "variant": "tonal",
+                                            "text": "此為官方插件修改，演員名稱和描述會自動翻譯成繁體中文，查詢自建的資料庫，慎用！",
+                                        },
                                     }
-                                ]
+                                ],
                             },
-                        ]
-                    }
-                ]
+                        ],
+                    },
+                ],
             }
         ], {
             "enabled": False,
@@ -297,7 +294,7 @@ class PersonMeta(_PluginBase):
             "cron": "",
             "type": "all",
             "delay": 30,
-            "remove_nozh": False
+            "remove_nozh": False,
         }
 
     def get_page(self) -> List[dict]:
@@ -324,13 +321,19 @@ class PersonMeta(_PluginBase):
             logger.warn(f"演职人员刮削 {mediainfo.title_year} 在媒体库中不存在")
             return
         # 查询条目详情
-        iteminfo = self.mschain.iteminfo(server=existsinfo.server, item_id=existsinfo.itemid)
+        iteminfo = self.mschain.iteminfo(
+            server=existsinfo.server, item_id=existsinfo.itemid
+        )
         if not iteminfo:
             logger.warn(f"演职人员刮削 {mediainfo.title_year} 条目详情获取失败")
             return
         # 刮削演职人员信息
-        self.__update_item(server=existsinfo.server, item=iteminfo,
-                           mediainfo=mediainfo, season=meta.begin_season)
+        self.__update_item(
+            server=existsinfo.server,
+            item=iteminfo,
+            mediainfo=mediainfo,
+            season=meta.begin_season,
+        )
 
     def scrap_library(self):
         """
@@ -349,8 +352,7 @@ class PersonMeta(_PluginBase):
                         continue
                     if not item.item_id:
                         continue
-                    if "Series" not in item.item_type \
-                            and "Movie" not in item.item_type:
+                    if "Series" not in item.item_type and "Movie" not in item.item_type:
                         continue
                     if self._event.is_set():
                         logger.info(f"演职人员刮削服务停止")
@@ -383,12 +385,14 @@ class PersonMeta(_PluginBase):
                 return
             if not people.get("Name"):
                 continue
-            if StringUtils.is_chinese(people.get("Name")) \
-                    and StringUtils.is_chinese(people.get("Role")):
+            if StringUtils.is_chinese(people.get("Name")) and StringUtils.is_chinese(
+                people.get("Role")
+            ):
                 peoples.append(people)
                 continue
-            info = self.__update_people(server=server, people=people,
-                                        douban_actors=douban_actors)
+            info = self.__update_people(
+                server=server, people=people, douban_actors=douban_actors
+            )
             if info:
                 peoples.append(info)
             elif not self._remove_nozh:
@@ -398,8 +402,13 @@ class PersonMeta(_PluginBase):
             iteminfo["People"] = peoples
             self.set_iteminfo(server=server, itemid=itemid, iteminfo=iteminfo)
 
-    def __update_item(self, server: str, item: MediaServerItem,
-                      mediainfo: MediaInfo = None, season: int = None):
+    def __update_item(
+        self,
+        server: str,
+        item: MediaServerItem,
+        mediainfo: MediaInfo = None,
+        season: int = None,
+    ):
         """
         更新媒体服务器中的条目
         """
@@ -410,16 +419,25 @@ class PersonMeta(_PluginBase):
             """
             if self._type == "name":
                 # 是否需要处理人物名称
-                _peoples = [x for x in _item.get("People", []) if
-                            (x.get("Name") and not StringUtils.is_chinese(x.get("Name")))]
+                _peoples = [
+                    x
+                    for x in _item.get("People", [])
+                    if (x.get("Name") and not StringUtils.is_chinese(x.get("Name")))
+                ]
             elif self._type == "role":
                 # 是否需要处理人物角色
-                _peoples = [x for x in _item.get("People", []) if
-                            (x.get("Role") and not StringUtils.is_chinese(x.get("Role")))]
+                _peoples = [
+                    x
+                    for x in _item.get("People", [])
+                    if (x.get("Role") and not StringUtils.is_chinese(x.get("Role")))
+                ]
             else:
-                _peoples = [x for x in _item.get("People", []) if
-                            (x.get("Name") and not StringUtils.is_chinese(x.get("Name")))
-                            or (x.get("Role") and not StringUtils.is_chinese(x.get("Role")))]
+                _peoples = [
+                    x
+                    for x in _item.get("People", [])
+                    if (x.get("Name") and not StringUtils.is_chinese(x.get("Name")))
+                    or (x.get("Role") and not StringUtils.is_chinese(x.get("Role")))
+                ]
             if _peoples:
                 return True
             return False
@@ -429,7 +447,11 @@ class PersonMeta(_PluginBase):
             if not item.tmdbid:
                 logger.warn(f"{item.title} 未找到tmdbid，无法识别媒体信息")
                 return
-            mtype = MediaType.TV if item.item_type in ['Series', 'show'] else MediaType.MOVIE
+            mtype = (
+                MediaType.TV
+                if item.item_type in ["Series", "show"]
+                else MediaType.MOVIE
+            )
             mediainfo = self.chain.recognize_media(mtype=mtype, tmdbid=item.tmdbid)
             if not mediainfo:
                 logger.warn(f"{item.title} 未识别到媒体信息")
@@ -445,55 +467,84 @@ class PersonMeta(_PluginBase):
             # 获取豆瓣演员信息
             logger.info(f"开始获取 {item.title} 的豆瓣演员信息 ...")
             douban_actors = self.__get_douban_actors(mediainfo=mediainfo, season=season)
-            self.__update_peoples(server=server, itemid=item.item_id, iteminfo=iteminfo, douban_actors=douban_actors)
+            self.__update_peoples(
+                server=server,
+                itemid=item.item_id,
+                iteminfo=iteminfo,
+                douban_actors=douban_actors,
+            )
         else:
             logger.info(f"{item.title} 的人物信息已是中文，无需更新")
 
         # 处理季和集人物
         if iteminfo.get("Type") and "Series" in iteminfo["Type"]:
             # 获取季媒体项
-            seasons = self.get_items(server=server, parentid=item.item_id, mtype="Season")
+            seasons = self.get_items(
+                server=server, parentid=item.item_id, mtype="Season"
+            )
             if not seasons:
                 logger.warn(f"{item.title} 未找到季媒体项")
                 return
             for season in seasons["Items"]:
                 # 获取豆瓣演员信息
-                season_actors = self.__get_douban_actors(mediainfo=mediainfo, season=season.get("IndexNumber"))
+                season_actors = self.__get_douban_actors(
+                    mediainfo=mediainfo, season=season.get("IndexNumber")
+                )
                 # 如果是Jellyfin，更新季的人物，Emby/Plex季没有人物
                 if server == "jellyfin":
-                    seasoninfo = self.get_iteminfo(server=server, itemid=season.get("Id"))
+                    seasoninfo = self.get_iteminfo(
+                        server=server, itemid=season.get("Id")
+                    )
                     if not seasoninfo:
                         logger.warn(f"{item.title} 未找到季媒体项：{season.get('Id')}")
                         continue
 
                     if __need_trans_actor(seasoninfo):
                         # 更新季媒体项人物
-                        self.__update_peoples(server=server, itemid=season.get("Id"), iteminfo=seasoninfo,
-                                              douban_actors=season_actors)
+                        self.__update_peoples(
+                            server=server,
+                            itemid=season.get("Id"),
+                            iteminfo=seasoninfo,
+                            douban_actors=season_actors,
+                        )
                         logger.info(f"季 {seasoninfo.get('Id')} 的人物信息更新完成")
                     else:
-                        logger.info(f"季 {seasoninfo.get('Id')} 的人物信息已是中文，无需更新")
+                        logger.info(
+                            f"季 {seasoninfo.get('Id')} 的人物信息已是中文，无需更新"
+                        )
                 # 获取集媒体项
-                episodes = self.get_items(server=server, parentid=season.get("Id"), mtype="Episode")
+                episodes = self.get_items(
+                    server=server, parentid=season.get("Id"), mtype="Episode"
+                )
                 if not episodes:
                     logger.warn(f"{item.title} 未找到集媒体项")
                     continue
                 # 更新集媒体项人物
                 for episode in episodes["Items"]:
                     # 获取集媒体项详情
-                    episodeinfo = self.get_iteminfo(server=server, itemid=episode.get("Id"))
+                    episodeinfo = self.get_iteminfo(
+                        server=server, itemid=episode.get("Id")
+                    )
                     if not episodeinfo:
                         logger.warn(f"{item.title} 未找到集媒体项：{episode.get('Id')}")
                         continue
                     if __need_trans_actor(episodeinfo):
                         # 更新集媒体项人物
-                        self.__update_peoples(server=server, itemid=episode.get("Id"), iteminfo=episodeinfo,
-                                              douban_actors=season_actors)
+                        self.__update_peoples(
+                            server=server,
+                            itemid=episode.get("Id"),
+                            iteminfo=episodeinfo,
+                            douban_actors=season_actors,
+                        )
                         logger.info(f"集 {episodeinfo.get('Id')} 的人物信息更新完成")
                     else:
-                        logger.info(f"集 {episodeinfo.get('Id')} 的人物信息已是中文，无需更新")
+                        logger.info(
+                            f"集 {episodeinfo.get('Id')} 的人物信息已是中文，无需更新"
+                        )
 
-    def __update_people(self, server: str, people: dict, douban_actors: list = None) -> Optional[dict]:
+    def __update_people(
+        self, server: str, people: dict, douban_actors: list = None
+    ) -> Optional[dict]:
         """
         更新人物信息，返回替换后的人物信息
         """
@@ -539,26 +590,34 @@ class PersonMeta(_PluginBase):
                     cn_name = self.__get_chinese_name(person_detail, int(person_tmdbid))
                     if cn_name:
                         # 更新中文名
-                        logger.debug(f"{people.get('Name')} 从TMDB获取到中文名：{cn_name}")
+                        logger.debug(
+                            f"{people.get('Name')} 从TMDB获取到中文名：{cn_name}"
+                        )
                         personinfo["Name"] = cn_name
                         ret_people["Name"] = cn_name
                         updated_name = True
                         # 更新中文描述
                         biography = _get_biography(person_detail.id, zhconv)
                         if biography is not None:
-                            logger.info(f"{people.get('Name')} 从TMDB_API获取到繁體中文描述")
+                            logger.info(
+                                f"{people.get('Name')} 从TMDB_API获取到繁體中文描述"
+                            )
                             personinfo["Overview"] = biography
                             updated_overview = True
                         else:
                             biography = person_detail.biography
                             if biography and StringUtils.is_chinese(biography):
-                                logger.debug(f"{people.get('Name')} 从TMDB获取到中文描述")
+                                logger.debug(
+                                    f"{people.get('Name')} 从TMDB获取到中文描述"
+                                )
                                 personinfo["Overview"] = biography
                                 updated_overview = True
                         # 图片
                         profile_path = person_detail.profile_path
                         if profile_path:
-                            logger.debug(f"{people.get('Name')} 从TMDB获取到图片：{profile_path}")
+                            logger.debug(
+                                f"{people.get('Name')} 从TMDB获取到图片：{profile_path}"
+                            )
                             profile_path = f"https://{settings.TMDB_IMAGE_DOMAIN}/t/p/original{profile_path}"
 
             # 从豆瓣信息中更新人物信息
@@ -585,49 +644,68 @@ class PersonMeta(_PluginBase):
               "latin_name": "Daniel Craig"
             }
             """
-            if douban_actors and (not updated_name
-                                  or not updated_overview
-                                  or not update_character):
+            if douban_actors and (
+                not updated_name or not updated_overview or not update_character
+            ):
                 # 从豆瓣演员中匹配中文名称、角色和简介
                 for douban_actor in douban_actors:
-                    if douban_actor.get("latin_name") == people.get("Name") \
-                            or douban_actor.get("name") == people.get("Name"):
+                    if douban_actor.get("latin_name") == people.get(
+                        "Name"
+                    ) or douban_actor.get("name") == people.get("Name"):
                         # 名称
                         if not updated_name:
-                            logger.debug(f"{people.get('Name')} 从豆瓣中获取到中文名：{douban_actor.get('name')}")
-                            personinfo["Name"] = zhconv.convert(douban_actor.get("name"), "zh-tw")
-                            ret_people["Name"] = zhconv.convert(douban_actor.get("name"), "zh-tw")
+                            logger.debug(
+                                f"{people.get('Name')} 从豆瓣中获取到中文名：{douban_actor.get('name')}"
+                            )
+                            personinfo["Name"] = zhconv.convert(
+                                douban_actor.get("name"), "zh-tw"
+                            )
+                            ret_people["Name"] = zhconv.convert(
+                                douban_actor.get("name"), "zh-tw"
+                            )
                             updated_name = True
                         # 描述
                         if not updated_overview:
                             if douban_actor.get("title"):
-                                logger.debug(f"{people.get('Name')} 从豆瓣中获取到中文描述：{douban_actor.get('title')}")
-                                personinfo["Overview"] = zhconv.convert(douban_actor.get("title"), "zh-tw")
+                                logger.debug(
+                                    f"{people.get('Name')} 从豆瓣中获取到中文描述：{douban_actor.get('title')}"
+                                )
+                                personinfo["Overview"] = zhconv.convert(
+                                    douban_actor.get("title"), "zh-tw"
+                                )
                                 updated_overview = True
                         # 饰演角色
                         if not update_character:
                             if douban_actor.get("character"):
                                 # "饰 詹姆斯·邦德 James Bond 007"
-                                character = re.sub(r"饰\s+", "",
-                                                   douban_actor.get("character"))
-                                character = re.sub("演员", "",
-                                                   character)
+                                character = re.sub(
+                                    r"饰\s+", "", douban_actor.get("character")
+                                )
+                                character = re.sub("演员", "", character)
                                 if character:
-                                    logger.debug(f"{people.get('Name')} 从豆瓣中获取到饰演角色：{character}")
-                                    ret_people["Role"] = zhconv.convert(character, "zh-tw")
+                                    logger.debug(
+                                        f"{people.get('Name')} 从豆瓣中获取到饰演角色：{character}"
+                                    )
+                                    ret_people["Role"] = zhconv.convert(
+                                        character, "zh-tw"
+                                    )
                                     update_character = True
                         # 图片
                         if not profile_path:
                             avatar = douban_actor.get("avatar") or {}
                             if avatar.get("large"):
-                                logger.debug(f"{people.get('Name')} 从豆瓣中获取到图片：{avatar.get('large')}")
+                                logger.debug(
+                                    f"{people.get('Name')} 从豆瓣中获取到图片：{avatar.get('large')}"
+                                )
                                 profile_path = avatar.get("large")
                         break
 
             # 更新人物图片
             if profile_path:
                 logger.debug(f"更新人物 {people.get('Name')} 的图片：{profile_path}")
-                self.set_item_image(server=server, itemid=people.get("Id"), imageurl=profile_path)
+                self.set_item_image(
+                    server=server, itemid=people.get("Id"), imageurl=profile_path
+                )
 
             # 锁定人物信息
             if updated_name:
@@ -640,7 +718,9 @@ class PersonMeta(_PluginBase):
             # 更新人物信息
             if updated_name or updated_overview or update_character:
                 logger.debug(f"更新人物 {people.get('Name')} 的信息：{personinfo}")
-                ret = self.set_iteminfo(server=server, itemid=people.get("Id"), iteminfo=personinfo)
+                ret = self.set_iteminfo(
+                    server=server, itemid=people.get("Id"), iteminfo=personinfo
+                )
                 if ret:
                     return ret_people
             else:
@@ -649,7 +729,9 @@ class PersonMeta(_PluginBase):
             logger.error(f"更新人物信息失败：{str(err)}")
         return None
 
-    def __get_douban_actors(self, mediainfo: MediaInfo, season: int = None) -> List[dict]:
+    def __get_douban_actors(
+        self, mediainfo: MediaInfo, season: int = None
+    ) -> List[dict]:
         """
         获取豆瓣演员信息
         """
@@ -658,15 +740,19 @@ class PersonMeta(_PluginBase):
         logger.debug(f"随机休眠 {sleep_time}秒 ...")
         time.sleep(sleep_time)
         # 匹配豆瓣信息
-        doubaninfo = self.chain.match_doubaninfo(name=mediainfo.title,
-                                                 imdbid=mediainfo.imdb_id,
-                                                 mtype=mediainfo.type,
-                                                 year=mediainfo.year,
-                                                 season=season)
+        doubaninfo = self.chain.match_doubaninfo(
+            name=mediainfo.title,
+            imdbid=mediainfo.imdb_id,
+            mtype=mediainfo.type,
+            year=mediainfo.year,
+            season=season,
+        )
         # 豆瓣演员
         if doubaninfo:
             doubanitem = self.chain.douban_info(doubaninfo.get("id")) or {}
-            return (doubanitem.get("actors") or []) + (doubanitem.get("directors") or [])
+            return (doubanitem.get("actors") or []) + (
+                doubanitem.get("directors") or []
+            )
         else:
             logger.debug(f"未找到豆瓣信息：{mediainfo.title_year}")
         return []
@@ -682,8 +768,10 @@ class PersonMeta(_PluginBase):
             获得Emby媒体项详情
             """
             try:
-                url = f'[HOST]emby/Users/[USER]/Items/{itemid}?' \
-                      f'Fields=ChannelMappingInfo&api_key=[APIKEY]'
+                url = (
+                    f"[HOST]emby/Users/[USER]/Items/{itemid}?"
+                    f"Fields=ChannelMappingInfo&api_key=[APIKEY]"
+                )
                 res = Emby().get_data(url=url)
                 if res:
                     return res.json()
@@ -696,12 +784,12 @@ class PersonMeta(_PluginBase):
             获得Jellyfin媒体项详情
             """
             try:
-                url = f'[HOST]Users/[USER]/Items/{itemid}?Fields=ChannelMappingInfo&api_key=[APIKEY]'
+                url = f"[HOST]Users/[USER]/Items/{itemid}?Fields=ChannelMappingInfo&api_key=[APIKEY]"
                 res = Jellyfin().get_data(url=url)
                 if res:
                     result = res.json()
                     if result:
-                        result['FileName'] = Path(result['Path']).name
+                        result["FileName"] = Path(result["Path"]).name
                     return result
             except Exception as err:
                 logger.error(f"获取Jellyfin媒体项详情失败：{str(err)}")
@@ -714,28 +802,28 @@ class PersonMeta(_PluginBase):
             iteminfo = {}
             try:
                 plexitem = Plex().get_plex().library.fetchItem(ekey=itemid)
-                if 'movie' in plexitem.METADATA_TYPE:
-                    iteminfo['Type'] = 'Movie'
-                    iteminfo['IsFolder'] = False
-                elif 'episode' in plexitem.METADATA_TYPE:
-                    iteminfo['Type'] = 'Series'
-                    iteminfo['IsFolder'] = False
-                    if 'show' in plexitem.TYPE:
-                        iteminfo['ChildCount'] = plexitem.childCount
-                iteminfo['Name'] = plexitem.title
-                iteminfo['Id'] = plexitem.key
-                iteminfo['ProductionYear'] = plexitem.year
-                iteminfo['ProviderIds'] = {}
+                if "movie" in plexitem.METADATA_TYPE:
+                    iteminfo["Type"] = "Movie"
+                    iteminfo["IsFolder"] = False
+                elif "episode" in plexitem.METADATA_TYPE:
+                    iteminfo["Type"] = "Series"
+                    iteminfo["IsFolder"] = False
+                    if "show" in plexitem.TYPE:
+                        iteminfo["ChildCount"] = plexitem.childCount
+                iteminfo["Name"] = plexitem.title
+                iteminfo["Id"] = plexitem.key
+                iteminfo["ProductionYear"] = plexitem.year
+                iteminfo["ProviderIds"] = {}
                 for guid in plexitem.guids:
-                    idlist = str(guid.id).split(sep='://')
+                    idlist = str(guid.id).split(sep="://")
                     if len(idlist) < 2:
                         continue
-                    iteminfo['ProviderIds'][idlist[0]] = idlist[1]
+                    iteminfo["ProviderIds"][idlist[0]] = idlist[1]
                 for location in plexitem.locations:
-                    iteminfo['Path'] = location
-                    iteminfo['FileName'] = Path(location).name
-                iteminfo['Overview'] = plexitem.summary
-                iteminfo['CommunityRating'] = plexitem.audienceRating
+                    iteminfo["Path"] = location
+                    iteminfo["FileName"] = Path(location).name
+                iteminfo["Overview"] = plexitem.summary
+                iteminfo["CommunityRating"] = plexitem.audienceRating
                 return iteminfo
             except Exception as err:
                 logger.error(f"获取Plex媒体项详情失败：{str(err)}")
@@ -761,9 +849,9 @@ class PersonMeta(_PluginBase):
             """
             try:
                 if parentid:
-                    url = f'[HOST]emby/Users/[USER]/Items?ParentId={parentid}&api_key=[APIKEY]'
+                    url = f"[HOST]emby/Users/[USER]/Items?ParentId={parentid}&api_key=[APIKEY]"
                 else:
-                    url = '[HOST]emby/Users/[USER]/Items?api_key=[APIKEY]'
+                    url = "[HOST]emby/Users/[USER]/Items?api_key=[APIKEY]"
                 res = Emby().get_data(url=url)
                 if res:
                     return res.json()
@@ -777,9 +865,11 @@ class PersonMeta(_PluginBase):
             """
             try:
                 if parentid:
-                    url = f'[HOST]Users/[USER]/Items?ParentId={parentid}&api_key=[APIKEY]'
+                    url = (
+                        f"[HOST]Users/[USER]/Items?ParentId={parentid}&api_key=[APIKEY]"
+                    )
                 else:
-                    url = '[HOST]Users/[USER]/Items?api_key=[APIKEY]'
+                    url = "[HOST]Users/[USER]/Items?api_key=[APIKEY]"
                 res = Jellyfin().get_data(url=url)
                 if res:
                     return res.json()
@@ -794,60 +884,60 @@ class PersonMeta(_PluginBase):
             items = {}
             try:
                 plex = Plex().get_plex()
-                items['Items'] = []
+                items["Items"] = []
                 if parentid:
-                    if mtype and 'Season' in mtype:
+                    if mtype and "Season" in mtype:
                         plexitem = plex.library.fetchItem(ekey=parentid)
-                        items['Items'] = []
+                        items["Items"] = []
                         for season in plexitem.seasons():
                             item = {
-                                'Name': season.title,
-                                'Id': season.key,
-                                'IndexNumber': season.seasonNumber,
-                                'Overview': season.summary
+                                "Name": season.title,
+                                "Id": season.key,
+                                "IndexNumber": season.seasonNumber,
+                                "Overview": season.summary,
                             }
-                            items['Items'].append(item)
-                    elif mtype and 'Episode' in mtype:
+                            items["Items"].append(item)
+                    elif mtype and "Episode" in mtype:
                         plexitem = plex.library.fetchItem(ekey=parentid)
-                        items['Items'] = []
+                        items["Items"] = []
                         for episode in plexitem.episodes():
                             item = {
-                                'Name': episode.title,
-                                'Id': episode.key,
-                                'IndexNumber': episode.episodeNumber,
-                                'Overview': episode.summary,
-                                'CommunityRating': episode.audienceRating
+                                "Name": episode.title,
+                                "Id": episode.key,
+                                "IndexNumber": episode.episodeNumber,
+                                "Overview": episode.summary,
+                                "CommunityRating": episode.audienceRating,
                             }
-                            items['Items'].append(item)
+                            items["Items"].append(item)
                     else:
                         plexitems = plex.library.sectionByID(sectionID=parentid)
                         for plexitem in plexitems.all():
                             item = {}
-                            if 'movie' in plexitem.METADATA_TYPE:
-                                item['Type'] = 'Movie'
-                                item['IsFolder'] = False
-                            elif 'episode' in plexitem.METADATA_TYPE:
-                                item['Type'] = 'Series'
-                                item['IsFolder'] = False
-                            item['Name'] = plexitem.title
-                            item['Id'] = plexitem.key
-                            items['Items'].append(item)
+                            if "movie" in plexitem.METADATA_TYPE:
+                                item["Type"] = "Movie"
+                                item["IsFolder"] = False
+                            elif "episode" in plexitem.METADATA_TYPE:
+                                item["Type"] = "Series"
+                                item["IsFolder"] = False
+                            item["Name"] = plexitem.title
+                            item["Id"] = plexitem.key
+                            items["Items"].append(item)
                 else:
                     plexitems = plex.library.sections()
                     for plexitem in plexitems:
                         item = {}
-                        if 'Directory' in plexitem.TAG:
-                            item['Type'] = 'Folder'
-                            item['IsFolder'] = True
-                        elif 'movie' in plexitem.METADATA_TYPE:
-                            item['Type'] = 'Movie'
-                            item['IsFolder'] = False
-                        elif 'episode' in plexitem.METADATA_TYPE:
-                            item['Type'] = 'Series'
-                            item['IsFolder'] = False
-                        item['Name'] = plexitem.title
-                        item['Id'] = plexitem.key
-                        items['Items'].append(item)
+                        if "Directory" in plexitem.TAG:
+                            item["Type"] = "Folder"
+                            item["IsFolder"] = True
+                        elif "movie" in plexitem.METADATA_TYPE:
+                            item["Type"] = "Movie"
+                            item["IsFolder"] = False
+                        elif "episode" in plexitem.METADATA_TYPE:
+                            item["Type"] = "Series"
+                            item["IsFolder"] = False
+                        item["Name"] = plexitem.title
+                        item["Id"] = plexitem.key
+                        items["Items"].append(item)
                 return items
             except Exception as err:
                 logger.error(f"获取Plex媒体的所有子媒体项失败：{str(err)}")
@@ -872,11 +962,9 @@ class PersonMeta(_PluginBase):
             """
             try:
                 res = Emby().post_data(
-                    url=f'[HOST]emby/Items/{itemid}?api_key=[APIKEY]&reqformat=json',
+                    url=f"[HOST]emby/Items/{itemid}?api_key=[APIKEY]&reqformat=json",
                     data=json.dumps(iteminfo),
-                    headers={
-                        "Content-Type": "application/json"
-                    }
+                    headers={"Content-Type": "application/json"},
                 )
                 if res and res.status_code in [200, 204]:
                     return True
@@ -893,16 +981,16 @@ class PersonMeta(_PluginBase):
             """
             try:
                 res = Jellyfin().post_data(
-                    url=f'[HOST]Items/{itemid}?api_key=[APIKEY]',
+                    url=f"[HOST]Items/{itemid}?api_key=[APIKEY]",
                     data=json.dumps(iteminfo),
-                    headers={
-                        "Content-Type": "application/json"
-                    }
+                    headers={"Content-Type": "application/json"},
                 )
                 if res and res.status_code in [200, 204]:
                     return True
                 else:
-                    logger.error(f"更新Jellyfin媒体项详情失败，错误码：{res.status_code}")
+                    logger.error(
+                        f"更新Jellyfin媒体项详情失败，错误码：{res.status_code}"
+                    )
                     return False
             except Exception as err:
                 logger.error(f"更新Jellyfin媒体项详情失败：{str(err)}")
@@ -914,13 +1002,15 @@ class PersonMeta(_PluginBase):
             """
             try:
                 plexitem = Plex().get_plex().library.fetchItem(ekey=itemid)
-                if 'CommunityRating' in iteminfo:
+                if "CommunityRating" in iteminfo:
                     edits = {
-                        'audienceRating.value': iteminfo['CommunityRating'],
-                        'audienceRating.locked': 1
+                        "audienceRating.value": iteminfo["CommunityRating"],
+                        "audienceRating.locked": 1,
                     }
                     plexitem.edit(**edits)
-                plexitem.editTitle(iteminfo['Name']).editSummary(iteminfo['Overview']).reload()
+                plexitem.editTitle(iteminfo["Name"]).editSummary(
+                    iteminfo["Overview"]
+                ).reload()
                 return True
             except Exception as err:
                 logger.error(f"更新Plex媒体项详情失败：{str(err)}")
@@ -946,9 +1036,10 @@ class PersonMeta(_PluginBase):
             """
             try:
                 if "doubanio.com" in imageurl:
-                    r = RequestUtils(headers={
-                        'Referer': "https://movie.douban.com/"
-                    }, ua=settings.USER_AGENT).get_res(url=imageurl, raise_exception=True)
+                    r = RequestUtils(
+                        headers={"Referer": "https://movie.douban.com/"},
+                        ua=settings.USER_AGENT,
+                    ).get_res(url=imageurl, raise_exception=True)
                 else:
                     r = RequestUtils().get_res(url=imageurl, raise_exception=True)
                 if r:
@@ -964,13 +1055,9 @@ class PersonMeta(_PluginBase):
             更新Emby媒体项图片
             """
             try:
-                url = f'[HOST]emby/Items/{itemid}/Images/Primary?api_key=[APIKEY]'
+                url = f"[HOST]emby/Items/{itemid}/Images/Primary?api_key=[APIKEY]"
                 res = Emby().post_data(
-                    url=url,
-                    data=_base64,
-                    headers={
-                        "Content-Type": "image/png"
-                    }
+                    url=url, data=_base64, headers={"Content-Type": "image/png"}
                 )
                 if res and res.status_code in [200, 204]:
                     return True
@@ -987,13 +1074,17 @@ class PersonMeta(_PluginBase):
             # FIXME 改为预下载图片
             """
             try:
-                url = f'[HOST]Items/{itemid}/RemoteImages/Download?' \
-                      f'Type=Primary&ImageUrl={imageurl}&ProviderName=TheMovieDb&api_key=[APIKEY]'
+                url = (
+                    f"[HOST]Items/{itemid}/RemoteImages/Download?"
+                    f"Type=Primary&ImageUrl={imageurl}&ProviderName=TheMovieDb&api_key=[APIKEY]"
+                )
                 res = Jellyfin().post_data(url=url)
                 if res and res.status_code in [200, 204]:
                     return True
                 else:
-                    logger.error(f"更新Jellyfin媒体项图片失败，错误码：{res.status_code}")
+                    logger.error(
+                        f"更新Jellyfin媒体项图片失败，错误码：{res.status_code}"
+                    )
                     return False
             except Exception as err:
                 logger.error(f"更新Jellyfin媒体项图片失败：{err}")
