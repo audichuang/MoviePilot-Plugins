@@ -13,9 +13,9 @@ class FindHistory(_PluginBase):
     # 插件描述
     plugin_desc = "尋找歷史文件"
     # 插件图标
-    plugin_icon = "Time_machine_A.png"
+    plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -43,6 +43,7 @@ class FindHistory(_PluginBase):
 
     def _task(self):
         db_path = Settings().CONFIG_PATH / 'user.db'
+        logger.info(f"数据库文件路径：{db_path}")
         try:
             gradedb = sqlite3.connect(db_path)
         except Exception as e:
@@ -51,6 +52,7 @@ class FindHistory(_PluginBase):
 
         transfer_history = []
         # 创建游标cursor来执行executeＳＱＬ语句
+        logger.info(f"連接到数据库 {db_path}")
         cursor = gradedb.cursor()
         sql = f'''
                 SELECT
