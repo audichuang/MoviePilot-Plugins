@@ -54,7 +54,7 @@ class FindHistory(_PluginBase):
         # 创建游标cursor来执行executeＳＱＬ语句
         logger.info(f"連接到数据库 {db_path}")
         cursor = gradedb.cursor()
-        sql = f'''
+        sql = '''
                 SELECT
                     src,
                     dest,
@@ -66,7 +66,9 @@ class FindHistory(_PluginBase):
                 FROM
                     transferhistory  
                 WHERE
-                    src IS NOT NULL AND dest IS NOT NULL AND dest LIKE '{link_dir}%' AND date >= DATE_SUB(NOW(), INTERVAL 10 DAY)';
+                    src IS NOT NULL
+                    AND dest IS NOT NULL
+                    AND date >= DATE_SUB(NOW(), INTERVAL 5 DAY);
                     '''
         cursor.execute(sql)
         transfer_history += cursor.fetchall()
