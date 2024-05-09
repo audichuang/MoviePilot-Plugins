@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -49,51 +49,56 @@ class FindHistory(_PluginBase):
         except Exception as e:
             logger.error(f"无法打开数据库文件 {db_path}，请检查路径是否正确：{str(e)}")
             return
+        try:
+            transfer_history = []
+            # 创建游标cursor来执行executeＳＱＬ语句
+            logger.info(f"連接到数据库 {db_path}")
+            cursor = gradedb.cursor()
+            sql = '''
+                    SELECT
+                        src,
+                        dest,
+                        type,
+                        category,
+                        tmdbid,
+                        year,
+                        date
+                    FROM
+                        transferhistory  
+                    WHERE
+                        src IS NOT NULL
+                        AND dest IS NOT NULL
+                        AND date >= DATE_SUB(NOW(), INTERVAL 5 DAY);
+                        '''
+            cursor.execute(sql)
+            transfer_history += cursor.fetchall()
+            
+            logger.info(f"查询到历史记录{len(transfer_history)}条")
+            cursor.close()
 
-        transfer_history = []
-        # 创建游标cursor来执行executeＳＱＬ语句
-        logger.info(f"連接到数据库 {db_path}")
-        cursor = gradedb.cursor()
-        sql = '''
-                SELECT
-                    src,
-                    dest,
-                    type,
-                    category,
-                    tmdbid,
-                    year,
-                    date
-                FROM
-                    transferhistory  
-                WHERE
-                    src IS NOT NULL
-                    AND dest IS NOT NULL
-                    AND date >= DATE_SUB(NOW(), INTERVAL 5 DAY);
-                    '''
-        cursor.execute(sql)
-        transfer_history += cursor.fetchall()
-        
-        logger.info(f"查询到历史记录{len(transfer_history)}条")
-        cursor.close()
-
-        if not transfer_history:
-            logger.error("未获取到历史记录，停止处理")
+            if not transfer_history:
+                logger.error("未获取到历史记录，停止处理")
+                return
+            transfer_history = []
+            for row in cursor.fetchall():
+                transfer_dict = {
+                    'src': row[0],
+                    'dest': row[1],
+                    'type': row[2],
+                    'category': row[3],
+                    'tmdbid': row[4],
+                    'year': row[5],
+                    'date': row[6]
+                }
+                transfer_history.append(transfer_dict)
+            # 使用logger.info逐行输出查询结果
+            for row_data in transfer_history:
+                logger.info(row_data)
+        except Exception as e:
+            logger.error(f"查询历史记录失败：{str(e)}")
             return
-        transfer_history = []
-        for row in cursor.fetchall():
-            transfer_dict = {
-                'src': row[0],
-                'dest': row[1],
-                'type': row[2],
-                'category': row[3],
-                'tmdbid': row[4],
-                'year': row[5],
-                'date': row[6]
-            }
-            transfer_history.append(transfer_dict)
-        # 使用logger.info逐行输出查询结果
-        for row_data in transfer_history:
-            logger.info(row_data)
+        finally:
+            gradedb.close()
 
         # for history in transfer_history:
         #     src = history[0]
