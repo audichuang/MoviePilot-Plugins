@@ -17,7 +17,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.1"
+    plugin_version = "0.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -36,7 +36,7 @@ class FindHistory(_PluginBase):
     def init_plugin(self, config: dict = None):
         if config:
             self._onlyonce = config.get("onlyonce")
-            self._day = int(config.get("day"))
+            self._day = config.get("day")
             self._link_dirs = config.get("link_dirs")
 
         if self._onlyonce:
@@ -62,7 +62,7 @@ class FindHistory(_PluginBase):
             today = datetime.date.today()
 
             # 计算指定天數前的日期
-            several_days_ago = today - datetime.timedelta(days=self._day)
+            several_days_ago = today - datetime.timedelta(days=int(self._day))
 
             # 将日期格式化为字符串
             several_days_ago_str = several_days_ago.strftime("%Y-%m-%d")
