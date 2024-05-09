@@ -31,7 +31,7 @@
         "level": 1
     },
     "LibraryScraper_Day": {
-        "name": "歷史記錄刮削媒體庫(繁體)",
+        "name": "歷史記錄刮削媒體庫",
         "description": "使用繁體中文依歷史記錄天數刮削媒體庫。",
         "labels": "刮削",
         "version": "1.1",

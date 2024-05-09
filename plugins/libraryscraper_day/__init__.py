@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import datetime as dt
 from pathlib import Path
 from threading import Event
 from typing import List, Tuple, Dict, Any
@@ -25,7 +26,7 @@ from app.plugins.libraryscraper_tw.media_items.tv_show import TvShow
 
 class LibraryScraper_Day(_PluginBase):
     # 插件名称
-    plugin_name = "歷史記錄刮削媒體庫(繁體)"
+    plugin_name = "歷史記錄刮削媒體庫"
     # 插件描述
     plugin_desc = "使用繁體中文依歷史記錄天數刮削媒體庫。"
     # 插件图标
@@ -394,7 +395,7 @@ class LibraryScraper_Day(_PluginBase):
             logger.info(f"連接到数据库 {db_path}")
             cursor = gradedb.cursor()
             # 获取当前日期
-            today = datetime.date.today()
+            today = dt.date.today()
 
             # 计算指定天數前的日期
             several_days_ago = today - timedelta(days=int(self._day))
