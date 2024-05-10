@@ -50,9 +50,9 @@
     },
     "SubscribeClear": {
         "name": "電視劇種子整理2",
-        "description": "清理订阅已下载集数。",
-        "labels": "订阅",
-        "version": "1.4",
+        "description": "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子",
+        "labels": "文件整理",
+        "version": "1.2",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 2

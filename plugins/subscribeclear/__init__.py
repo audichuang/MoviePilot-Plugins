@@ -11,11 +11,11 @@ class SubscribeClear(_PluginBase):
     # 插件名称
     plugin_name = "電視劇種子整理2"
     # 插件描述
-    plugin_desc = "清理订阅已下载集数。"
+    plugin_desc = "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子"
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.4"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "aduichuang"
     # 作者主页
