@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -49,6 +49,7 @@ class FindHistory(_PluginBase):
         except Exception as e:
             logger.error(f"无法打开数据库文件 {db_path}，请检查路径是否正确：{str(e)}")
             return
+        transfer_history_dict = {}
         try:
             transfer_history = []
             # 创建游标cursor来执行executeＳＱＬ语句
@@ -69,7 +70,7 @@ class FindHistory(_PluginBase):
                 logger.error("未获取到历史记录，停止处理")
                 return
             subscribe_history_dict = self.get_subsctibe_dict(cursor)
-            transfer_history_dict = {}
+
             for row in transfer_history:
                 tmdbid = row[5]
                 transfer_dict = {
@@ -132,10 +133,11 @@ class FindHistory(_PluginBase):
         logger.info(f"共{len(result_dict)}个电视剧需要整理")
         try:
             for tmdbid, seasons in result_dict.items():
-                notify_text = f"{tmdbid} {transfer_history_dict[tmdbid][0]["title"]} 的季{seasons}"
-                logger.info(f"需要整理 {notify_text}")
+                print(
+                    f"{tmdbid} {transfer_dict[tmdbid][0]["title"]}需要整理的季：{seasons}"
+                )
         except Exception as e:
-            logger.error(f"生成通知文本失败：{str(e)}")
+            logger.error(f"輸出失敗：{str(e)}")
             return
         logger.info("全部处理完成")
 
