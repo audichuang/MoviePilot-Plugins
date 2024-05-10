@@ -28,9 +28,10 @@ class Tidy(_PluginBase):
     auth_level = 1
 
     _onlyonce: bool = False
-    _notifiy: bool = False
+    _notify: bool = False
 
     def init_plugin(self, config: dict = None):
+        logger.info("初始化电视剧种子整理插件")
         if config:
             self._onlyonce = config.get("onlyonce")
             self._notify = config.get("notify")
@@ -42,7 +43,7 @@ class Tidy(_PluginBase):
         self.__update_config()
 
     def _task(self):
-        if self._notifiy:
+        if self._notify:
             self.post_message(
                 mtype=NotificationType.MediaServer,
                 title="【電視劇種子】",
@@ -135,7 +136,7 @@ class Tidy(_PluginBase):
                 logger.info(f"需要整理 {notify_text}")
             # 將每個 notify_text 加上換行符號並合併成一個字符串
             text = "\n".join(notify_text)
-            if self._notifiy:
+            if self._notify:
                 self.post_message(
                     mtype=NotificationType.MediaServer,
                     title="【電視劇需要重新下載】",
@@ -182,7 +183,7 @@ class Tidy(_PluginBase):
         return subscribe_history_dict
 
     def __update_config(self):
-        self.update_config({"onlyonce": self._onlyonce})
+        self.update_config({"onlyonce": self._onlyonce, "notify": self._notify})
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
