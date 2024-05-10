@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -101,10 +101,13 @@ class FindHistory(_PluginBase):
         for tmdbid, shows in transfer_history_dict.items():
             dict = {}
             for show in shows:
-                if show["seasons"] not in dict.keys():
-                    dict[show["seasons"]] = []
-                if show["download_hash"] not in dict[show["seasons"]]:
-                    dict[show["seasons"]].append(show["download_hash"])
+                season = int(show["seasons"])
+                if season == 0:
+                    continue
+                if season not in dict.keys():
+                    dict[season] = []
+                if show["download_hash"] not in dict[season]:
+                    dict[season].append(show["download_hash"])
             for season, download_hash_list in dict.items():
                 if len(download_hash_list) > 1:
                     # 多季有不同种子，需要整理
