@@ -48,7 +48,7 @@
         "author": "audichuang",
         "level": 1
     },
-    "IosShortcut": {
+    "ShortCut": {
         "name": "IOS快捷指令",
         "description": "IOS快捷指令，搜索最佳種子並下載",
         "labels": "工具",

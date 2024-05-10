@@ -14,7 +14,7 @@ from app.plugins import _PluginBase
 from app.schemas import MediaType
 
 
-class IosShortcut(_PluginBase):
+class ShortCut(_PluginBase):
     # 插件名称
     plugin_name = "IOS快捷指令"
     # 插件描述
@@ -28,7 +28,7 @@ class IosShortcut(_PluginBase):
     # 作者主页
     author_url = "https://github.com/auduchuang"
     # 插件配置项ID前缀
-    plugin_config_prefix = "IosShortcut_"
+    plugin_config_prefix = "ShortCut_"
     # 加载顺序
     plugin_order = 15
     # 可使用的用户级别
