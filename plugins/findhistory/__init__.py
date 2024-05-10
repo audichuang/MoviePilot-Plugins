@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -91,12 +91,35 @@ class FindHistory(_PluginBase):
                     transfer_history_dict[tmdbid].append(transfer_dict)
                 except KeyError:
                     transfer_history_dict[tmdbid] = [transfer_dict]
-            logger.info(f"共{len(transfer_history_dict)}個電視劇要處理")
+            logger.info(f"共{len(transfer_history_dict)}個電視劇再記錄裡")
         except Exception as e:
             logger.error(f"查询历史记录失败：{str(e)}")
             return
+        
+        need_to_tidy_shows = []
+        for tmdbid, shows in transfer_history_dict.items():
+            dict = {}
+            for show in shows:
+                if show["seasons"] not in dict.keys():
+                    dict[show["seasons"]] = []
+                if show["download_hash"] not in dict[show["seasons"]]:
+                    dict[show["seasons"]].append(show["download_hash"])
+            for season, download_hash_list in dict.items():
+                if len(download_hash_list) > 1:
+                    # 多季有不同种子，需要整理
+                    need_to_tidy_shows.append(
+                        {
+                            "title": shows[0]["title"],
+                            "year": shows[0]["year"],
+                            "seasons": season,
+                            "tmdbid": tmdbid,
+                            "torrent_num": len(download_hash_list),
+                        }
+                    )
+        logger.info(f"共{len(need_to_tidy_shows)}个需要整理的电视剧")
         logger.info("全部处理完成")
 
+    
     def __update_config(self):
         self.update_config({"onlyonce": self._onlyonce, "link_dirs": self._link_dirs})
 
