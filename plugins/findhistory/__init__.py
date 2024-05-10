@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -102,7 +102,10 @@ class FindHistory(_PluginBase):
                 dict = {}
                 logger.info(f"处理{tmdbid}的历史记录")
                 for show in shows:
-                    logger.info(f"处理{show['seasons']}的历史记录")
+                    logger.info(f"处理季度{show['seasons']}的历史记录")
+                    if show["seasons"] == "":
+                        logger.warning(f"{show['tmdbid']} {show['title']}季度{show['seasons']}为空，跳过")
+                        continue
                     season = int(show["seasons"][1:])
                     if season == 0:
                         continue
