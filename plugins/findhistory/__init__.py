@@ -131,15 +131,16 @@ class FindHistory(_PluginBase):
             logger.error(f"查询订阅记录失败：{str(e)}")
             return
         logger.info(f"共{len(result_dict)}个电视剧需要整理")
-        try:
-            for tmdbid, seasons in result_dict.items():
-                print(
-                    f"{tmdbid} {transfer_dict[tmdbid][0]["title"]}需要整理的季：{seasons}"
-                )
-        except Exception as e:
-            logger.error(f"輸出失敗：{str(e)}")
-            return
-        logger.info("全部处理完成")
+        logger.info(f"{result_dict}")
+        # try:
+        #     for tmdbid, seasons in result_dict.items():
+        #         print(
+        #             f"{tmdbid} {transfer_dict[tmdbid][0]["title"]}需要整理的季：{seasons}"
+        #         )
+        # except Exception as e:
+        #     logger.error(f"輸出失敗：{str(e)}")
+        #     return
+        # logger.info("全部处理完成")
 
     @staticmethod
     def get_subsctibe_dict(cursor):
