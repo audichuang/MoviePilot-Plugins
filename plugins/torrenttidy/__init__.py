@@ -15,7 +15,7 @@ class TorrentTidy(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "1.2"
+    plugin_version = "1.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -28,7 +28,7 @@ class TorrentTidy(_PluginBase):
     auth_level = 1
 
     _onlyonce: bool = False
-    _notifiy = False
+    _notifiy: bool = False
 
     def init_plugin(self, config: dict = None):
         if config:
@@ -87,9 +87,9 @@ class TorrentTidy(_PluginBase):
                     "title": row[4],
                     "tmdbid": row[5],
                     "year": row[6],
-                    "seasons": row[6],
-                    "episodes": row[7],
-                    "download_hash": row[8],
+                    "seasons": row[7],
+                    "episodes": row[8],
+                    "download_hash": row[9],
                 }
                 if tmdbid is None:
                     logger.info(f"跳过无tmdbid的记录：{transfer_dict}")
@@ -227,31 +227,9 @@ class TorrentTidy(_PluginBase):
                             },
                         ],
                     },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                },
-                                "content": [
-                                    {
-                                        "component": "VAlert",
-                                        "props": {
-                                            "type": "info",
-                                            "variant": "tonal",
-                                            "text": "排除需要檢查的路徑，留空表示全部檢查。",
-                                            "style": "white-space: pre-line;",
-                                        },
-                                    }
-                                ],
-                            }
-                        ],
-                    },
                 ],
             }
-        ], {"onlyonce": False, "link_dirs": ""}
+        ], {"onlyonce": False}
 
     def get_page(self) -> List[dict]:
         pass
