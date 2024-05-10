@@ -39,7 +39,7 @@
         "author": "audichuang",
         "level": 1
     },
-    "TorrentTidy":{
+    "TvTorrentTidy":{
         "name": "電視劇種子整理",
         "description": "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子",
         "labels": "文件整理",
