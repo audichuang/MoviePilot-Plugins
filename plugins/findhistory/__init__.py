@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.4"
+    plugin_version = "0.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -130,7 +130,13 @@ class FindHistory(_PluginBase):
             logger.error(f"查询订阅记录失败：{str(e)}")
             return
         logger.info(f"共{len(result_dict)}个电视剧需要整理")
-
+        try:
+            for tmdbid, seasons in result_dict.items():
+                notify_text = f"{tmdbid} {transfer_history_dict[tmdbid][0]["title"]} 的季{seasons}"
+                logger.info(f"需要整理 {notify_text}")
+        except Exception as e:
+            logger.error(f"生成通知文本失败：{str(e)}")
+            return
         logger.info("全部处理完成")
 
     @staticmethod
