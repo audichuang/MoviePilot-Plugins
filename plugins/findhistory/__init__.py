@@ -102,7 +102,7 @@ class FindHistory(_PluginBase):
             dict = {}
             for show in shows:
                 logger.ing(f"处理{show["seasons"]}的历史记录")
-                season = show["seasons"]
+                season = int(show["seasons"][1:])
                 if season == 0:
                     continue
                 if season not in dict.keys():
