@@ -49,10 +49,10 @@
         "level": 1
     },
     "SubscribeClear": {
-        "name": "清理订阅缓存",
+        "name": "電視劇種子整理2",
         "description": "清理订阅已下载集数。",
         "labels": "订阅",
-        "version": "1.3",
+        "version": "1.4",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 2

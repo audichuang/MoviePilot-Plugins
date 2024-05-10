@@ -9,13 +9,13 @@ from app.log import logger
 
 class SubscribeClear(_PluginBase):
     # 插件名称
-    plugin_name = "清理订阅缓存"
+    plugin_name = "電視劇種子整理2"
     # 插件描述
     plugin_desc = "清理订阅已下载集数。"
     # 插件图标
-    plugin_icon = "https://raw.githubusercontent.com/thsrite/MoviePilot-Plugins/main/icons/broom.png"
+    plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.4"
     # 插件作者
     plugin_author = "aduichuang"
     # 作者主页
@@ -31,6 +31,7 @@ class SubscribeClear(_PluginBase):
     _onlyonce = False
 
     def init_plugin(self, config: dict = None):
+        logger.info("初始化插件")
         if config:
             self._onlyonce = config.get("onlyonce")
             self._notify = config.get("notify")
@@ -134,7 +135,6 @@ class SubscribeClear(_PluginBase):
             return
         finally:
             gradedb.close()
-            
 
     def __update_config(self):
         self.update_config({"onlyonce": self._onlyonce})
