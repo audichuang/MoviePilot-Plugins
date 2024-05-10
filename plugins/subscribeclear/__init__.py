@@ -15,7 +15,7 @@ class SubscribeClear(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.2"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "aduichuang"
     # 作者主页
@@ -205,7 +205,7 @@ class SubscribeClear(_PluginBase):
                     },
                 ],
             }
-        ], {"onlyonce": self._onlyonce, "notify": self._notify}
+        ], {"onlyonce": False, "notify": self._notify}
 
     def get_page(self) -> List[dict]:
         pass
