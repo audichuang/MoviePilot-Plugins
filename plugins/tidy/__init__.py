@@ -204,7 +204,7 @@ class Tidy(_PluginBase):
         return subscribe_history_dict
 
     def __update_config(self):
-        self.update_config({"onlyonce": self._onlyonce, "link_dirs": self._link_dirs})
+        self.update_config({"onlyonce": self._onlyonce, "notify": self._notify, "link_dirs": self._link_dirs})
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
