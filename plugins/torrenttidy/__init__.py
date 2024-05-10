@@ -1,9 +1,6 @@
 import sqlite3
-from pathlib import Path
 from typing import List, Tuple, Dict, Any
 
-import os
-import datetime
 from app.core.config import Settings
 from app.log import logger
 from app.plugins import _PluginBase
@@ -18,7 +15,7 @@ class TorrentTidy(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -63,14 +60,6 @@ class TorrentTidy(_PluginBase):
             # 创建游标cursor来执行executeＳＱＬ语句
             logger.info(f"連接到数据库 {db_path}")
             cursor = gradedb.cursor()
-            # 获取当前日期
-            today = datetime.date.today()
-
-            # 计算指定天數前的日期
-            several_days_ago = today - datetime.timedelta(days=int(self._day))
-
-            # 将日期格式化为字符串
-            several_days_ago_str = several_days_ago.strftime("%Y-%m-%d")
 
             sql = """
             SELECT src, dest, type, category, title, tmdbid, year, seasons, episodes, download_hash
@@ -81,7 +70,6 @@ class TorrentTidy(_PluginBase):
             """
             cursor.execute(sql)
             transfer_history += cursor.fetchall()
-            
 
             logger.info(f"查询到历史记录{len(transfer_history)}条")
             if not transfer_history:
@@ -96,7 +84,7 @@ class TorrentTidy(_PluginBase):
                     "dest": row[1],
                     "type": row[2],
                     "category": row[3],
-                    "title" : row[4],
+                    "title": row[4],
                     "tmdbid": row[5],
                     "year": row[6],
                     "seasons": row[6],
@@ -111,7 +99,7 @@ class TorrentTidy(_PluginBase):
                 except KeyError:
                     transfer_history_dict[tmdbid] = [transfer_dict]
             logger.info(f"共{len(transfer_history_dict)}個電視劇要處理")
-        
+
             need_to_tidy_shows = []
             for tmdbid, shows in transfer_history_dict.items():
                 dict = {}
@@ -123,13 +111,15 @@ class TorrentTidy(_PluginBase):
                 for season, download_hash_list in dict.items():
                     if len(download_hash_list) > 1:
                         # 多季有不同种子，需要整理
-                        need_to_tidy_shows.append({
-                            "title": shows[0]["title"],
-                            "year": shows[0]["year"],
-                            "seasons": season,
-                            "tmdbid" : tmdbid,
-                            "torrent_num" : len(download_hash_list),
-                        })
+                        need_to_tidy_shows.append(
+                            {
+                                "title": shows[0]["title"],
+                                "year": shows[0]["year"],
+                                "seasons": season,
+                                "tmdbid": tmdbid,
+                                "torrent_num": len(download_hash_list),
+                            }
+                        )
             result_dict = {}
             for need_to_tidy_show in need_to_tidy_shows:
                 if need_to_tidy_show["tmdbid"] in subscribe_history_dict.keys():
@@ -144,14 +134,14 @@ class TorrentTidy(_PluginBase):
                 notify_text = f"{tmdbid} {transfer_history_dict[tmdbid][0]["title"]} 的季{seasons}"
                 logger.info(f"需要整理 {notify_text}")
             # 將每個 notify_text 加上換行符號並合併成一個字符串
-            text = '\n'.join(notify_text)
+            text = "\n".join(notify_text)
             if self._notifiy:
                 self.post_message(
                     mtype=NotificationType.MediaServer,
                     title="【電視劇需要重新下載】",
                     text=text,
                 )
-        
+
         except Exception as e:
             logger.error(f"整理失败：{str(e)}")
             return
@@ -159,16 +149,15 @@ class TorrentTidy(_PluginBase):
             gradedb.close()
             logger.info(f"关闭数据库 {db_path}")
         logger.info("全部处理完成")
-        
-        
+
     @staticmethod
     def get_subsctibe_dict(cursor):
-        '''
+        """
         获取订阅记录
-        
+
         :param cursor: 数据库游标
         :return: 订阅记录字典 {tmdbid: [season]}
-        '''
+        """
         sql = """
         SELECT name, tmdbid, year, season
         FROM subscribe
@@ -190,10 +179,10 @@ class TorrentTidy(_PluginBase):
                 subscribe_history_dict[tmdbid].append(season)
             except KeyError:
                 subscribe_history_dict[tmdbid] = [season]
-        return subscribe_history_dict 
+        return subscribe_history_dict
 
     def __update_config(self):
-        self.update_config({"onlyonce": self._onlyonce, "day": self._day})
+        self.update_config({"onlyonce": self._onlyonce})
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
@@ -243,25 +232,6 @@ class TorrentTidy(_PluginBase):
                         "content": [
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12},
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "day",
-                                            "label": "幾天的歷史記錄",
-                                            "placeholder": "請輸入天數",
-                                        },
-                                    }
-                                ],
-                            }
-                        ],
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
                                 "props": {
                                     "cols": 12,
                                 },
@@ -271,7 +241,7 @@ class TorrentTidy(_PluginBase):
                                         "props": {
                                             "type": "info",
                                             "variant": "tonal",
-                                            "text": "根据转移记录中的硬链接恢复源文件",
+                                            "text": "排除需要檢查的路徑，留空表示全部檢查。",
                                             "style": "white-space: pre-line;",
                                         },
                                     }
