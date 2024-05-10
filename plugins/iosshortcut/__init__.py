@@ -16,13 +16,13 @@ from app.schemas import MediaType
 
 class IosShortcut(_PluginBase):
     # 插件名称
-    plugin_name = "快捷指令"
+    plugin_name = "IOS快捷指令"
     # 插件描述
-    plugin_desc = "IOS快捷指令，快速选片添加订阅"
+    plugin_desc = "IOS快捷指令，搜索最佳種子並下載"
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.8"
     # 插件作者
     plugin_author = "auduchuang"
     # 作者主页

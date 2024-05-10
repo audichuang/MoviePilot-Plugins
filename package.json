@@ -49,10 +49,10 @@
         "level": 1
     },
     "IosShortcut": {
-        "name": "ios捷徑",
-        "description": "快速建立ios捷徑。",
+        "name": "IOS快捷指令",
+        "description": "IOS快捷指令，搜索最佳種子並下載",
         "labels": "工具",
-        "version": "1.0",
+        "version": "1.8",
         "icon": "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg",
         "author": "audichuang",
         "level": 1
