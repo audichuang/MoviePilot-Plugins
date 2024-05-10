@@ -70,6 +70,7 @@ class FindHistory(_PluginBase):
                 logger.error("未获取到历史记录，停止处理")
                 return
             subscribe_history_dict = self.get_subsctibe_dict(cursor)
+            logger.info(f"电视剧订阅记录 : {subscribe_history_dict}")
 
             for row in transfer_history:
                 tmdbid = row[5]
@@ -135,34 +136,34 @@ class FindHistory(_PluginBase):
             logger.error(f"处理历史记录失败：{str(e)}")
             return
         
-        result_dict = {}
-        try:
-            for need_to_tidy_show in need_to_tidy_shows:
-                tmdbid = need_to_tidy_show["tmdbid"]
-                if tmdbid in subscribe_history_dict.keys():
-                    list1 = subscribe_history_dict[tmdbid]
-                    list2 = need_to_tidy_show["seasons"]
-                    # 找到 list2 中存在但 list1 中不存在的元素(並非訂閱的季)
-                    not_in_list1 = [x for x in list2 if  x not in list1]
-                    if len(not_in_list1) > 0:
-                        logger.info(f"訂閱的季： {list1} 需整理的季度：{list2}")
-                        logger.info(
-                            f"{need_to_tidy_show['title']} 需要整理的季：{not_in_list1}"
-                        )
-                    result_dict[need_to_tidy_show["tmdbid"]] = not_in_list1
-        except Exception as err:
-            logger.error(f"查询订阅记录失败：{str(err)}")
-            return
-        logger.info(f"共{len(result_dict)}个电视剧需要整理")
-        logger.info(f"{result_dict}")
-        try:
-            for tmdbid, seasons in result_dict.items():
-                print(
-                    f"{tmdbid} {transfer_dict[tmdbid][0]["title"]}需要整理的季：{seasons}"
-                )
-        except Exception as e:
-            logger.error(f"輸出失敗：{str(e)}")
-            return
+        # result_dict = {}
+        # try:
+        #     for need_to_tidy_show in need_to_tidy_shows:
+        #         tmdbid = need_to_tidy_show["tmdbid"]
+        #         if tmdbid in subscribe_history_dict.keys():
+        #             list1 = subscribe_history_dict[tmdbid]
+        #             list2 = need_to_tidy_show["seasons"]
+        #             # 找到 list2 中存在但 list1 中不存在的元素(並非訂閱的季)
+        #             not_in_list1 = [x for x in list2 if  x not in list1]
+        #             if len(not_in_list1) > 0:
+        #                 logger.info(f"訂閱的季： {list1} 需整理的季度：{list2}")
+        #                 logger.info(
+        #                     f"{need_to_tidy_show['title']} 需要整理的季：{not_in_list1}"
+        #                 )
+        #             result_dict[need_to_tidy_show["tmdbid"]] = not_in_list1
+        # except Exception as err:
+        #     logger.error(f"查询订阅记录失败：{str(err)}")
+        #     return
+        # logger.info(f"共{len(result_dict)}个电视剧需要整理")
+        # logger.info(f"{result_dict}")
+        # try:
+        #     for tmdbid, seasons in result_dict.items():
+        #         print(
+        #             f"{tmdbid} {transfer_dict[tmdbid][0]["title"]}需要整理的季：{seasons}"
+        #         )
+        # except Exception as e:
+        #     logger.error(f"輸出失敗：{str(e)}")
+        #     return
         logger.info("全部处理完成")
 
     @staticmethod
