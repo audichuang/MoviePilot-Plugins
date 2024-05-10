@@ -39,27 +39,9 @@
         "author": "audichuang",
         "level": 1
     },
-    "Tidy":{
+    "Tidy": {
         "name": "電視劇種子整理",
         "description": "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子",
-        "labels": "文件整理",
-        "version": "1.1",
-        "icon": "Bookstack_A.png",
-        "author": "audichuang",
-        "level": 1
-    },
-    "SubscribeClear": {
-        "name": "電視劇種子整理2",
-        "description": "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子",
-        "labels": "文件整理",
-        "version": "1.1",
-        "icon": "scraper.png",
-        "author": "audichuang",
-        "level": 2
-    },
-    "FindHistory": {
-        "name": "尋找歷史文件",
-        "description": "尋找歷史文件",
         "labels": "文件整理",
         "version": "0.6",
         "icon": "Bookstack_A.png",

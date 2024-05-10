@@ -5,13 +5,14 @@ from typing import List, Tuple, Dict, Any
 from app.core.config import Settings
 from app.log import logger
 from app.plugins import _PluginBase
+from app.schemas.types import NotificationType
 
 
-class FindHistory(_PluginBase):
+class Tidy(_PluginBase):
     # 插件名称
-    plugin_name = "尋找歷史文件"
+    plugin_name = "電視劇種子整理"
     # 插件描述
-    plugin_desc = "尋找歷史文件"
+    plugin_desc = "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子"
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
@@ -21,25 +22,29 @@ class FindHistory(_PluginBase):
     # 作者主页
     author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
-    plugin_config_prefix = "findhistory_"
+    plugin_config_prefix = "tidy_"
     # 加载顺序
     plugin_order = 32
     # 可使用的用户级别
     auth_level = 1
 
     _onlyonce: bool = False
+    _notify: bool = False
     _link_dirs: str = None
 
     def init_plugin(self, config: dict = None):
         if config:
             self._onlyonce = config.get("onlyonce")
+            self._notify = config.get("notify")
             self._link_dirs = config.get("link_dirs")
-
+        run = False
         if self._onlyonce:
             # 执行替换
-            self._task()
+            run = True
             self._onlyonce = False
         self.__update_config()
+        if run:
+            self._task()
 
     def _task(self):
         db_path = Settings().CONFIG_PATH / "user.db"
@@ -213,7 +218,22 @@ class FindHistory(_PluginBase):
                                             "model": "onlyonce",
                                             "label": "立即运行一次",
                                         },
-                                    }
+                                    },
+                                
+                                ],
+                            },
+                            {
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
+                                    {
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "notify",
+                                            "label": "發送通知",
+                                        },
+                                    },
+                                
                                 ],
                             }
                         ],
