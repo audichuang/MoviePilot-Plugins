@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.4"
+    plugin_version = "0.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -138,8 +138,9 @@ class FindHistory(_PluginBase):
         result_dict = {}
         try:
             for need_to_tidy_show in need_to_tidy_shows:
-                if need_to_tidy_show["tmdbid"] in subscribe_history_dict.keys():
-                    list1 = subscribe_history_dict[need_to_tidy_show["tmdbid"]]
+                tmdbid = need_to_tidy_show["tmdbid"]
+                if tmdbid in subscribe_history_dict.keys():
+                    list1 = subscribe_history_dict[tmdbid]
                     list2 = need_to_tidy_show["seasons"]
                     # 找到 list2 中存在但 list1 中不存在的元素(並非訂閱的季)
                     not_in_list1 = [x for x in list2 if  x not in list1]
@@ -149,8 +150,8 @@ class FindHistory(_PluginBase):
                             f"{need_to_tidy_show['title']} 需要整理的季：{not_in_list1}"
                         )
                     result_dict[need_to_tidy_show["tmdbid"]] = not_in_list1
-        except Exception as e:
-            logger.error(f"查询订阅记录失败：{str(e)}")
+        except Exception as err:
+            logger.error(f"查询订阅记录失败：{str(err)}")
             return
         logger.info(f"共{len(result_dict)}个电视剧需要整理")
         logger.info(f"{result_dict}")
