@@ -7,7 +7,7 @@ from app.plugins import _PluginBase
 from app.schemas.types import NotificationType
 
 
-class TvTorrentTidy(_PluginBase):
+class Tidy(_PluginBase):
     # 插件名称
     plugin_name = "電視劇種子整理"
     # 插件描述
@@ -15,13 +15,13 @@ class TvTorrentTidy(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.4"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
     author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
-    plugin_config_prefix = "tv_torrent_tidy_"
+    plugin_config_prefix = "tidy_"
     # 加载顺序
     plugin_order = 32
     # 可使用的用户级别
