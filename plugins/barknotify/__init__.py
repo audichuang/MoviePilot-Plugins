@@ -12,7 +12,7 @@ class BarkNotify(_PluginBase):
     # 插件名称
     plugin_name = "Bark發送通知"
     # 插件描述
-    plugin_desc = "使用Bark發送通知到ios裝置。"
+    plugin_desc = "使用Bark發送通知到多個Bark App，包括Mac、iPad、iPhone。"
     # 插件图标
     plugin_icon = "Bark_A.png"
     # 插件版本

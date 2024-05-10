@@ -416,7 +416,6 @@ class LibraryScraper_Day(_PluginBase):
                     "year": row[5],
                     "date": row[6],
                 }
-                logger.info(f"查询到历史记录{transfer_dict}")
                 transfer_history_list.append(transfer_dict)
             logger.info(f"查询到历史记录list共{len(transfer_history_list)}条")
             try:

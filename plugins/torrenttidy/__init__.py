@@ -7,35 +7,36 @@ import datetime
 from app.core.config import Settings
 from app.log import logger
 from app.plugins import _PluginBase
+from app.schemas.types import NotificationType
 
 
-class FindHistory(_PluginBase):
+class TorrentTidy(_PluginBase):
     # 插件名称
-    plugin_name = "尋找歷史文件"
+    plugin_name = "電視劇種子整理"
     # 插件描述
-    plugin_desc = "尋找歷史文件"
+    plugin_desc = "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子"
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
     author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
-    plugin_config_prefix = "findhistory_"
+    plugin_config_prefix = "torrent_tidy_"
     # 加载顺序
     plugin_order = 32
     # 可使用的用户级别
     auth_level = 1
 
     _onlyonce: bool = False
-    _day: int = 5
+    _notifiy = False
 
     def init_plugin(self, config: dict = None):
         if config:
             self._onlyonce = config.get("onlyonce")
-            self._day = config.get("day")
+            self._notify = config.get("notify")
 
         if self._onlyonce:
             # 执行替换
@@ -44,6 +45,12 @@ class FindHistory(_PluginBase):
         self.__update_config()
 
     def _task(self):
+        if self._notifiy:
+            self.post_message(
+                mtype=NotificationType.MediaServer,
+                title="【電視劇種子】",
+                text=f"開始整理",
+            )
         db_path = Settings().CONFIG_PATH / "user.db"
         logger.info(f"数据库文件路径：{db_path}")
         try:
@@ -65,85 +72,125 @@ class FindHistory(_PluginBase):
             # 将日期格式化为字符串
             several_days_ago_str = several_days_ago.strftime("%Y-%m-%d")
 
-            sql = f"""
-            SELECT src, dest, type, category, tmdbid, year, date
+            sql = """
+            SELECT src, dest, type, category, title, tmdbid, year, seasons, episodes, download_hash
             FROM transferhistory
             WHERE src IS NOT NULL
             AND dest IS NOT NULL
-            AND date >= '{several_days_ago_str}'
+            AND type = '电视剧'
             """
             cursor.execute(sql)
             transfer_history += cursor.fetchall()
+            
 
             logger.info(f"查询到历史记录{len(transfer_history)}条")
-            logger.info(f"{transfer_history}")
-
             if not transfer_history:
                 logger.error("未获取到历史记录，停止处理")
                 return
-            transfer_history_list = []
+            subscribe_history_dict = self.get_subsctibe_dict(cursor)
+            transfer_history_dict = {}
             for row in transfer_history:
+                tmdbid = row[5]
                 transfer_dict = {
                     "src": row[0],
                     "dest": row[1],
                     "type": row[2],
                     "category": row[3],
-                    "tmdbid": row[4],
-                    "year": row[5],
-                    "date": row[6],
+                    "title" : row[4],
+                    "tmdbid": row[5],
+                    "year": row[6],
+                    "seasons": row[6],
+                    "episodes": row[7],
+                    "download_hash": row[8],
                 }
-                logger.info(f"查询到历史记录{transfer_dict}")
-                transfer_history_list.append(transfer_dict)
-            logger.info(f"查询到历史记录list共{len(transfer_history_list)}条")
-            try:
-                folderpath_to_libraryscraper = self.get_process_path_list(
-                    transfer_history_list
+                if tmdbid is None:
+                    logger.info(f"跳过无tmdbid的记录：{transfer_dict}")
+                    continue
+                try:
+                    transfer_history_dict[tmdbid].append(transfer_dict)
+                except KeyError:
+                    transfer_history_dict[tmdbid] = [transfer_dict]
+            logger.info(f"共{len(transfer_history_dict)}個電視劇要處理")
+        
+            need_to_tidy_shows = []
+            for tmdbid, shows in transfer_history_dict.items():
+                dict = {}
+                for show in shows:
+                    if show["seasons"] not in dict.keys():
+                        dict[show["seasons"]] = []
+                    if show["download_hash"] not in dict[show["seasons"]]:
+                        dict[show["seasons"]].append(show["download_hash"])
+                for season, download_hash_list in dict.items():
+                    if len(download_hash_list) > 1:
+                        # 多季有不同种子，需要整理
+                        need_to_tidy_shows.append({
+                            "title": shows[0]["title"],
+                            "year": shows[0]["year"],
+                            "seasons": season,
+                            "tmdbid" : tmdbid,
+                            "torrent_num" : len(download_hash_list),
+                        })
+            result_dict = {}
+            for need_to_tidy_show in need_to_tidy_shows:
+                if need_to_tidy_show["tmdbid"] in subscribe_history_dict.keys():
+                    list1 = subscribe_history_dict[need_to_tidy_show["tmdbid"]]
+                    list2 = need_to_tidy_show["seasons"]
+                    # 找到 list2 中存在但 list1 中不存在的元素(並非訂閱的季)
+                    not_in_list1 = [x for x in list2 if x not in list1]
+                    result_dict[need_to_tidy_show["tmdbid"]] = not_in_list1
+            logger.info(f"共{len(result_dict)}个电视剧需要整理")
+            notify_text = []
+            for tmdbid, seasons in result_dict.items():
+                notify_text = f"{tmdbid} {transfer_history_dict[tmdbid][0]["title"]} 的季{seasons}"
+                logger.info(f"需要整理 {notify_text}")
+            # 將每個 notify_text 加上換行符號並合併成一個字符串
+            text = '\n'.join(notify_text)
+            if self._notifiy:
+                self.post_message(
+                    mtype=NotificationType.MediaServer,
+                    title="【電視劇需要重新下載】",
+                    text=text,
                 )
-                logger.info(f"需要刮削的資料夾：{folderpath_to_libraryscraper}")
-                logger.info(f"共{len(folderpath_to_libraryscraper)}个需要刮削的資料夾")
-            except Exception as e:
-                logger.error(f"获取需要刮削的資料夾失败：{str(e)}")
-                return
+        
         except Exception as e:
-            logger.error(f"查询历史记录失败：{str(e)}")
+            logger.error(f"整理失败：{str(e)}")
             return
         finally:
             gradedb.close()
             logger.info(f"关闭数据库 {db_path}")
         logger.info("全部处理完成")
-
+        
+        
     @staticmethod
-    def get_process_path_list(transfer_history_list):
-        def is_subpath(path, potential_parent):
-            path = os.path.normpath(path)
-            potential_parent = os.path.normpath(potential_parent)
-            return os.path.commonprefix([path, potential_parent]) == potential_parent
-
-        folderpath_to_process = []
-        for history in transfer_history_list:
-            dest = history["dest"]
-            folder_path = os.path.dirname(dest)
-
-            # 检查是否为已有目录的子目录
-            is_child = False
-            for existing_path in folderpath_to_process:
-                if is_subpath(folder_path, existing_path):
-                    is_child = True
-                    break
-
-            if not is_child:
-                folderpath_to_process.append(folder_path)
-
-        # 从最长的路径开始遍历,删除被其他路径包含的路径
-        folderpath_to_process.sort(key=len, reverse=True)
-        for i in range(len(folderpath_to_process)):
-            for j in range(len(folderpath_to_process)):
-                if i != j and is_subpath(
-                    folderpath_to_process[j], folderpath_to_process[i]
-                ):
-                    folderpath_to_process.pop(j)
-                    break
-        return folderpath_to_process
+    def get_subsctibe_dict(cursor):
+        '''
+        获取订阅记录
+        
+        :param cursor: 数据库游标
+        :return: 订阅记录字典 {tmdbid: [season]}
+        '''
+        sql = """
+        SELECT name, tmdbid, year, season
+        FROM subscribe
+        WHERE tmdbid IS NOT NULL
+        AND type = '电视剧'
+        """
+        cursor.execute(sql)
+        subscription_history = []
+        subscription_history += cursor.fetchall()
+        if not subscription_history:
+            logger.error("未获取到订阅记录")
+            return {}
+        logger.info(f"查询到订阅记录{len(subscription_history)}条")
+        subscribe_history_dict = {}
+        for row in subscription_history:
+            tmdbid = row[1]
+            season = row[3]
+            try:
+                subscribe_history_dict[tmdbid].append(season)
+            except KeyError:
+                subscribe_history_dict[tmdbid] = [season]
+        return subscribe_history_dict 
 
     def __update_config(self):
         self.update_config({"onlyonce": self._onlyonce, "day": self._day})
@@ -175,7 +222,20 @@ class FindHistory(_PluginBase):
                                         },
                                     }
                                 ],
-                            }
+                            },
+                            {
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
+                                "content": [
+                                    {
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "notify",
+                                            "label": "發送通知",
+                                        },
+                                    }
+                                ],
+                            },
                         ],
                     },
                     {
