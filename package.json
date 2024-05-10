@@ -43,7 +43,7 @@
         "name": "電視劇種子整理",
         "description": "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子",
         "labels": "文件整理",
-        "version": "1.5",
+        "version": "1.1",
         "icon": "Bookstack_A.png",
         "author": "audichuang",
         "level": 1
