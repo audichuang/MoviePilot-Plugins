@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "0.4"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -101,7 +101,8 @@ class FindHistory(_PluginBase):
         for tmdbid, shows in transfer_history_dict.items():
             dict = {}
             for show in shows:
-                season = int(show["seasons"])
+                logger.ing(f"处理{show}的历史记录")
+                season = int(show["seasons"][1:])
                 if season == 0:
                     continue
                 if season not in dict.keys():
