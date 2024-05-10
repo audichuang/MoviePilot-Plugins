@@ -164,7 +164,7 @@ class FindHistory(_PluginBase):
         # except Exception as e:
         #     logger.error(f"輸出失敗：{str(e)}")
         #     return
-        logger.info("全部处理完成")
+        # logger.info("全部处理完成")
 
     @staticmethod
     def get_subsctibe_dict(cursor):
