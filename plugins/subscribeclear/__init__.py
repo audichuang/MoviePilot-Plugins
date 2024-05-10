@@ -27,9 +27,8 @@ class SubscribeClear(_PluginBase):
     # 可使用的用户级别
     auth_level = 1
 
-    # 任务执行间隔
-    _subscribe_ids = None
-    subscribe = None
+    _notify = False
+    _onlyonce = False
 
     def init_plugin(self, config: dict = None):
         if config:
@@ -43,7 +42,7 @@ class SubscribeClear(_PluginBase):
         self.__update_config()
 
     def _task(self):
-        if self._notifiy:
+        if self._notify:
             self.post_message(
                 mtype=NotificationType.MediaServer,
                 title="【電視劇種子】",
@@ -130,57 +129,12 @@ class SubscribeClear(_PluginBase):
                     not_in_list1 = [x for x in list2 if x not in list1]
                     result_dict[need_to_tidy_show["tmdbid"]] = not_in_list1
             logger.info(f"共{len(result_dict)}个电视剧需要整理")
-            notify_text = []
-            for tmdbid, seasons in result_dict.items():
-                notify_text = f"{tmdbid} {transfer_history_dict[tmdbid][0]["title"]} 的季{seasons}"
-                logger.info(f"需要整理 {notify_text}")
-            # 將每個 notify_text 加上換行符號並合併成一個字符串
-            text = "\n".join(notify_text)
-            if self._notifiy:
-                self.post_message(
-                    mtype=NotificationType.MediaServer,
-                    title="【電視劇需要重新下載】",
-                    text=text,
-                )
-
         except Exception as e:
-            logger.error(f"整理失败：{str(e)}")
+            logger.error(f"处理订阅缓存失败：{str(e)}")
             return
         finally:
             gradedb.close()
-            logger.info(f"关闭数据库 {db_path}")
-        logger.info("全部处理完成")
-
-    @staticmethod
-    def get_subsctibe_dict(cursor):
-        """
-        获取订阅记录
-
-        :param cursor: 数据库游标
-        :return: 订阅记录字典 {tmdbid: [season]}
-        """
-        sql = """
-        SELECT name, tmdbid, year, season
-        FROM subscribe
-        WHERE tmdbid IS NOT NULL
-        AND type = '电视剧'
-        """
-        cursor.execute(sql)
-        subscription_history = []
-        subscription_history += cursor.fetchall()
-        if not subscription_history:
-            logger.error("未获取到订阅记录")
-            return {}
-        logger.info(f"查询到订阅记录{len(subscription_history)}条")
-        subscribe_history_dict = {}
-        for row in subscription_history:
-            tmdbid = row[1]
-            season = row[3]
-            try:
-                subscribe_history_dict[tmdbid].append(season)
-            except KeyError:
-                subscribe_history_dict[tmdbid] = [season]
-        return subscribe_history_dict
+            
 
     def __update_config(self):
         self.update_config({"onlyonce": self._onlyonce})
