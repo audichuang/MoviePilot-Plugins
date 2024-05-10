@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -96,32 +96,44 @@ class FindHistory(_PluginBase):
         except Exception as e:
             logger.error(f"查询历史记录失败：{str(e)}")
             return
-
-        need_to_tidy_shows = []
         for tmdbid, shows in transfer_history_dict.items():
-            dict = {}
+            logger.info(f"处理{tmdbid}的历史记录")
             for show in shows:
-                logger.ing(f"处理{show["seasons"]}的历史记录")
-                season = int(show["seasons"][1:])
-                if season == 0:
+                logger.info(f"处理{show['seasons']}的历史记录")
+                try:
+                    logger.info(int(show['seasons'][1:]))
+                except Error as e:
+                    logger.error(f"获取季数失败：{str(e)}")
                     continue
-                if season not in dict.keys():
-                    dict[season] = []
-                if show["download_hash"] not in dict[season]:
-                    dict[season].append(show["download_hash"])
-            for season, download_hash_list in dict.items():
-                if len(download_hash_list) > 1:
-                    # 多季有不同种子，需要整理
-                    need_to_tidy_shows.append(
-                        {
-                            "title": shows[0]["title"],
-                            "year": shows[0]["year"],
-                            "seasons": season,
-                            "tmdbid": tmdbid,
-                            "torrent_num": len(download_hash_list),
-                        }
-                    )
-        logger.info(f"共{len(need_to_tidy_shows)}个需要整理的电视剧")
+        # need_to_tidy_shows = []
+        # try:
+        #     for tmdbid, shows in transfer_history_dict.items():
+        #         dict = {}
+        #         for show in shows:
+        #             logger.ing(f"处理{show["seasons"]}的历史记录")
+        #             season = int(show["seasons"][1:])
+        #             if season == 0:
+        #                 continue
+        #             if season not in dict.keys():
+        #                 dict[season] = []
+        #             if show["download_hash"] not in dict[season]:
+        #                 dict[season].append(show["download_hash"])
+        #         for season, download_hash_list in dict.items():
+        #             if len(download_hash_list) > 1:
+        #                 # 多季有不同种子，需要整理      
+        #                 need_to_tidy_shows.append(
+        #                     {
+        #                         "title": shows[0]["title"],
+        #                         "year": shows[0]["year"],
+        #                         "seasons": season,
+        #                         "tmdbid": tmdbid,
+        #                         "torrent_num": len(download_hash_list),
+        #                     }
+        #                 )
+        #     logger.info(f"共{len(need_to_tidy_shows)}个需要整理的电视剧")
+        # except Exception as e:
+        #     logger.error(f"处理历史记录失败：{str(e)}")
+        #     return
         # try:
         #     result_dict = {}
         #     for need_to_tidy_show in need_to_tidy_shows:
