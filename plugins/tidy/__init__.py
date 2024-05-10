@@ -4,7 +4,7 @@ from typing import List, Tuple, Dict, Any
 from app.core.config import Settings
 from app.log import logger
 from app.plugins import _PluginBase
-from app.schemas.types import NotificationType
+# from app.schemas.types import NotificationType
 
 
 class Tidy(_PluginBase):
@@ -23,7 +23,7 @@ class Tidy(_PluginBase):
     # 插件配置项ID前缀
     plugin_config_prefix = "tidy_"
     # 加载顺序
-    plugin_order = 32
+    plugin_order = 1
     # 可使用的用户级别
     auth_level = 1
 
@@ -43,12 +43,12 @@ class Tidy(_PluginBase):
         self.__update_config()
 
     def _task(self):
-        if self._notify:
-            self.post_message(
-                mtype=NotificationType.MediaServer,
-                title="【電視劇種子】",
-                text=f"開始整理",
-            )
+        # if self._notify:
+        #     self.post_message(
+        #         mtype=NotificationType.MediaServer,
+        #         title="【電視劇種子】",
+        #         text=f"開始整理",
+        #     )
         db_path = Settings().CONFIG_PATH / "user.db"
         logger.info(f"数据库文件路径：{db_path}")
         try:
@@ -136,12 +136,12 @@ class Tidy(_PluginBase):
                 logger.info(f"需要整理 {notify_text}")
             # 將每個 notify_text 加上換行符號並合併成一個字符串
             text = "\n".join(notify_text)
-            if self._notify:
-                self.post_message(
-                    mtype=NotificationType.MediaServer,
-                    title="【電視劇需要重新下載】",
-                    text=text,
-                )
+            # if self._notify:
+            #     self.post_message(
+            #         mtype=NotificationType.MediaServer,
+            #         title="【電視劇需要重新下載】",
+            #         text=text,
+            #     )
 
         except Exception as e:
             logger.error(f"整理失败：{str(e)}")
