@@ -127,6 +127,7 @@ class FindHistory(_PluginBase):
                         )
                 
             logger.info(f"共{len(need_to_tidy_shows)}个需要整理的电视剧")
+            logger.info(f"{need_to_tidy_shows}")
             if not need_to_tidy_shows:
                 logger.info("无需整理")
                 return
