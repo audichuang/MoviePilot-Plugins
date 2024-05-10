@@ -16,7 +16,7 @@ class Tidy(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -155,6 +155,19 @@ class Tidy(_PluginBase):
                             result_dict[tmdbid].append(need_to_tidy_show["seasons"])
                         except Exception:
                             result_dict[tmdbid] = [need_to_tidy_show["seasons"]]
+            if self._notify:
+                if len(result_dict) == 0:
+                    self.post_message(
+                    mtype=NotificationType.MediaServer,
+                    title="【電視劇種子】",
+                    text=f"沒有需要整理的電視劇",
+                    )
+                else:
+                    self.post_message(
+                    mtype=NotificationType.MediaServer,
+                    title="【電視劇种子】",
+                    text=f"以下电视剧需要整理：\n{result_dict}",
+                    )
             logger.info(result_dict)
         except Exception as err:
             logger.info(f"歷史紀錄和訂閱比對發生錯誤:{err}")
