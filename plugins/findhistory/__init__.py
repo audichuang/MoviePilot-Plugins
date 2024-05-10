@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "0.4"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -68,7 +68,7 @@ class FindHistory(_PluginBase):
             if not transfer_history:
                 logger.error("未获取到历史记录，停止处理")
                 return
-
+            subscribe_history_dict = self.get_subsctibe_dict(cursor)
             transfer_history_dict = {}
             for row in transfer_history:
                 tmdbid = row[5]
@@ -95,7 +95,7 @@ class FindHistory(_PluginBase):
         except Exception as e:
             logger.error(f"查询历史记录失败：{str(e)}")
             return
-        
+
         need_to_tidy_shows = []
         for tmdbid, shows in transfer_history_dict.items():
             dict = {}
@@ -119,7 +119,37 @@ class FindHistory(_PluginBase):
         logger.info(f"共{len(need_to_tidy_shows)}个需要整理的电视剧")
         logger.info("全部处理完成")
 
-    
+    @staticmethod
+    def get_subsctibe_dict(cursor):
+        """
+        获取订阅记录
+
+        :param cursor: 数据库游标
+        :return: 订阅记录字典 {tmdbid: [season]}
+        """
+        sql = """
+        SELECT name, tmdbid, year, season
+        FROM subscribe
+        WHERE tmdbid IS NOT NULL
+        AND type = '电视剧'
+        """
+        cursor.execute(sql)
+        subscription_history = []
+        subscription_history += cursor.fetchall()
+        if not subscription_history:
+            logger.error("未获取到订阅记录")
+            return {}
+        logger.info(f"查询到订阅记录{len(subscription_history)}条")
+        subscribe_history_dict = {}
+        for row in subscription_history:
+            tmdbid = row[1]
+            season = row[3]
+            try:
+                subscribe_history_dict[tmdbid].append(season)
+            except KeyError:
+                subscribe_history_dict[tmdbid] = [season]
+        return subscribe_history_dict
+
     def __update_config(self):
         self.update_config({"onlyonce": self._onlyonce, "link_dirs": self._link_dirs})
 
