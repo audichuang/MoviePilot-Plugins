@@ -15,7 +15,7 @@ class FindHistory(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.6"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -112,6 +112,9 @@ class FindHistory(_PluginBase):
                         continue
                     if season not in dict.keys():
                         dict[season] = []
+                    if show["download_hash"] is None:
+                        logger.warning(f"{show['tmdbid']} {show['title']}季度{show['seasons']}无下载记录，跳过")
+                        continue
                     if show["download_hash"] not in dict[season]:
                         dict[season].append(show["download_hash"])
                 for season, download_hash_list in dict.items():
@@ -136,35 +139,20 @@ class FindHistory(_PluginBase):
             logger.error(f"处理历史记录失败：{str(e)}")
             return
         
-        # result_dict = {}
-        # try:
-        #     for need_to_tidy_show in need_to_tidy_shows:
-        #         tmdbid = need_to_tidy_show["tmdbid"]
-        #         if tmdbid in subscribe_history_dict.keys():
-        #             list1 = subscribe_history_dict[tmdbid]
-        #             list2 = need_to_tidy_show["seasons"]
-        #             # 找到 list2 中存在但 list1 中不存在的元素(並非訂閱的季)
-        #             not_in_list1 = [x for x in list2 if  x not in list1]
-        #             if len(not_in_list1) > 0:
-        #                 logger.info(f"訂閱的季： {list1} 需整理的季度：{list2}")
-        #                 logger.info(
-        #                     f"{need_to_tidy_show['title']} 需要整理的季：{not_in_list1}"
-        #                 )
-        #             result_dict[need_to_tidy_show["tmdbid"]] = not_in_list1
-        # except Exception as err:
-        #     logger.error(f"查询订阅记录失败：{str(err)}")
-        #     return
-        # logger.info(f"共{len(result_dict)}个电视剧需要整理")
-        # logger.info(f"{result_dict}")
-        # try:
-        #     for tmdbid, seasons in result_dict.items():
-        #         print(
-        #             f"{tmdbid} {transfer_dict[tmdbid][0]["title"]}需要整理的季：{seasons}"
-        #         )
-        # except Exception as e:
-        #     logger.error(f"輸出失敗：{str(e)}")
-        #     return
-        # logger.info("全部处理完成")
+        result_dict = {}
+        try:
+            for need_to_tidy_show in need_to_tidy_shows:
+                tmdbid = need_to_tidy_show["tmdbid"]
+                if tmdbid in subscribe_history_dict.keys():
+                    subscribe_season_list = subscribe_history_dict[tmdbid]
+                    if need_to_tidy_show["seasons"] not in subscribe_season_list:
+                        try:
+                            result_dict[tmdbid].append(need_to_tidy_show["seasons"])
+                        except Exception:
+                            result_dict[tmdbid] = [need_to_tidy_show["seasons"]]
+            logger.info(result_dict)
+        except Exception as err:
+            logger.info(f"歷史紀錄和訂閱比對發生錯誤:{err}")
 
     @staticmethod
     def get_subsctibe_dict(cursor):
