@@ -47,7 +47,9 @@ class ShortCut(_PluginBase):
 
     def init_plugin(self, config: dict = None):
         self._enable = config.get("enable") if config.get("enable") else False
-        self._plugin_key = config.get("plugin_key") if config.get("plugin_key") else settings.API_TOKEN
+        self._plugin_key = (
+            config.get("plugin_key") if config.get("plugin_key") else settings.API_TOKEN
+        )
         self._num = int(config.get("num")) if config.get("num") else 3
 
         self.downloadchain = DownloadChain()
@@ -59,7 +61,7 @@ class ShortCut(_PluginBase):
     def search(self, title: str, plugin_key: str) -> Any:
         """
         模糊搜索媒体信息列表
-        
+
         return:
                 {
                 "source": "bangumi",
@@ -137,11 +139,11 @@ class ShortCut(_PluginBase):
             logger.error(f"plugin_key错误：{plugin_key}")
             return []
         _, medias = self.mediachain.search(title=title)
-        logger.info(f"搜索结果 _：{_}")
-        logger.info(f"搜索结果 medias：{medias}")
+        logger.error(f"搜索结果 _：{_}")
+        logger.error(f"搜索结果 medias：{medias}")
         if medias:
             ret = []
-            for media in medias[:self._num]:
+            for media in medias[: self._num]:
                 # 降低图片质量
                 media.poster_path.replace("/original/", "/w200/")
                 ret.append(media)
@@ -149,7 +151,9 @@ class ShortCut(_PluginBase):
         logger.info(f"{title} 没有找到结果")
         return []
 
-    def subscribe(self, title: str, tmdbid: str, type: str = "电视剧", plugin_key: str = "") -> Any:
+    def subscribe(
+        self, title: str, tmdbid: str, type: str = "电视剧", plugin_key: str = ""
+    ) -> Any:
         """
         添加订阅订阅
         """
@@ -160,32 +164,37 @@ class ShortCut(_PluginBase):
         # 元数据
         meta = MetaInfo(title=title)
         meta.tmdbid = tmdbid
-        mediainfo: MediaInfo = self.chain.recognize_media(meta=meta, tmdbid=tmdbid,
-                                                          mtype=MediaType(type))
+        mediainfo: MediaInfo = self.chain.recognize_media(
+            meta=meta, tmdbid=tmdbid, mtype=MediaType(type)
+        )
         if not mediainfo:
-            msg = f'未识别到媒体信息，标题：{title}，tmdb_id：{tmdbid}'
+            msg = f"未识别到媒体信息，标题：{title}，tmdb_id：{tmdbid}"
             logger.warn(msg)
             return msg
 
         # 查询缺失的媒体信息
-        exist_flag, _ = self.downloadchain.get_no_exists_info(meta=meta, mediainfo=mediainfo)
+        exist_flag, _ = self.downloadchain.get_no_exists_info(
+            meta=meta, mediainfo=mediainfo
+        )
         if exist_flag:
-            msg = f'{mediainfo.title_year} 媒体库中已存在'
+            msg = f"{mediainfo.title_year} 媒体库中已存在"
             logger.info(msg)
             return msg
         # 判断用户是否已经添加订阅
         if self.subscribechain.exists(mediainfo=mediainfo, meta=meta):
-            msg = f'{mediainfo.title_year} 订阅已存在'
+            msg = f"{mediainfo.title_year} 订阅已存在"
             logger.info(msg)
             return msg
         # 添加订阅
-        sid, msg = self.subscribechain.add(title=mediainfo.title,
-                                           year=mediainfo.year,
-                                           mtype=mediainfo.type,
-                                           tmdbid=mediainfo.tmdb_id,
-                                           season=meta.begin_season,
-                                           exist_ok=True,
-                                           username="快捷指令")
+        sid, msg = self.subscribechain.add(
+            title=mediainfo.title,
+            year=mediainfo.year,
+            mtype=mediainfo.type,
+            tmdbid=mediainfo.tmdb_id,
+            season=meta.begin_season,
+            exist_ok=True,
+            username="快捷指令",
+        )
         if not msg:
             return f"{mediainfo.title_year} 订阅成功"
         else:
@@ -204,14 +213,14 @@ class ShortCut(_PluginBase):
         logger.info(f"搜索种子 tmdbid：{tmdbid} type：{type}")
         self.torrents_list = []
         torrents = self.searchchain.search_by_id(tmdbid=tmdbid, mtype=type)
-        logger.info(f"搜索结果 torrents：{torrents}")
+        logger.error(f"搜索结果 torrents：{torrents}")
 
         if not torrents:
             logger.error("未搜索到任何资源")
             return []
         else:
             self.torrents_list = [torrent.to_dict() for torrent in torrents]
-            logger.info(f"搜索结果 torrents_list：{self.torrents_list}")
+            logger.error(f"搜索结果 torrents_list：{self.torrents_list}")
 
         return self.torrents_list
 
@@ -235,9 +244,7 @@ class ShortCut(_PluginBase):
 
         # 上下文
         context = Context(
-            meta_info=metainfo,
-            media_info=mediainfo,
-            torrent_info=torrentinfo
+            meta_info=metainfo, media_info=mediainfo, torrent_info=torrentinfo
         )
         did = self.downloadchain.download_single(context=context, username="快捷指令")
         if not did:
@@ -253,25 +260,28 @@ class ShortCut(_PluginBase):
                 "methods": ["GET"],
                 "summary": "模糊搜索",
                 "description": "模糊搜索",
-            }, {
+            },
+            {
                 "path": "/subscribe",
                 "endpoint": self.subscribe,
                 "methods": ["GET"],
                 "summary": "添加订阅",
                 "description": "添加订阅",
-            }, {
+            },
+            {
                 "path": "/torrents",
                 "endpoint": self.torrents,
                 "methods": ["GET"],
                 "summary": "搜索种子",
                 "description": "搜索种子",
-            }, {
+            },
+            {
                 "path": "/download",
                 "endpoint": self.download,
                 "methods": ["GET"],
                 "summary": "下载任务",
                 "description": "下载任务",
-            }
+            },
         ]
 
     @staticmethod
@@ -281,112 +291,108 @@ class ShortCut(_PluginBase):
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         return [
             {
-                'component': 'VForm',
-                'content': [
+                "component": "VForm",
+                "content": [
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 2
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 2},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'enable',
-                                            'label': '启用插件',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "enable",
+                                            "label": "启用插件",
+                                        },
                                     }
-                                ]
-                            }, {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'num',
-                                            'label': '快捷指令列表展示数量',
-                                            'placeholder': '数量过多会影响快捷指令速度',
-                                        }
-                                    }
-                                ]
-                            }, {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'plugin_key',
-                                            'label': '插件plugin_key',
-                                            'placeholder': '留空默认是mp的api_key',
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }, {
-                        'component': 'VRow',
-                        'content': [
+                                ],
+                            },
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
+                                "content": [
                                     {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '感谢Nest的想法。更新于 2024/4/25 安装完插件需要重启MoviePilot（1.8.3+） 推荐使用只有订阅功能的快捷指令，按需选择。'
-                                        }
+                                        "component": "VTextField",
+                                        "props": {
+                                            "model": "num",
+                                            "label": "快捷指令列表展示数量",
+                                            "placeholder": "数量过多会影响快捷指令速度",
+                                        },
                                     }
-                                ]
-                            }, {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                },
-                                'content': [
+                                ],
+                            },
+                            {
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
                                     {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '包含订阅和下载，快捷指令：https://www.icloud.com/shortcuts/467c61e122814fb3b910701c0ce276cc'
-                                        }
+                                        "component": "VTextField",
+                                        "props": {
+                                            "model": "plugin_key",
+                                            "label": "插件plugin_key",
+                                            "placeholder": "留空默认是mp的api_key",
+                                        },
                                     }
-                                ]
-                            }, {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        "component": "VRow",
+                        "content": [
+                            {
+                                "component": "VCol",
+                                "props": {
+                                    "cols": 12,
                                 },
-                                'content': [
+                                "content": [
                                     {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '只有订阅功能，快捷指令：https://www.icloud.com/shortcuts/359d70d2fe554388a2efcdd9929a033b'
-                                        }
+                                        "component": "VAlert",
+                                        "props": {
+                                            "type": "info",
+                                            "variant": "tonal",
+                                            "text": "感谢Nest的想法。更新于 2024/4/25 安装完插件需要重启MoviePilot（1.8.3+） 推荐使用只有订阅功能的快捷指令，按需选择。",
+                                        },
                                     }
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                                ],
+                            },
+                            {
+                                "component": "VCol",
+                                "props": {
+                                    "cols": 12,
+                                },
+                                "content": [
+                                    {
+                                        "component": "VAlert",
+                                        "props": {
+                                            "type": "info",
+                                            "variant": "tonal",
+                                            "text": "包含订阅和下载，快捷指令：https://www.icloud.com/shortcuts/467c61e122814fb3b910701c0ce276cc",
+                                        },
+                                    }
+                                ],
+                            },
+                            {
+                                "component": "VCol",
+                                "props": {
+                                    "cols": 12,
+                                },
+                                "content": [
+                                    {
+                                        "component": "VAlert",
+                                        "props": {
+                                            "type": "info",
+                                            "variant": "tonal",
+                                            "text": "只有订阅功能，快捷指令：https://www.icloud.com/shortcuts/359d70d2fe554388a2efcdd9929a033b",
+                                        },
+                                    }
+                                ],
+                            },
+                        ],
+                    },
+                ],
             }
         ], {
             "enable": self._enable,
