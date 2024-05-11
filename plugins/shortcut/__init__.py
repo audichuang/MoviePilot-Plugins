@@ -16,17 +16,17 @@ from app.schemas import MediaType
 
 class ShortCut(_PluginBase):
     # 插件名称
-    plugin_name = "IOS快捷指令"
+    plugin_name = "快捷指令"
     # 插件描述
-    plugin_desc = "IOS快捷指令，搜索最佳種子並下載"
+    plugin_desc = "IOS快捷指令，快速选片添加订阅"
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg"
     # 插件版本
-    plugin_version = "1.9"
+    plugin_version = "1.8"
     # 插件作者
-    plugin_author = "auduchuang"
+    plugin_author = "audichuang"
     # 作者主页
-    author_url = "https://github.com/auduchuang"
+    author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
     plugin_config_prefix = "ShortCut_"
     # 加载顺序
@@ -64,7 +64,7 @@ class ShortCut(_PluginBase):
             logger.error(f"plugin_key错误：{plugin_key}")
             return []
         _, medias = self.mediachain.search(title=title)
-        logger.info(f"搜索结果 _ ：{_}")
+        logger.info(f"搜索结果 _：{_}")
         logger.info(f"搜索结果 medias：{medias}")
         if medias:
             ret = []
@@ -131,6 +131,7 @@ class ShortCut(_PluginBase):
             type = MediaType(type)
         if season:
             season = int(season)
+        logger.info(f"搜索种子 tmdbid：{tmdbid} type：{type} area：{area} season：{season}")
         self.torrents_list = []
 
         if settings.RECOGNIZE_SOURCE == "douban":
@@ -151,6 +152,7 @@ class ShortCut(_PluginBase):
             return []
         else:
             self.torrents_list = [torrent.to_dict() for torrent in torrents]
+            logger.info(f"搜索结果 torrents_list：{self.torrents_list}")
 
         return self.torrents_list[:50]
 
