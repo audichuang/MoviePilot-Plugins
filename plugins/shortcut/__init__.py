@@ -22,7 +22,7 @@ class ShortCut(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg"
     # 插件版本
-    plugin_version = "1.9"
+    plugin_version = "2.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -192,8 +192,7 @@ class ShortCut(_PluginBase):
             return msg
 
     @cached(TTLCache(maxsize=100, ttl=300))
-    def torrents(self, tmdbid: int, type: str = None, area: str = "title",
-                 season: str = None, plugin_key: str = None):
+    def torrents(self, tmdbid: int, type: str = None, plugin_key: str = None):
         """
         根据TMDBID精确搜索站点资源
         """
@@ -202,23 +201,10 @@ class ShortCut(_PluginBase):
             return []
         if type:
             type = MediaType(type)
-        if season:
-            season = int(season)
-        logger.info(f"搜索种子 tmdbid：{tmdbid} type：{type} area：{area} season：{season}")
+        logger.info(f"搜索种子 tmdbid：{tmdbid} type：{type}")
         self.torrents_list = []
-
-        if settings.RECOGNIZE_SOURCE == "douban":
-            # 通过TMDBID识别豆瓣ID
-            doubaninfo = self.mediachain.get_doubaninfo_by_tmdbid(tmdbid=tmdbid, mtype=type)
-            if doubaninfo:
-                torrents = self.searchchain.search_by_id(doubanid=doubaninfo.get("id"),
-                                                         mtype=type, area=area, season=season)
-            else:
-                logger.error("未识别到豆瓣媒体信息")
-                return []
-        else:
-            torrents = self.searchchain.search_by_id(tmdbid=tmdbid, mtype=type, area=area, season=season)
-            logger.info(f"搜索结果 torrents：{torrents}")
+        torrents = self.searchchain.search_by_id(tmdbid=tmdbid, mtype=type)
+        logger.info(f"搜索结果 torrents：{torrents}")
 
         if not torrents:
             logger.error("未搜索到任何资源")
@@ -227,7 +213,7 @@ class ShortCut(_PluginBase):
             self.torrents_list = [torrent.to_dict() for torrent in torrents]
             logger.info(f"搜索结果 torrents_list：{self.torrents_list}")
 
-        return self.torrents_list[:50]
+        return self.torrents_list
 
     def download(self, idx: int, plugin_key: str = None):
         if self._plugin_key != plugin_key:
