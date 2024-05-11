@@ -22,7 +22,7 @@ class ShortCut(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg"
     # 插件版本
-    plugin_version = "1.8"
+    plugin_version = "1.9"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
