@@ -22,7 +22,7 @@ class ShortCut(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg"
     # 插件版本
-    plugin_version = "2.0"
+    plugin_version = "2.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -138,6 +138,7 @@ class ShortCut(_PluginBase):
         if self._plugin_key != plugin_key:
             logger.error(f"plugin_key错误：{plugin_key}")
             return []
+        logger.error(f"搜索 title：{title}")
         _, medias = self.mediachain.search(title=title)
         logger.error(f"搜索结果 _：{_}")
         logger.error(f"搜索结果 medias：{medias}")
