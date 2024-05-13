@@ -2,6 +2,8 @@ from typing import List, Tuple, Dict, Any
 
 from cachetools import cached, TTLCache
 
+import zhconv
+
 from app.chain.download import DownloadChain
 from app.chain.media import MediaChain
 from app.chain.search import SearchChain
@@ -138,16 +140,25 @@ class ShortCut(_PluginBase):
         if self._plugin_key != plugin_key:
             logger.error(f"plugin_key错误：{plugin_key}")
             return []
-        logger.error(f"搜索 title：{title}")
         _, medias = self.mediachain.search(title=title)
-        logger.error(f"搜索结果 _：{_}")
-        logger.error(f"搜索结果 medias：{medias}")
+        cn_title = zhconv.convert(title, "zh-cn")
+        _, medias_cn = self.mediachain.search(title=cn_title)
         if medias:
             ret = []
             for media in medias[: self._num]:
                 # 降低图片质量
                 media.poster_path.replace("/original/", "/w200/")
                 ret.append(media)
+
+        if medias_cn:
+            for media in medias_cn[: self._num]:
+                # 降低图片质量
+                media.poster_path.replace("/original/", "/w200/")
+                for ret_media in ret:
+                    if ret_media.tmdb_id == media.tmdb_id:
+                        break
+                else:
+                    ret.append(media)
             return ret
         logger.info(f"{title} 没有找到结果")
         return []
