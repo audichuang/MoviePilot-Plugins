@@ -24,7 +24,7 @@ class ShortCut(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg"
     # 插件版本
-    plugin_version = "2.1"
+    plugin_version = "2.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -147,11 +147,15 @@ class ShortCut(_PluginBase):
             ret = []
             for media in medias[: self._num]:
                 # 降低图片质量
+                if media.poster_path is None:
+                    continue
                 media.poster_path.replace("/original/", "/w200/")
                 ret.append(media)
 
         if medias_cn:
             for media in medias_cn[: self._num]:
+                if media.poster_path is None:
+                    continue
                 # 降低图片质量
                 media.poster_path.replace("/original/", "/w200/")
                 for ret_media in ret:
