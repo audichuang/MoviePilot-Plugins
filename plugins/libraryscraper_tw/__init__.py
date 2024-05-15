@@ -29,7 +29,7 @@ class LibraryScraper_Tw(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.4"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -63,7 +63,6 @@ class LibraryScraper_Tw(_PluginBase):
             self._cron = config.get("cron")
             self._scraper_paths = config.get("scraper_paths") or ""
 
-
         # 停止现有任务
         self.stop_service()
 
@@ -74,18 +73,24 @@ class LibraryScraper_Tw(_PluginBase):
             if self._onlyonce:
                 logger.info(f"媒體庫刮削轉繁體服務，立刻運行一次")
                 self._scheduler = BackgroundScheduler(timezone=settings.TZ)
-                self._scheduler.add_job(func=self.__libraryscraper, trigger='date',
-                                        run_date=datetime.now(tz=pytz.timezone(settings.TZ)) + timedelta(seconds=3),
-                                        name="媒體庫刮削轉繁體")
+                self._scheduler.add_job(
+                    func=self.__libraryscraper,
+                    trigger="date",
+                    run_date=datetime.now(tz=pytz.timezone(settings.TZ))
+                    + timedelta(seconds=3),
+                    name="媒體庫刮削轉繁體",
+                )
                 # 关闭一次性开关
                 self._onlyonce = False
-                self.update_config({
-                    "onlyonce": False,
-                    "notify": self._notify,
-                    "enabled": self._enabled,
-                    "cron": self._cron,
-                    "scraper_paths": self._scraper_paths
-                })
+                self.update_config(
+                    {
+                        "onlyonce": False,
+                        "notify": self._notify,
+                        "enabled": self._enabled,
+                        "cron": self._cron,
+                        "scraper_paths": self._scraper_paths,
+                    }
+                )
                 if self._scheduler.get_jobs():
                     # 启动服务
                     self._scheduler.print_jobs()
@@ -113,152 +118,144 @@ class LibraryScraper_Tw(_PluginBase):
         }]
         """
         if self._enabled and self._cron:
-            return [{
-                "id": "LibraryScraper_Tw",
-                "name": "媒體庫刮削服務(繁體)",
-                "trigger": CronTrigger.from_crontab(self._cron),
-                "func": self.__libraryscraper,
-                "kwargs": {}
-            }]
+            return [
+                {
+                    "id": "LibraryScraper_Tw",
+                    "name": "媒體庫刮削服務(繁體)",
+                    "trigger": CronTrigger.from_crontab(self._cron),
+                    "func": self.__libraryscraper,
+                    "kwargs": {},
+                }
+            ]
         elif self._enabled:
-            return [{
-                "id": "LibraryScraper",
-                "name": "媒體庫刮削服務(繁體)",
-                "trigger": CronTrigger.from_crontab("0 0 */7 * *"),
-                "func": self.__libraryscraper,
-                "kwargs": {}
-            }]
+            return [
+                {
+                    "id": "LibraryScraper",
+                    "name": "媒體庫刮削服務(繁體)",
+                    "trigger": CronTrigger.from_crontab("0 0 */7 * *"),
+                    "func": self.__libraryscraper,
+                    "kwargs": {},
+                }
+            ]
         return []
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         return [
             {
-                'component': 'VForm',
-                'content': [
+                "component": "VForm",
+                "content": [
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'enabled',
-                                            'label': '啟用插件',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "enabled",
+                                            "label": "啟用插件",
+                                        },
                                     }
-                                ]
-                            },{
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'notify',
-                                            'label': '發送通知',
-                                        }
-                                    }
-                                ]
+                                ],
                             },
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'onlyonce',
-                                            'label': '立刻運行一次',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "notify",
+                                            "label": "發送通知",
+                                        },
                                     }
-                                ]
-                            }
-                        ]
+                                ],
+                            },
+                            {
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
+                                "content": [
+                                    {
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "onlyonce",
+                                            "label": "立刻運行一次",
+                                        },
+                                    }
+                                ],
+                            },
+                        ],
                     },
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12},
+                                "content": [
                                     {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'cron',
-                                            'label': '执行周期',
-                                            'placeholder': '5位cron表达式，留空自动'
-                                        }
+                                        "component": "VTextField",
+                                        "props": {
+                                            "model": "cron",
+                                            "label": "执行周期",
+                                            "placeholder": "5位cron表达式，留空自动",
+                                        },
                                     }
-                                ]
+                                ],
                             }
-                        ]
+                        ],
                     },
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12},
+                                "content": [
                                     {
-                                        'component': 'VTextarea',
-                                        'props': {
-                                            'model': 'scraper_paths',
-                                            'label': '削刮路徑',
-                                            'rows': 5,
-                                            'placeholder': '每一行一個目錄'
-                                        }
+                                        "component": "VTextarea",
+                                        "props": {
+                                            "model": "scraper_paths",
+                                            "label": "削刮路徑",
+                                            "rows": 5,
+                                            "placeholder": "每一行一個目錄",
+                                        },
                                     }
-                                ]
+                                ],
                             }
-                        ]
+                        ],
                     },
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
+                                "component": "VCol",
+                                "props": {
+                                    "cols": 12,
                                 },
-                                'content': [
+                                "content": [
                                     {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '不刮削原盤影片，請注意目錄結構。'
-                                        }
+                                        "component": "VAlert",
+                                        "props": {
+                                            "type": "info",
+                                            "variant": "tonal",
+                                            "text": "不刮削原盤影片，請注意目錄結構。",
+                                        },
                                     }
-                                ]
+                                ],
                             }
-                        ]
-                    }
-                ]
+                        ],
+                    },
+                ],
             }
         ], {
             "enabled": False,
             "cron": "0 0 */7 * *",
             "mode": "",
             "scraper_paths": "",
-            "err_hosts": ""
+            "err_hosts": "",
         }
 
     def get_page(self) -> List[dict]:
@@ -278,18 +275,20 @@ class LibraryScraper_Tw(_PluginBase):
             self.post_message(
                 mtype=NotificationType.MediaServer,
                 title="【媒體庫開始刮削】",
-                text=f"總共 {total_paths} 個路徑"
+                text=f"總共 {total_paths} 個路徑",
             )
             logger.info(f"成功發送通知")
         for path in paths:
             if not path:
+                continue
+            if path[0] == "#":
                 continue
             total_paths -= 1
             if self._notify:
                 self.post_message(
                     mtype=NotificationType.MediaServer,
                     title="【媒體庫刮削】",
-                    text=f"開始刮削 {path}"
+                    text=f"開始刮削 {path}",
                 )
 
             logger.info(f"開始刮削媒體庫路徑：{path} ...")
@@ -306,7 +305,7 @@ class LibraryScraper_Tw(_PluginBase):
                     is_movie_folder = "/电影/" in nfo_file_path
                     # 跳過 BDMV 和 CERTIFICATE 文件夹 (針對原盤)
                     if "/BDMV/" in folder_path or "/CERTIFICATE/" in folder_path:
-                        logger.info(f"跳過原盤檔案: {nfo_file_path}")  
+                        logger.info(f"跳過原盤檔案: {nfo_file_path}")
                         continue
                     root = NfoFileManager.read_nfo_file(nfo_file_path)
                     properties = NfoFileManager.get_property(root)
@@ -314,34 +313,54 @@ class LibraryScraper_Tw(_PluginBase):
                         # 電影
                         tmdb_id = properties.get("tmdbid")
                         update_dict = Movie.get_movie_nfo_update_dict(tmdb_id, zhconv)
-                        logger.info(f"開始刮削tmdbid: {tmdb_id} 電影：{nfo_file_path} ...")
+                        logger.info(
+                            f"開始刮削tmdbid: {tmdb_id} 電影：{nfo_file_path} ..."
+                        )
                         NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
-                        
+
                     elif not is_movie_folder:
                         # 電視節目
-                        if file_name == "tvshow.nfo" and NfoFileManager.has_tag(nfo_file_path, "<tvshow>"):
+                        if file_name == "tvshow.nfo" and NfoFileManager.has_tag(
+                            nfo_file_path, "<tvshow>"
+                        ):
                             # tvshow
                             tmdb_id = properties.get("tmdbid")
-                            logger.info(f"開始刮削tmdbid: {tmdb_id} 電視劇：{nfo_file_path} ...")
-                            update_dict = TvShow.get_tvshow_nfo_update_dict(tmdb_id, zhconv)
+                            logger.info(
+                                f"開始刮削tmdbid: {tmdb_id} 電視劇：{nfo_file_path} ..."
+                            )
+                            update_dict = TvShow.get_tvshow_nfo_update_dict(
+                                tmdb_id, zhconv
+                            )
 
-                        elif file_name == "season.nfo" and NfoFileManager.has_tag(nfo_file_path, "<season>"):
+                        elif file_name == "season.nfo" and NfoFileManager.has_tag(
+                            nfo_file_path, "<season>"
+                        ):
                             # season
-                            tvshow_nfo_path = NfoFileManager.season_nfo_find_tvshow_nfo(nfo_file_path)
+                            tvshow_nfo_path = NfoFileManager.season_nfo_find_tvshow_nfo(
+                                nfo_file_path
+                            )
                             root = NfoFileManager.read_nfo_file(tvshow_nfo_path)
                             tv_show_properties = NfoFileManager.get_property(root)
                             tmdb_id = tv_show_properties.get("tmdbid")
                             season_number = properties.get("seasonnumber")
-                            logger.info(f"開始刮削tmdbid: {tmdb_id} 第 {season_number} 季：{nfo_file_path} ...")
-                            update_dict = TvShow.get_season_nfo_update_dict(tmdb_id, season_number, zhconv)
+                            logger.info(
+                                f"開始刮削tmdbid: {tmdb_id} 第 {season_number} 季：{nfo_file_path} ..."
+                            )
+                            update_dict = TvShow.get_season_nfo_update_dict(
+                                tmdb_id, season_number, zhconv
+                            )
 
                         elif NfoFileManager.has_tag(nfo_file_path, "<episodedetails>"):
                             # episode
                             tmdb_id = properties.get("tmdbid")
                             season_number = properties.get("season")
                             episode_number = properties.get("episode")
-                            logger.info(f"開始刮削tmdbid: {tmdb_id} 第 {season_number} 季第 {episode_number} 集：{nfo_file_path} ...")
-                            update_dict = TvShow.get_episode_nfo_update_dict(tmdb_id, season_number, episode_number, zhconv)
+                            logger.info(
+                                f"開始刮削tmdbid: {tmdb_id} 第 {season_number} 季第 {episode_number} 集：{nfo_file_path} ..."
+                            )
+                            update_dict = TvShow.get_episode_nfo_update_dict(
+                                tmdb_id, season_number, episode_number, zhconv
+                            )
 
                         if update_dict:
                             NfoFileManager.modify_nfo_file(nfo_file_path, update_dict)
@@ -353,7 +372,7 @@ class LibraryScraper_Tw(_PluginBase):
                 self.post_message(
                     mtype=NotificationType.MediaServer,
                     title="【媒體庫刮削】",
-                    text=f"刮削 {path} 完成，耗時 {end_time - start_time:.2f} 秒"
+                    text=f"刮削 {path} 完成，耗時 {end_time - start_time:.2f} 秒",
                 )
             logger.info(f"媒體庫 {path} 刮削完成")
         logger.info(f"媒體庫刮削服務(繁體) 運行完畢")
@@ -361,7 +380,7 @@ class LibraryScraper_Tw(_PluginBase):
             self.post_message(
                 mtype=NotificationType.MediaServer,
                 title="【媒體庫刮削】",
-                text=f"刮削完成"
+                text=f"刮削完成",
             )
 
     def stop_service(self):
