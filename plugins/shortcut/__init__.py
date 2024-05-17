@@ -24,7 +24,7 @@ class ShortCut(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg"
     # 插件版本
-    plugin_version = "2.2"
+    plugin_version = "2.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -63,85 +63,14 @@ class ShortCut(_PluginBase):
     def search(self, title: str, plugin_key: str) -> Any:
         """
         模糊搜索媒体信息列表
-
-        return:
-                {
-                "source": "bangumi",
-                "type": "电视剧",
-                "title": "希区柯克剧场 第四季",
-                "en_title": null,
-                "sg_title": null,
-                "year": null,
-                "season": 4,
-                "tmdb_id": null,
-                "imdb_id": null,
-                "tvdb_id": null,
-                "douban_id": null,
-                "bangumi_id": 433012,
-                "original_language": null,
-                "original_title": "Alfred Hitchcock Presents Season 4 (1958)",
-                "release_date": "",
-                "backdrop_path": null,
-                "poster_path": "http://lain.bgm.tv/pic/cover/l/b9/19/433012_4vSlC.jpg",
-                "logo_path": null,
-                "vote_average": 0,
-                "overview": "",
-                "genre_ids": [],
-                "names": [],
-                "seasons": {},
-                "season_info": [],
-                "season_years": {},
-                "category": "",
-                "tmdb_info": {},
-                "douban_info": {},
-                "bangumi_info": {
-                    "id": 433012,
-                    "url": "http://bgm.tv/subject/433012",
-                    "type": 6,
-                    "name": "Alfred Hitchcock Presents Season 4 (1958)",
-                    "name_cn": "希区柯克剧场 第四季",
-                    "summary": "",
-                    "air_date": "",
-                    "air_weekday": 0,
-                    "images": {
-                        "large": "http://lain.bgm.tv/pic/cover/l/b9/19/433012_4vSlC.jpg",
-                        "common": "http://lain.bgm.tv/pic/cover/c/b9/19/433012_4vSlC.jpg",
-                        "medium": "http://lain.bgm.tv/pic/cover/m/b9/19/433012_4vSlC.jpg",
-                        "small": "http://lain.bgm.tv/pic/cover/s/b9/19/433012_4vSlC.jpg",
-                        "grid": "http://lain.bgm.tv/pic/cover/g/b9/19/433012_4vSlC.jpg"
-                    }
-                },
-                "directors": [],
-                "actors": [],
-                "adult": false,
-                "created_by": [],
-                "episode_run_time": [],
-                "genres": [],
-                "first_air_date": null,
-                "homepage": null,
-                "languages": [],
-                "last_air_date": null,
-                "networks": [],
-                "number_of_episodes": 0,
-                "number_of_seasons": 0,
-                "origin_country": [],
-                "original_name": null,
-                "production_companies": [],
-                "production_countries": [],
-                "spoken_languages": [],
-                "status": null,
-                "tagline": null,
-                "vote_count": 0,
-                "popularity": 0,
-                "runtime": null,
-                "next_episode_to_air": {}
-            }
         """
         if self._plugin_key != plugin_key:
             logger.error(f"plugin_key错误：{plugin_key}")
             return []
+        logger.error(f"搜索媒体信息 title：{title}")
         _, medias = self.mediachain.search(title=title)
         cn_title = zhconv.convert(title, "zh-cn")
+        logger.error(f"搜索媒体信息 cn_title：{cn_title}")
         _, medias_cn = self.mediachain.search(title=cn_title)
         if medias:
             ret = []
