@@ -19,6 +19,7 @@ from app.db.subscribe_oper import SubscribeOper
 from app.chain.subscribe import SubscribeChain
 from app.scheduler import Scheduler
 from app.schemas.types import MediaType
+from app.modules.themoviedb import TheMovieDbModule
 
 
 class RefreshEpisode(_PluginBase):
@@ -29,7 +30,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "0.4"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -51,6 +52,7 @@ class RefreshEpisode(_PluginBase):
     _subscribeoper = None
     _subscribechain = None
     _scheduler = None
+    _themoviemodule = None
 
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
@@ -68,6 +70,7 @@ class RefreshEpisode(_PluginBase):
             self._subscribeoper = SubscribeOper()
             self._subscribechain = SubscribeChain()
             self._scheduler = Scheduler()
+            self._themoviemodule = TheMovieDbModule()
 
             # 加载模块
         if self._enabled:
@@ -160,15 +163,14 @@ class RefreshEpisode(_PluginBase):
 
     def refresh_cache(self):
         try:
-            response = self._scheduler.start("clear_cache")
-            logger.info(f"清理缓存服务，状态：{response}")
+            self._themoviemodule.clear_cache()
         except Exception as e:
             logger.error(f"清理缓存服务失败：{str(e)}")
 
     def refresh_recent(self):
-        logger.info("測試清理緩存服務")
+        logger.info("測試清理TMDB緩存服務")
         self.refresh_cache()
-        logger.info("測試清理緩存服務完成")
+        logger.info("測試清理TMDB緩存服務完成")
         logger.info("測試訂閱服務")
         self.subscribe_drama(
             type="电视剧", tmdbid=10494, year=1995, season=1, title="无处可去的人"
