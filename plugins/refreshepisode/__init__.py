@@ -26,7 +26,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -116,6 +116,7 @@ class RefreshEpisode(_PluginBase):
                 "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NTZhNDFlODE2NTkxMzNjM2M5OTJjZGFiMzZkYjMyMSIsInN1YiI6IjY1ODViMWQ2NzFmMDk1NTdjNTIzZjdjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Yafqg4nwY-i3mdhinliUOsS9MIKBGeCg2oEIG7y4wuk",
             }
             url = f"https://api.themoviedb.org/3/tv/{tmdbid}/season/{season_number}?language=zh-TW"
+            logger.info(f"{url}")
             try:
                 response = requests.get(url, headers=headers)
                 result_dict = response.json()
@@ -123,6 +124,9 @@ class RefreshEpisode(_PluginBase):
                 logger.error(f"获取{tmdbid}第{season_number}季详情失败：{str(e)}")
                 result_dict = {}
             total_episodes = len(result_dict)
+            logger.info(
+                f"get_total_episodes {tmdbid}第{season_number}季共{total_episodes}集"
+            )
             return total_episodes
         except Exception as e:
             logger.error(f"获取{tmdbid}第{season_number}季集数失败：{str(e)}")
