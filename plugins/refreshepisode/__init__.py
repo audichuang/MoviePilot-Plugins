@@ -33,7 +33,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -207,6 +207,7 @@ class RefreshEpisode(_PluginBase):
                     title=name,
                 )
                 logger.info(f"重新訂閱 {name} ({year})第{season}季 成功")
+        logger.info("檢查劇集集數完成")
 
     # def __refresh_emby(self) -> bool:
     #     end_date = self.__get_date(-int(self._offset_days))
