@@ -26,7 +26,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "0.4"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -123,7 +123,7 @@ class RefreshEpisode(_PluginBase):
             except Exception as e:
                 logger.error(f"获取{tmdbid}第{season_number}季详情失败：{str(e)}")
                 result_dict = {}
-            total_episodes = len(result_dict)
+            total_episodes = len(result_dict["episodes"])
             logger.info(
                 f"get_total_episodes {tmdbid}第{season_number}季共{total_episodes}集"
             )
