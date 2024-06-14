@@ -26,7 +26,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.4"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -133,23 +133,29 @@ class RefreshEpisode(_PluginBase):
             return 0
 
     def refresh_recent(self):
-        all_subscribe = self._subscribeoper.list()
-        logger.info(f"訂閱集數更新服务，共{len(all_subscribe)}个订阅")
-        drama_subscribe = [s for s in all_subscribe if s.type == "电视剧"]
-        all_drama_id = [s.id for s in drama_subscribe]
-        logger.info(f"訂閱劇集，共{len(all_drama_id)}个订阅")
-        logger.info(f"{type(all_drama_id[0])}")
-        for subscribe_id in all_drama_id:
-            subscribe = self._subscribeoper.get(subscribe_id)
-            tmdbid = subscribe.tmdbid
-            season = subscribe.season
-            name = subscribe.name
-            year = subscribe.year
-            logger.info(f"尋找最新集數")
-            total_episodes = self.get_total_episodes(int(tmdbid), int(season))
-            logger.info(
-                f"刷新{name} ({year}) {tmdbid} 第{season}季 最新集数 {total_episodes}"
-            )
+        update_dict = {}
+        update_dict["total_episode"] = 10
+        sid = 1285
+        self._subscribeoper.update(sid, update_dict)
+        logger.info(f"刷新最近集数成功")
+        
+        # all_subscribe = self._subscribeoper.list()
+        # logger.info(f"訂閱集數更新服务，共{len(all_subscribe)}个订阅")
+        # drama_subscribe = [s for s in all_subscribe if s.type == "电视剧"]
+        # all_drama_id = [s.id for s in drama_subscribe]
+        # logger.info(f"訂閱劇集，共{len(all_drama_id)}个订阅")
+        # logger.info(f"{type(all_drama_id[0])}")
+        # for subscribe_id in all_drama_id:
+        #     subscribe = self._subscribeoper.get(subscribe_id)
+        #     tmdbid = subscribe.tmdbid
+        #     season = subscribe.season
+        #     name = subscribe.name
+        #     year = subscribe.year
+        #     logger.info(f"尋找最新集數")
+        #     total_episodes = self.get_total_episodes(int(tmdbid), int(season))
+        #     logger.info(
+        #         f"刷新{name} ({year}) {tmdbid} 第{season}季 最新集数 {total_episodes}"
+        #     )
 
     def __refresh_emby(self) -> bool:
         end_date = self.__get_date(-int(self._offset_days))
