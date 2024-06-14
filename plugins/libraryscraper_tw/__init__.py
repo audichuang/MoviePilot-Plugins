@@ -16,6 +16,8 @@ from app.log import logger
 from app.plugins import _PluginBase
 from app.schemas.types import NotificationType
 
+from app.helper.thread import ThreadHelper
+from concurrent.futures import ThreadPoolExecutor
 from app.plugins.libraryscraper_tw.nfo_file_manager import NfoFileManager
 from app.plugins.libraryscraper_tw.media_items.movie import Movie
 from app.plugins.libraryscraper_tw.media_items.tv_show import TvShow

@@ -56,6 +56,15 @@
         "icon": "https://raw.githubusercontent.com/honue/MoviePilot-Plugins/main/icons/shortcut.jpg",
         "author": "audichuang",
         "level": 1
+    },
+    "RefreshEpisode": {
+        "name": "訂閱集數更新",
+        "description": "刷新訂閱劇集最新集數",
+        "labels": "工具",
+        "version": "0.5",
+        "icon": "Bookstack_A.png",
+        "author": "audichuang",
+        "level": 1
     }
     
 }
