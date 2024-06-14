@@ -26,7 +26,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -127,7 +127,7 @@ class RefreshEpisode(_PluginBase):
         except Exception as e:
             logger.error(f"获取{tmdbid}第{season_number}季集数失败：{str(e)}")
             return 0
-    
+
     def refresh_recent(self):
         all_subscribe = self._subscribeoper.list()
         logger.info(f"訂閱集數更新服务，共{len(all_subscribe)}个订阅")
@@ -146,8 +146,6 @@ class RefreshEpisode(_PluginBase):
             logger.info(
                 f"刷新{name} ({year}) {tmdbid} 第{season}季 最新集数 {total_episodes}"
             )
-
-    
 
     def __refresh_emby(self) -> bool:
         end_date = self.__get_date(-int(self._offset_days))
