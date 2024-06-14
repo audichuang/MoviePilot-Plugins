@@ -1,4 +1,5 @@
 import time
+import requests
 from datetime import datetime, timedelta
 
 import pytz
@@ -25,7 +26,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -121,7 +122,20 @@ class RefreshEpisode(_PluginBase):
             season = subscribe.season
             name = subscribe.name
             year = subscribe.year
+            self.get_total_episodes()
             logger.info(f"刷新{name} ({year}) {tmdbid} 第{season}季 最新集数")
+            
+    def get_total_episodes(self, tmdbid, season):
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NTZhNDFlODE2NTkxMzNjM2M5OTJjZGFiMzZkYjMyMSIsInN1YiI6IjY1ODViMWQ2NzFmMDk1NTdjNTIzZjdjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Yafqg4nwY-i3mdhinliUOsS9MIKBGeCg2oEIG7y4wuk",
+        }
+        def _get_tv_season_details(tv_id, season_number, language="zh-TW"):
+            url = f"https://api.themoviedb.org/3/tv/{tv_id}/season/{season_number}?language={language}"
+
+            response = requests.get(url, headers=headers)
+            return response.json()
+        return len(_get_tv_season_details(tmdbid, season))
 
     def __refresh_emby(self) -> bool:
         end_date = self.__get_date(-int(self._offset_days))
