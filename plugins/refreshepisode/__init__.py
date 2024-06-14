@@ -12,11 +12,14 @@ from typing import Any, List, Dict, Tuple, Optional
 from app.log import logger
 from app.schemas.types import EventType, NotificationType
 
+from fastapi import Depends
+
+from app.db import get_db
 from app.modules.emby import Emby
 from app.modules.jellyfin import Jellyfin
 from app.modules.plex import Plex
 from app.db.subscribe_oper import SubscribeOper
-from app.chain.subscribe import SubscribeChain
+from app.chain.subscribe import SubscribeChain, Subscribe
 from app.scheduler import Scheduler
 from app.schemas.types import MediaType
 from app.modules.themoviedb.tmdbapi import TmdbApi
@@ -30,7 +33,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.6"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -51,6 +54,7 @@ class RefreshEpisode(_PluginBase):
     _notify = False
     _subscribeoper = None
     _subscribechain = None
+    _subscribe = None
     _scheduler = None
     _tmdbapi = None
 
@@ -69,6 +73,7 @@ class RefreshEpisode(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._subscribeoper = SubscribeOper()
             self._subscribechain = SubscribeChain()
+            self._subscribe = Subscribe()
             self._tmdbapi = TmdbApi()
             logger.info(f"self._tmdbapi:{self._tmdbapi} {TmdbApi()}")
 
@@ -134,9 +139,9 @@ class RefreshEpisode(_PluginBase):
                 logger.error(f"获取{tmdbid}第{season_number}季详情失败：{str(e)}")
                 result_dict = {}
             total_episodes = len(result_dict["episodes"])
-            logger.info(
-                f"get_total_episodes {tmdbid}第{season_number}季共{total_episodes}集"
-            )
+            # logger.info(
+            #     f"get_total_episodes {tmdbid}第{season_number}季共{total_episodes}集"
+            # )
             return total_episodes
         except Exception as e:
             logger.error(f"获取{tmdbid}第{season_number}季集数失败：{str(e)}")
@@ -160,6 +165,20 @@ class RefreshEpisode(_PluginBase):
             logger.info(f"订阅ID：{sid}")
         except Exception as e:
             logger.error(f"添加订阅失败：{str(e)}")
+    
+    def unsubscribe_drama(self, subscribe_id):
+        try:
+            db = Depends(get_db)
+        except Exception as e:
+            logger.error(f"獲取db失败：{str(e)}")
+            return
+        try:
+            subscribe = self._subscribe.get(db, subscribe_id)
+            logger.info(f"取消订阅：{subscribe}")
+            if subscribe:
+                subscribe.delete(db, subscribe_id)
+        except Exception as e: 
+            logger.error(f"取消订阅失败：{str(e)}")
 
     def refresh_cache(self):
         try:
@@ -168,20 +187,21 @@ class RefreshEpisode(_PluginBase):
             logger.error(f"清理缓存服务失败：{str(e)}")
 
     def refresh_recent(self):
-        logger.info("測試清理TMDB緩存服務")
-        self.refresh_cache()
-        logger.info("測試清理TMDB緩存服務完成")
-        logger.info("測試訂閱服務")
-        self.subscribe_drama(
-            type="电视剧", tmdbid=10494, year=1995, season=1, title="无处可去的人"
-        )
-        logger.info("測試訂閱服務完成")
+        logger.info("測試取消訂閱服務")
+        self.unsubscribe_drama(1281)
+        logger.info("測試取消訂閱服務完成")
+        # logger.info("測試清理TMDB緩存服務")
+        # self.refresh_cache()
+        # logger.info("測試清理TMDB緩存服務完成")
+        # logger.info("測試訂閱服務")
+        # self.subscribe_drama(
+        #     type="电视剧", tmdbid=10494, year=1995, season=1, title="无处可去的人"
+        # )
+        # logger.info("測試訂閱服務完成")
         # all_subscribe = self._subscribeoper.list()
-        # logger.info(f"訂閱集數更新服务，共{len(all_subscribe)}个订阅")
         # drama_subscribe = [s for s in all_subscribe if s.type == "电视剧"]
         # all_drama_id = [s.id for s in drama_subscribe]
         # logger.info(f"訂閱劇集，共{len(all_drama_id)}个订阅")
-        # logger.info(f"{type(all_drama_id[0])}")
         # for subscribe_id in all_drama_id:
         #     subscribe = self._subscribeoper.get(subscribe_id)
         #     tmdbid = subscribe.tmdbid
@@ -191,6 +211,7 @@ class RefreshEpisode(_PluginBase):
         #     total_epidsodes_old = subscribe.total_episode
         #     total_episodes = self.get_total_episodes(int(tmdbid), int(season))
         #     if total_episodes > total_epidsodes_old:
+        #         # 集數不是最新的 重新訂閱
         #         logger.info(
         #             f"{name} ({year})第{season}季最新集数{total_episodes}，目前為{total_epidsodes_old}，需要更新"
         #         )
