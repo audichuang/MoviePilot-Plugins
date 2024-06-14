@@ -26,7 +26,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.7"
+    plugin_version = "0.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -142,7 +142,7 @@ class RefreshEpisode(_PluginBase):
             name = subscribe.name
             year = subscribe.year
             logger.info(f"尋找最新集數")
-            total_episodes = self.get_total_episodes(int(tmdbid), int(tmdbid))
+            total_episodes = self.get_total_episodes(int(tmdbid), int(season))
             logger.info(
                 f"刷新{name} ({year}) {tmdbid} 第{season}季 最新集数 {total_episodes}"
             )
