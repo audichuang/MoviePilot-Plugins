@@ -33,7 +33,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.7"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -49,7 +49,6 @@ class RefreshEpisode(_PluginBase):
     _enabled = False
     # 任务执行间隔
     _cron = None
-    _offset_days = "0"
     _onlyonce = False
     _notify = False
     _subscribeoper = None
@@ -68,7 +67,6 @@ class RefreshEpisode(_PluginBase):
         if config:
             self._enabled = config.get("enabled")
             self._cron = config.get("cron")
-            self._offset_days = config.get("offset_days")
             self._notify = config.get("notify")
             self._onlyonce = config.get("onlyonce")
             self._subscribeoper = SubscribeOper()
@@ -85,7 +83,7 @@ class RefreshEpisode(_PluginBase):
             if self._cron:
                 try:
                     self._scheduler.add_job(
-                        func=self.refresh_recent,
+                        func=self.drama_detect,
                         trigger=CronTrigger.from_crontab(self._cron),
                         name="刷新剧集元数据",
                     )
@@ -95,7 +93,7 @@ class RefreshEpisode(_PluginBase):
             if self._onlyonce:
                 logger.info(f"刷新最近剧集元数据服务启动，立即运行一次")
                 self._scheduler.add_job(
-                    func=self.refresh_recent,
+                    func=self.drama_detect,
                     trigger="date",
                     run_date=datetime.now(tz=pytz.timezone(settings.TZ))
                     + timedelta(seconds=3),
@@ -108,7 +106,6 @@ class RefreshEpisode(_PluginBase):
                         "onlyonce": False,
                         "cron": self._cron,
                         "enabled": self._enabled,
-                        "offset_days": self._offset_days,
                         "notify": self._notify,
                     }
                 )
@@ -118,11 +115,11 @@ class RefreshEpisode(_PluginBase):
                 self._scheduler.print_jobs()
                 self._scheduler.start()
 
-    def __get_date(self, offset_day):
-        now_time = datetime.now()
-        end_time = now_time + timedelta(days=offset_day)
-        end_date = end_time.strftime("%Y-%m-%d")
-        return end_date
+    # def __get_date(self, offset_day):
+    #     now_time = datetime.now()
+    #     end_time = now_time + timedelta(days=offset_day)
+    #     end_date = end_time.strftime("%Y-%m-%d")
+    #     return end_date
 
     def get_total_episodes(self, tmdbid, season_number):
         try:
@@ -131,7 +128,6 @@ class RefreshEpisode(_PluginBase):
                 "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NTZhNDFlODE2NTkxMzNjM2M5OTJjZGFiMzZkYjMyMSIsInN1YiI6IjY1ODViMWQ2NzFmMDk1NTdjNTIzZjdjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Yafqg4nwY-i3mdhinliUOsS9MIKBGeCg2oEIG7y4wuk",
             }
             url = f"https://api.themoviedb.org/3/tv/{tmdbid}/season/{season_number}?language=zh-TW"
-            logger.info(f"{url}")
             try:
                 response = requests.get(url, headers=headers)
                 result_dict = response.json()
@@ -139,9 +135,6 @@ class RefreshEpisode(_PluginBase):
                 logger.error(f"获取{tmdbid}第{season_number}季详情失败：{str(e)}")
                 result_dict = {}
             total_episodes = len(result_dict["episodes"])
-            # logger.info(
-            #     f"get_total_episodes {tmdbid}第{season_number}季共{total_episodes}集"
-            # )
             return total_episodes
         except Exception as e:
             logger.error(f"获取{tmdbid}第{season_number}季集数失败：{str(e)}")
@@ -186,18 +179,7 @@ class RefreshEpisode(_PluginBase):
         except Exception as e:
             logger.error(f"清理缓存服务失败：{str(e)}")
 
-    def refresh_recent(self):
-        # logger.info("測試取消訂閱服務")
-        # self.unsubscribe_drama(1281)
-        # logger.info("測試取消訂閱服務完成")
-        # logger.info("測試清理TMDB緩存服務")
-        # self.refresh_cache()
-        # logger.info("測試清理TMDB緩存服務完成")
-        # logger.info("測試訂閱服務")
-        # self.subscribe_drama(
-        #     type="电视剧", tmdbid=10494, year=1995, season=1, title="无处可去的人"
-        # )
-        # logger.info("測試訂閱服務完成")
+    def drama_detect(self):
         all_subscribe = self._subscribeoper.list()
         drama_subscribe = [s for s in all_subscribe if s.type == "电视剧"]
         all_drama_id = [s.id for s in drama_subscribe]
@@ -226,34 +208,34 @@ class RefreshEpisode(_PluginBase):
                 )
                 logger.info(f"重新訂閱 {name} ({year})第{season}季 成功")
 
-    def __refresh_emby(self) -> bool:
-        end_date = self.__get_date(-int(self._offset_days))
-        url_end_date = f"[HOST]emby/Items?IncludeItemTypes=Episode&MinPremiereDate={end_date}&IsMissing=false&Recursive=true&api_key=[APIKEY]"
-        # 有些没有日期的，也做个保底刷新
-        url_start_date = f"[HOST]emby/Items?IncludeItemTypes=Episode&MaxPremiereDate=1900-01-01&IsMissing=false&Recursive=true&api_key=[APIKEY]"
-        return self._refresh_by_url(url_end_date) and self._refresh_by_url(
-            url_start_date
-        )
+    # def __refresh_emby(self) -> bool:
+    #     end_date = self.__get_date(-int(self._offset_days))
+    #     url_end_date = f"[HOST]emby/Items?IncludeItemTypes=Episode&MinPremiereDate={end_date}&IsMissing=false&Recursive=true&api_key=[APIKEY]"
+    #     # 有些没有日期的，也做个保底刷新
+    #     url_start_date = f"[HOST]emby/Items?IncludeItemTypes=Episode&MaxPremiereDate=1900-01-01&IsMissing=false&Recursive=true&api_key=[APIKEY]"
+    #     return self._refresh_by_url(url_end_date) and self._refresh_by_url(
+    #         url_start_date
+    #     )
 
-    def _refresh_by_url(self, url):
-        res_g = Emby().get_data(url)
-        success = False
-        if res_g:
-            success = True
-            res_items = res_g.json().get("Items")
-            if res_items:
-                for res_item in res_items:
-                    item_id = res_item.get("Id")
-                    series_name = res_item.get("SeriesName")
-                    name = res_item.get("Name")
-                    # 刷新元数据
-                    req_url = f"[HOST]emby/Items/{item_id}/Refresh?MetadataRefreshMode=FullRefresh&ImageRefreshMode=FullRefresh&ReplaceAllMetadata=true&ReplaceAllImages=true&api_key=[APIKEY]"
-                    res_pos = Emby().post_data(req_url)
-                    if res_pos:
-                        logger.info(f"刷新元数据：{series_name} - {name}")
-                    else:
-                        logger.error(f"刷新媒体库对象 {item_id} 失败，无法连接Emby！")
-        return success
+    # def _refresh_by_url(self, url):
+    #     res_g = Emby().get_data(url)
+    #     success = False
+    #     if res_g:
+    #         success = True
+    #         res_items = res_g.json().get("Items")
+    #         if res_items:
+    #             for res_item in res_items:
+    #                 item_id = res_item.get("Id")
+    #                 series_name = res_item.get("SeriesName")
+    #                 name = res_item.get("Name")
+    #                 # 刷新元数据
+    #                 req_url = f"[HOST]emby/Items/{item_id}/Refresh?MetadataRefreshMode=FullRefresh&ImageRefreshMode=FullRefresh&ReplaceAllMetadata=true&ReplaceAllImages=true&api_key=[APIKEY]"
+    #                 res_pos = Emby().post_data(req_url)
+    #                 if res_pos:
+    #                     logger.info(f"刷新元数据：{series_name} - {name}")
+    #                 else:
+    #                     logger.error(f"刷新媒体库对象 {item_id} 失败，无法连接Emby！")
+    #     return success
 
     def get_state(self) -> bool:
         return self._enabled
@@ -339,19 +321,6 @@ class RefreshEpisode(_PluginBase):
                                     {
                                         "component": "VTextField",
                                         "props": {"model": "cron", "label": "执行周期"},
-                                    }
-                                ],
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "offset_days",
-                                            "label": "几天内",
-                                        },
                                     }
                                 ],
                             },
