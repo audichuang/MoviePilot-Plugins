@@ -33,7 +33,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -165,7 +165,7 @@ class RefreshEpisode(_PluginBase):
             logger.info(f"订阅ID：{sid}")
         except Exception as e:
             logger.error(f"添加订阅失败：{str(e)}")
-    
+
     def unsubscribe_drama(self, subscribe_id):
         try:
             db = Depends(get_db)
@@ -177,7 +177,7 @@ class RefreshEpisode(_PluginBase):
             logger.info(f"取消订阅：{subscribe}")
             if subscribe:
                 subscribe.delete(db, subscribe_id)
-        except Exception as e: 
+        except Exception as e:
             logger.error(f"取消订阅失败：{str(e)}")
 
     def refresh_cache(self):
@@ -187,9 +187,9 @@ class RefreshEpisode(_PluginBase):
             logger.error(f"清理缓存服务失败：{str(e)}")
 
     def refresh_recent(self):
-        logger.info("測試取消訂閱服務")
-        self.unsubscribe_drama(1281)
-        logger.info("測試取消訂閱服務完成")
+        # logger.info("測試取消訂閱服務")
+        # self.unsubscribe_drama(1281)
+        # logger.info("測試取消訂閱服務完成")
         # logger.info("測試清理TMDB緩存服務")
         # self.refresh_cache()
         # logger.info("測試清理TMDB緩存服務完成")
@@ -198,23 +198,33 @@ class RefreshEpisode(_PluginBase):
         #     type="电视剧", tmdbid=10494, year=1995, season=1, title="无处可去的人"
         # )
         # logger.info("測試訂閱服務完成")
-        # all_subscribe = self._subscribeoper.list()
-        # drama_subscribe = [s for s in all_subscribe if s.type == "电视剧"]
-        # all_drama_id = [s.id for s in drama_subscribe]
-        # logger.info(f"訂閱劇集，共{len(all_drama_id)}个订阅")
-        # for subscribe_id in all_drama_id:
-        #     subscribe = self._subscribeoper.get(subscribe_id)
-        #     tmdbid = subscribe.tmdbid
-        #     season = subscribe.season
-        #     name = subscribe.name
-        #     year = subscribe.year
-        #     total_epidsodes_old = subscribe.total_episode
-        #     total_episodes = self.get_total_episodes(int(tmdbid), int(season))
-        #     if total_episodes > total_epidsodes_old:
-        #         # 集數不是最新的 重新訂閱
-        #         logger.info(
-        #             f"{name} ({year})第{season}季最新集数{total_episodes}，目前為{total_epidsodes_old}，需要更新"
-        #         )
+        all_subscribe = self._subscribeoper.list()
+        drama_subscribe = [s for s in all_subscribe if s.type == "电视剧"]
+        all_drama_id = [s.id for s in drama_subscribe]
+        logger.info(f"訂閱劇集，共{len(all_drama_id)}个订阅")
+        for subscribe_id in all_drama_id:
+            subscribe = self._subscribeoper.get(subscribe_id)
+            tmdbid = subscribe.tmdbid
+            season = subscribe.season
+            name = subscribe.name
+            year = subscribe.year
+            total_epidsodes_old = subscribe.total_episode
+            total_episodes = self.get_total_episodes(int(tmdbid), int(season))
+            if total_episodes > total_epidsodes_old:
+                # 集數不是最新的 重新訂閱
+                logger.info(
+                    f"{name} ({year})第{season}季最新集数{total_episodes}，目前為{total_epidsodes_old}，需要更新"
+                )
+                self.unsubscribe_drama(subscribe_id)
+                time.sleep(1)
+                self.subscribe_drama(
+                    type="电视剧",
+                    tmdbid=tmdbid,
+                    year=year,
+                    season=season,
+                    title=name,
+                )
+                logger.info(f"重新訂閱 {name} ({year})第{season}季 成功")
 
     def __refresh_emby(self) -> bool:
         end_date = self.__get_date(-int(self._offset_days))
