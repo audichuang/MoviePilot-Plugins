@@ -19,7 +19,7 @@ from app.db.subscribe_oper import SubscribeOper
 from app.chain.subscribe import SubscribeChain
 from app.scheduler import Scheduler
 from app.schemas.types import MediaType
-from app.modules.themoviedb import TheMovieDbModule
+from app.modules.themoviedb.tmdbapi import TmdbApi
 
 
 class RefreshEpisode(_PluginBase):
@@ -30,7 +30,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.4"
+    plugin_version = "0.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -52,7 +52,7 @@ class RefreshEpisode(_PluginBase):
     _subscribeoper = None
     _subscribechain = None
     _scheduler = None
-    _themoviemodule = None
+    _tmdbapi = None
 
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
@@ -69,8 +69,8 @@ class RefreshEpisode(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._subscribeoper = SubscribeOper()
             self._subscribechain = SubscribeChain()
-            self._scheduler = Scheduler()
-            self._themoviemodule = TheMovieDbModule()
+            self._tmdbapi = TmdbApi()
+            logger.info(f"self._tmdbapi:{self._tmdbapi} {TmdbApi()}")
 
             # 加载模块
         if self._enabled:
@@ -163,7 +163,7 @@ class RefreshEpisode(_PluginBase):
 
     def refresh_cache(self):
         try:
-            self._themoviemodule.clear_cache()
+            self._tmdbapi.clear_cache()
         except Exception as e:
             logger.error(f"清理缓存服务失败：{str(e)}")
 
