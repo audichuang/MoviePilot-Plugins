@@ -23,7 +23,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -48,9 +48,6 @@ class RefreshEpisode(_PluginBase):
     _scheduler: Optional[BackgroundScheduler] = None
 
     def init_plugin(self, config: dict = None):
-        # 停止现有任务
-        self.stop_service()
-
         if config:
             self._enabled = config.get("enabled")
             self._cron = config.get("cron")
@@ -59,7 +56,10 @@ class RefreshEpisode(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._subscribeoper = SubscribeOper()
 
-            # 加载模块
+        # 停止现有任务
+        self.stop_service()
+
+        # 加载模块
         if self._enabled:
             # 定时服务
             self._scheduler = BackgroundScheduler(timezone=settings.TZ)
@@ -77,7 +77,7 @@ class RefreshEpisode(_PluginBase):
             if self._onlyonce:
                 logger.info(f"刷新劇集訂閱總集束服務啟動，立即運行一次")
                 self._scheduler.add_job(
-                    func=self.refresh_recent,
+                    func=self.update_drama_episode,
                     trigger="date",
                     run_date=datetime.now(tz=pytz.timezone(settings.TZ))
                     + timedelta(seconds=3),
