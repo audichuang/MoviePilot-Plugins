@@ -11,7 +11,9 @@ from typing import Any, List, Dict, Tuple, Optional
 from app.log import logger
 from app.schemas.types import EventType, NotificationType
 
-
+from app.modules.emby import Emby
+from app.modules.jellyfin import Jellyfin
+from app.modules.plex import Plex
 from app.db.subscribe_oper import SubscribeOper
 
 
@@ -23,7 +25,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.7"
+    plugin_version = "0.8"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -48,6 +50,9 @@ class RefreshEpisode(_PluginBase):
     _scheduler: Optional[BackgroundScheduler] = None
 
     def init_plugin(self, config: dict = None):
+        # 停止现有任务
+        self.stop_service()
+
         if config:
             self._enabled = config.get("enabled")
             self._cron = config.get("cron")
@@ -56,10 +61,7 @@ class RefreshEpisode(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._subscribeoper = SubscribeOper()
 
-        # 停止现有任务
-        self.stop_service()
-
-        # 加载模块
+            # 加载模块
         if self._enabled:
             # 定时服务
             self._scheduler = BackgroundScheduler(timezone=settings.TZ)
@@ -67,21 +69,21 @@ class RefreshEpisode(_PluginBase):
             if self._cron:
                 try:
                     self._scheduler.add_job(
-                        func=self.update_drama_episode,
+                        func=self.refresh_recent,
                         trigger=CronTrigger.from_crontab(self._cron),
-                        name="刷新劇集訂閱總集數",
+                        name="刷新剧集元数据",
                     )
                 except Exception as err:
                     logger.error(f"定时任务配置错误：{str(err)}")
 
             if self._onlyonce:
-                logger.info(f"刷新劇集訂閱總集束服務啟動，立即運行一次")
+                logger.info(f"刷新最近剧集元数据服务启动，立即运行一次")
                 self._scheduler.add_job(
-                    func=self.update_drama_episode,
+                    func=self.refresh_recent,
                     trigger="date",
                     run_date=datetime.now(tz=pytz.timezone(settings.TZ))
                     + timedelta(seconds=3),
-                    name="刷新劇集訂閱總集數",
+                    name="刷新剧集元数据",
                 )
                 # 关闭一次性开关
                 self._onlyonce = False
@@ -100,7 +102,13 @@ class RefreshEpisode(_PluginBase):
                 self._scheduler.print_jobs()
                 self._scheduler.start()
 
-    def update_drama_episode(self):
+    def __get_date(self, offset_day):
+        now_time = datetime.now()
+        end_time = now_time + timedelta(days=offset_day)
+        end_date = end_time.strftime("%Y-%m-%d")
+        return end_date
+
+    def refresh_recent(self):
         all_subscribe = self._subscribeoper.list()
         logger.info(f"訂閱集數更新服务，共{len(all_subscribe)}个订阅")
         logger.info(f"{all_subscribe}")
@@ -109,8 +117,53 @@ class RefreshEpisode(_PluginBase):
         logger.info(f"訂閱劇集，共{len(all_drama_id)}个订阅")
         logger.info(f"{type(all_drama_id[0])}")
 
+    def __refresh_emby(self) -> bool:
+        end_date = self.__get_date(-int(self._offset_days))
+        url_end_date = f"[HOST]emby/Items?IncludeItemTypes=Episode&MinPremiereDate={end_date}&IsMissing=false&Recursive=true&api_key=[APIKEY]"
+        # 有些没有日期的，也做个保底刷新
+        url_start_date = f"[HOST]emby/Items?IncludeItemTypes=Episode&MaxPremiereDate=1900-01-01&IsMissing=false&Recursive=true&api_key=[APIKEY]"
+        return self._refresh_by_url(url_end_date) and self._refresh_by_url(
+            url_start_date
+        )
+
+    def _refresh_by_url(self, url):
+        res_g = Emby().get_data(url)
+        success = False
+        if res_g:
+            success = True
+            res_items = res_g.json().get("Items")
+            if res_items:
+                for res_item in res_items:
+                    item_id = res_item.get("Id")
+                    series_name = res_item.get("SeriesName")
+                    name = res_item.get("Name")
+                    # 刷新元数据
+                    req_url = f"[HOST]emby/Items/{item_id}/Refresh?MetadataRefreshMode=FullRefresh&ImageRefreshMode=FullRefresh&ReplaceAllMetadata=true&ReplaceAllImages=true&api_key=[APIKEY]"
+                    res_pos = Emby().post_data(req_url)
+                    if res_pos:
+                        logger.info(f"刷新元数据：{series_name} - {name}")
+                    else:
+                        logger.error(f"刷新媒体库对象 {item_id} 失败，无法连接Emby！")
+        return success
+
     def get_state(self) -> bool:
         return self._enabled
+
+    @staticmethod
+    def get_command() -> List[Dict[str, Any]]:
+        """
+        定义远程控制命令
+        :return: 命令关键字、事件、描述、附带数据
+        """
+        return [
+            {
+                "cmd": "/refreshrecentmeta",
+                "event": EventType.PluginAction,
+                "desc": "刷新最近元数据",
+                "category": "",
+                "data": {"action": "refreshrecentmeta"},
+            }
+        ]
 
     def get_api(self) -> List[Dict[str, Any]]:
         pass
