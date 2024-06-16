@@ -21,7 +21,7 @@ class MediaScraper(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.1"
+    plugin_version = "0.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -122,13 +122,15 @@ class MediaScraper(_PluginBase):
         # 入库数据
         transferinfo: TransferInfo = event_info.get("transferinfo")
         mediainfo: MediaInfo = event_info.get("mediainfo")
-        title = (mediainfo.title,)
-        year = (mediainfo.year,)
-        type = (mediainfo.type,)
-        category = (mediainfo.category,)
+        title = mediainfo.title
+        year = mediainfo.year
+        type = mediainfo.type
+        category = mediainfo.category
         target_path = transferinfo.target_path
+        path = transferinfo.path
+        file_list_new = transferinfo.file_list_new
         logger.info(
-            f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path}"
+            f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path},path:{path},file_list_new:{file_list_new}"
         )
         # """
         # 发送通知消息
