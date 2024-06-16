@@ -3,14 +3,18 @@ from typing import Any, List, Dict, Tuple
 
 from app.core.config import settings
 from app.core.context import MediaInfo
+from app.modules.themoviedb.tmdbapi import TmdbApi
+from app.plugins.mediascraper.scraper import TmdbScraper
+
 from app.core.event import eventmanager, Event
-from app.modules.emby import Emby
-from app.modules.jellyfin import Jellyfin
-from app.modules.plex import Plex
+# from app.modules.emby import Emby
+# from app.modules.jellyfin import Jellyfin
+# from app.modules.plex import Plex
 from app.plugins import _PluginBase
 from app.schemas import TransferInfo, RefreshMediaItem
 from app.schemas.types import EventType
 from app.log import logger
+from app.plugins.mediascraper.do_scrape import scrape
 
 
 class MediaScraper(_PluginBase):
@@ -21,7 +25,7 @@ class MediaScraper(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -39,11 +43,12 @@ class MediaScraper(_PluginBase):
     _emby = None
     _jellyfin = None
     _plex = None
+    _tmdb = None
+    _tmdbscraper = None
 
     def init_plugin(self, config: dict = None):
-        self._emby = Emby()
-        self._jellyfin = Jellyfin()
-        self._plex = Plex()
+        self._tmdb = TmdbApi()
+        self._tmdbscraper = TmdbScraper(self._tmdb)
         if config:
             self._enabled = config.get("enabled")
             self._delay = config.get("delay") or 0
@@ -132,6 +137,8 @@ class MediaScraper(_PluginBase):
         logger.info(
             f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path},path:{path},file_list_new:{file_list_new}"
         )
+        for path in file_list_new:
+            scrape(path, self._tmdbscraper)
         # """
         # 发送通知消息
         # """
