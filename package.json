@@ -65,6 +65,15 @@
         "icon": "Bookstack_A.png",
         "author": "audichuang",
         "level": 1
+    },
+    "Media_Scraper":{
+        "name": "刮削繁體中文資訊",
+        "description": "入庫後自動刮削繁體中文資訊。",
+        "labels": "媒体库,刮削",
+        "version": "0.5",
+        "icon": "scraper.png",
+        "author": "audichuang",
+        "level": 1
     }
     
 }
