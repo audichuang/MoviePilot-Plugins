@@ -66,7 +66,7 @@
         "author": "audichuang",
         "level": 1
     },
-    "Media_Scraper":{
+    "MediaScraper":{
         "name": "刮削繁體中文資訊",
         "description": "入庫後自動刮削繁體中文資訊。",
         "labels": "媒体库,刮削",

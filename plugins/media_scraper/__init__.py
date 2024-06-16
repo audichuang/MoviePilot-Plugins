@@ -13,7 +13,7 @@ from app.schemas.types import EventType
 from app.log import logger
 
 
-class Media_Scraper(_PluginBase):
+class MediaScraper(_PluginBase):
     # 插件名称
     plugin_name = "刮削繁體中文資訊"
     # 插件描述
