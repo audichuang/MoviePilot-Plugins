@@ -21,7 +21,7 @@ class MediaScraper(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -127,7 +127,7 @@ class MediaScraper(_PluginBase):
         type = (mediainfo.type,)
         category = (mediainfo.category,)
         target_path = transferinfo.target_path
-        print(
+        logger.info(
             f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path}"
         )
         # """
