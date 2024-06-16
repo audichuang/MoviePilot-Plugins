@@ -70,7 +70,7 @@
         "name": "刮削繁體中文資訊",
         "description": "入庫後自動刮削繁體中文資訊。",
         "labels": "媒体库,刮削",
-        "version": "0.3",
+        "version": "1.0",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1

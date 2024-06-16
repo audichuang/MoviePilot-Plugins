@@ -7,6 +7,7 @@ from app.modules.themoviedb.tmdbapi import TmdbApi
 from app.plugins.mediascraper.scraper import TmdbScraper
 
 from app.core.event import eventmanager, Event
+
 # from app.modules.emby import Emby
 # from app.modules.jellyfin import Jellyfin
 # from app.modules.plex import Plex
@@ -25,7 +26,7 @@ class MediaScraper(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页

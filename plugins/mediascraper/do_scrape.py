@@ -26,9 +26,10 @@ def scrape(path: str, tmdbscraper: TmdbScraper) -> Any:
     chain = MediaChain()
     meta = MetaInfoPath(scrape_path)
     mediainfo = chain.recognize_media(meta)
-    mediainfo_tw = Get_TW_info.get_media_info(mediainfo)
-    if not mediainfo_tw:
+    if not mediainfo:
         return schemas.Response(success=False, message="刮削失败，无法识别媒体信息")
+    mediainfo_tw = Get_TW_info.get_media_info(mediainfo)
+
     # 刮削
     scrape_metadata(
         scraper=tmdbscraper,
