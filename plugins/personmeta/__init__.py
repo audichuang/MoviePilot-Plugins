@@ -37,7 +37,7 @@ from app.plugins.personmeta.get_acter_name_and_biography import (
 )
 
 
-class PersonMeta(_PluginBase):
+class PersonMetaScrape(_PluginBase):
     # 插件名称
     plugin_name = "演員刮削"
     # 插件描述
@@ -51,7 +51,7 @@ class PersonMeta(_PluginBase):
     # 作者主页
     author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
-    plugin_config_prefix = "personmeta_"
+    plugin_config_prefix = "personmetascrape_"
     # 加载顺序
     plugin_order = 24
     # 可使用的用户级别

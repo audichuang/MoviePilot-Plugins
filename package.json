@@ -8,7 +8,7 @@
         "author": "audichuang",
         "level": 1
     },
-    "PersonMeta": {
+    "PersonMetaScrape": {
         "name": "演員刮削",
         "description": "刮削演員圖片和繁體中文名稱。",
         "labels": "媒体库,刮削",
