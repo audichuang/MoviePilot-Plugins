@@ -7,6 +7,7 @@ from app.modules.themoviedb.tmdbapi import TmdbApi
 from app.plugins.mediascraperone.scraper import TmdbScraper
 
 from app.core.event import eventmanager, Event
+
 # from app.modules.emby import Emby
 # from app.modules.jellyfin import Jellyfin
 # from app.modules.plex import Plex
@@ -38,7 +39,6 @@ class MediaScraperOne(_PluginBase):
     auth_level = 1
 
     # 私有属性
-    _enabled = False
     _onlyonce = False
     _tmdbscraper = None
     _scrape_path = ""
@@ -47,20 +47,17 @@ class MediaScraperOne(_PluginBase):
         self._tmdb = TmdbApi()
         self._tmdbscraper = TmdbScraper(self._tmdb)
         if config:
-            self._enabled = config.get("enabled")
             self._onlyonce = config.get("onlyonce")
-            self._exectue = config.get("exectue")
             self._scrape_path = config.get("scrape_path")
-        
-        if self._enabled and self._onlyonce:
+
+        if self._onlyonce:
+            # 执行替换
             if self._scrape_path != "":
                 scrape(self._scrape_path, self._tmdbscraper)
-            self._scrape_path = ""
             self._onlyonce = False
-            
 
     def get_state(self) -> bool:
-        return self._enabled
+        return self._onlyonce
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
@@ -75,73 +72,47 @@ class MediaScraperOne(_PluginBase):
         """
         return [
             {
-                'component': 'VForm',
-                'content': [
+                "component": "VForm",
+                "content": [
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'enable',
-                                            'label': '啟動',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "onlyonce",
+                                            "label": "立即執行一次",
+                                        },
                                     }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'onlyonce',
-                                            'label': '立即執行一次',
-                                        }
-                                    }
-                                ]
+                                ],
                             }
-                        ]
+                        ],
                     },
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 8
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 8},
+                                "content": [
                                     {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'scrape_path',
-                                            'label': '刮削地址'
-                                        }
+                                        "component": "VTextField",
+                                        "props": {
+                                            "model": "scrape_path",
+                                            "label": "刮削地址",
+                                        },
                                     }
-                                ]
+                                ],
                             }
-                        ]
+                        ],
                     },
-                ]
+                ],
             }
-        ], {
-            "enabled": False,
-            "request_method": "POST",
-            "webhook_url": ""
-        }
+        ], {"enabled": False, "request_method": "POST", "webhook_url": ""}
 
     def get_page(self) -> List[dict]:
         pass
