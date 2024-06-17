@@ -30,7 +30,7 @@ class MediaScraperOne(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -56,7 +56,7 @@ class MediaScraperOne(_PluginBase):
             self._tmdbscraper = TmdbScraper(self._tmdb)
             if self._onlyonce:
                 paths = self._scraper_paths.split("\n")
-                logger.info(f"開始刮削，共有{len(paths)}個目錄或檔案")
+                logger.info(f"開始分析{paths}，共有{len(paths)}個目錄或檔案")
                 scrape_list = []
                 for path in paths:
                     scraper_path = Path(path)
@@ -77,12 +77,16 @@ class MediaScraperOne(_PluginBase):
                                     "dest": transferhistory.dest,
                                 }
                             )
+                logger.info(f"共有{len(scrape_list)}個需要刮削的檔案")
                 for scrape_item in scrape_list:
-                    scrape(
-                        src_path=scrape_item["src"],
-                        dest_path=scrape_item["dest"],
-                        tmdbscraper=self._tmdbscraper,
-                    )
+                    try:
+                        scrape(
+                            src_path=scrape_item["src"],
+                            dest_path=scrape_item["dest"],
+                            tmdbscraper=self._tmdbscraper,
+                        )
+                    except Exception as e:
+                        logger.error(f"刮削 {scrape_item['src']} 失敗: {e}")
                 logger.info("刮削完成")
 
                 self._onlyonce = False
