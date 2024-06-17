@@ -26,7 +26,7 @@ class MediaScraperOne(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.2"
+    plugin_version = "0.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -112,7 +112,7 @@ class MediaScraperOne(_PluginBase):
                     },
                 ],
             }
-        ], {"enabled": False, "request_method": "POST", "webhook_url": ""}
+        ], {"onlyonce": False, "scrape_path": ""}
 
     def get_page(self) -> List[dict]:
         pass
