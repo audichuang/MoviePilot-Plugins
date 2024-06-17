@@ -26,7 +26,7 @@ class MediaScraper(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.4"
+    plugin_version = "1.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -134,12 +134,10 @@ class MediaScraper(_PluginBase):
             type = mediainfo.type
             category = mediainfo.category
             target_path = transferinfo.target_path
-            src = transferinfo.src
-            dest = transferinfo.dest
             path = transferinfo.path
             file_list_new = transferinfo.file_list_new
             logger.info(
-                f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path},path:{path},file_list_new:{file_list_new},src:{src},dest:{dest}"
+                f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path},path:{path},file_list_new:{file_list_new}"
             )
             for file_path in file_list_new:
                 scrape(
