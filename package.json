@@ -52,7 +52,7 @@
         "name": "刮削繁體中文",
         "description": "給指定路徑刮削繁體中文資訊",
         "labels": "媒体库,刮削",
-        "version": "0.7",
+        "version": "0.5",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1
