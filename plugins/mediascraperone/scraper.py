@@ -15,7 +15,7 @@ from app.utils.common import retry
 from app.utils.dom import DomUtils
 from app.utils.http import RequestUtils
 from app.utils.system import SystemUtils
-from app.plugins.mediascraper.scrape_transfer import Get_TW_info
+from app.plugins.mediascraperone.scrape_transfer import Get_TW_info
 
 
 class TmdbScraper:

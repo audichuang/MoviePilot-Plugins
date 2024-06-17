@@ -4,7 +4,7 @@ from app.core.config import settings
 from app.core.context import MediaInfo
 from app.core.meta import MetaBase
 from app.log import logger
-from app.modules.themoviedb.scraper import TmdbScraper
+from app.plugins.mediascraperone.scraper import TmdbScraper
 
 from app.utils.system import SystemUtils
 

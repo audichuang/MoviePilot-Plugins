@@ -7,7 +7,6 @@ from app.modules.themoviedb.tmdbapi import TmdbApi
 from app.plugins.mediascraperone.scraper import TmdbScraper
 
 from app.core.event import eventmanager, Event
-
 # from app.modules.emby import Emby
 # from app.modules.jellyfin import Jellyfin
 # from app.modules.plex import Plex
@@ -15,7 +14,11 @@ from app.plugins import _PluginBase
 from app.schemas import TransferInfo, RefreshMediaItem
 from app.schemas.types import EventType
 from app.log import logger
+from app.db.transferhistory_oper import TransferHistoryOper
 from app.plugins.mediascraperone.do_scrape import scrape
+from app.utils.system import SystemUtils
+from app.core.config import settings
+from pathlib import Path
 
 
 class MediaScraperOne(_PluginBase):
@@ -26,7 +29,7 @@ class MediaScraperOne(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.3"
+    plugin_version = "0.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -38,18 +41,18 @@ class MediaScraperOne(_PluginBase):
     # 可使用的用户级别
     auth_level = 1
 
-    # 私有属性
-    _onlyonce = False
-    _tmdbscraper = None
-    _scrape_path = ""
+    _onlyonce: bool = False
+    _notify: bool = False
+    _scraper_paths: str = None
+    _tmdb : TmdbApi = None
+    _tmdbscraper : TmdbScraper = None
 
     def init_plugin(self, config: dict = None):
         self._tmdb = TmdbApi()
         self._tmdbscraper = TmdbScraper(self._tmdb)
         if config:
             self._onlyonce = config.get("onlyonce")
-            self._scrape_path = config.get("scrape_path")
-
+            self._scraper_paths = config.get("scraper_paths")
         run = False
         if self._onlyonce:
             # 执行替换
@@ -57,15 +60,37 @@ class MediaScraperOne(_PluginBase):
             self._onlyonce = False
         self.__update_config()
         if run:
-            if self._scrape_path != "":
-                scrape(self._scrape_path, self._tmdbscraper)
+            self.scraping()
 
-    def __update_config(self):
-        self.update_config({"onlyonce": self._onlyonce, "scrape_path": self._scrape_path})
+    def scraping(self):
+        paths = self._scraper_paths.split("\n")
+        scrape_list = []
+        for path in paths:
+            scraper_path = Path(path)
+            if scraper_path.is_file:
+                # 單一檔案
+                files = [scraper_path]
+            else:
+                # 資料夾
+                files = SystemUtils.list_files(scraper_path, settings.RMT_MEDIAEXT)
+            for file in files:
+                transferhistorys = TransferHistoryOper().get_by_title(str(file))
+                for transferhistory in transferhistorys:
+                    scrape_list.append({
+                        "src": transferhistory.src,
+                        "dest": transferhistory.dest
+                    })
+        for scrape_item in scrape_list:
+            scrape(
+                src_path=scrape_item["src"],
+                dest_path=scrape_item["dest"],
+                tmdbscraper=self._tmdbscraper,
+            )
 
     
-    def get_state(self) -> bool:
-        return self._onlyonce
+
+    def __update_config(self):
+        self.update_config({"onlyonce": self._onlyonce, "notify": self._notify, "scraper_paths": self._scraper_paths})
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
@@ -75,9 +100,6 @@ class MediaScraperOne(_PluginBase):
         pass
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
-        """
-        拼装插件配置页面，需要返回两块数据：1、页面配置；2、数据结构
-        """
         return [
             {
                 "component": "VForm",
@@ -93,9 +115,24 @@ class MediaScraperOne(_PluginBase):
                                         "component": "VSwitch",
                                         "props": {
                                             "model": "onlyonce",
-                                            "label": "立即執行一次",
+                                            "label": "立即运行一次",
                                         },
-                                    }
+                                    },
+                                
+                                ],
+                            },
+                            {
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
+                                    {
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "notify",
+                                            "label": "發送通知",
+                                        },
+                                    },
+                                
                                 ],
                             }
                         ],
@@ -105,13 +142,17 @@ class MediaScraperOne(_PluginBase):
                         "content": [
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 8},
+                                "props": {
+                                    "cols": 12,
+                                },
                                 "content": [
                                     {
-                                        "component": "VTextField",
+                                        "component": "VTextarea",
                                         "props": {
-                                            "model": "scrape_path",
-                                            "label": "刮削地址",
+                                            "model": "scraper_paths",
+                                            "label": "需要刮削的目錄or路徑",
+                                            "rows": 5,
+                                            "placeholder": "目錄or路徑 (一行一個)",
                                         },
                                     }
                                 ],
@@ -120,16 +161,13 @@ class MediaScraperOne(_PluginBase):
                     },
                 ],
             }
-        ], {"onlyonce": False, "scrape_path": ""}
+        ], {"onlyonce": False, "notify": False,"scraper_paths": ""}
 
     def get_page(self) -> List[dict]:
         pass
-    
+
     def get_state(self) -> bool:
         return self._onlyonce
 
     def stop_service(self):
-        """
-        退出插件
-        """
         pass

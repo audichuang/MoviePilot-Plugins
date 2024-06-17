@@ -21,33 +21,6 @@
             "v1.5": "豆瓣資訊轉成繁體中文。"
         }
     },
-    "LibraryScraper_Tw": {
-        "name": "媒體庫刮削(繁體)",
-        "description": "定時刮削媒體庫，補齊缺失資訊，使用繁體中文。",
-        "labels": "刮削",
-        "version": "1.4",
-        "icon": "scraper.png",
-        "author": "audichuang",
-        "level": 1
-    },
-    "LibraryScraper_Day": {
-        "name": "歷史記錄刮削媒體庫",
-        "description": "使用繁體中文依歷史記錄天數刮削媒體庫。",
-        "labels": "刮削",
-        "version": "1.2",
-        "icon": "scraper.png",
-        "author": "audichuang",
-        "level": 1
-    },
-    "Tidy": {
-        "name": "電視劇種子整理",
-        "description": "尋找電視劇是否完結且沒訂閱，若非單一種子就必須進行整理種子",
-        "labels": "文件整理",
-        "version": "1.0",
-        "icon": "Bookstack_A.png",
-        "author": "audichuang",
-        "level": 1
-    },
     "ShortCut": {
         "name": "快捷指令",
         "description": "IOS快捷指令，搜索最佳種子並下載",
@@ -70,7 +43,7 @@
         "name": "刮削繁體中文資訊",
         "description": "入庫後自動刮削繁體中文資訊。",
         "labels": "媒体库,刮削",
-        "version": "1.5",
+        "version": "1.6",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1
@@ -79,7 +52,7 @@
         "name": "刮削繁體中文",
         "description": "給指定路徑刮削繁體中文資訊",
         "labels": "媒体库,刮削",
-        "version": "0.3",
+        "version": "0.5",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1
