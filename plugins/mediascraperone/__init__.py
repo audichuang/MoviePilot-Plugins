@@ -93,7 +93,16 @@ class MediaScraperOne(_PluginBase):
                                             'model': 'enable',
                                             'label': '啟動',
                                         }
-                                    },
+                                    }
+                                ]
+                            },
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                    'md': 6
+                                },
+                                'content': [
                                     {
                                         'component': 'VSwitch',
                                         'props': {
