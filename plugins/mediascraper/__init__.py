@@ -26,7 +26,7 @@ class MediaScraper(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -138,50 +138,9 @@ class MediaScraper(_PluginBase):
         logger.info(
             f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path},path:{path},file_list_new:{file_list_new}"
         )
-        for path in file_list_new:
-            scrape(path, self._tmdbscraper)
-        # """
-        # 发送通知消息
-        # """
-        # if not self._enabled:
-        #     return
-
-        # event_info: dict = event.event_data
-        # if not event_info:
-        #     return
-
-        # # 刷新媒体库
-        # if not settings.MEDIASERVER:
-        #     return
-
-        # if self._delay:
-        #     logger.info(f"延迟 {self._delay} 秒后刷新媒体库... ")
-        #     time.sleep(float(self._delay))
-
-        # # 入库数据
-        # transferinfo: TransferInfo = event_info.get("transferinfo")
-        # mediainfo: MediaInfo = event_info.get("mediainfo")
-        # items = [
-        #     RefreshMediaItem(
-        #         title=mediainfo.title,
-        #         year=mediainfo.year,
-        #         type=mediainfo.type,
-        #         category=mediainfo.category,
-        #         target_path=transferinfo.target_path
-        #     )
-        # ]
-        # # Emby
-        # if "emby" in settings.MEDIASERVER:
-        #     self._emby.refresh_library_by_items(items)
-
-        # # Jeyllyfin
-        # if "jellyfin" in settings.MEDIASERVER:
-        #     # FIXME Jellyfin未找到刷新单个项目的API
-        #     self._jellyfin.refresh_root_library()
-
-        # # Plex
-        # if "plex" in settings.MEDIASERVER:
-        #     self._plex.refresh_library_by_items(items)
+        scrape(transferinfo.path, self._tmdbscraper)
+        # for file_path in file_list_new:
+        #     scrape(file_path, self._tmdbscraper)
 
     def stop_service(self):
         """
