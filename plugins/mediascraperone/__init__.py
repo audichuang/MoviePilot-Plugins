@@ -50,12 +50,20 @@ class MediaScraperOne(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._scrape_path = config.get("scrape_path")
 
+        run = False
         if self._onlyonce:
             # 执行替换
+            run = True
+            self._onlyonce = False
+        self.__update_config()
+        if run:
             if self._scrape_path != "":
                 scrape(self._scrape_path, self._tmdbscraper)
-            self._onlyonce = False
 
+    def __update_config(self):
+        self.update_config({"onlyonce": self._onlyonce, "scrape_path": self._scrape_path})
+
+    
     def get_state(self) -> bool:
         return self._onlyonce
 
@@ -116,6 +124,9 @@ class MediaScraperOne(_PluginBase):
 
     def get_page(self) -> List[dict]:
         pass
+    
+    def get_state(self) -> bool:
+        return self._onlyonce
 
     def stop_service(self):
         """
