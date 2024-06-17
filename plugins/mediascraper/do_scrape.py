@@ -13,18 +13,18 @@ from app.plugins.mediascraper.scraper import TmdbScraper
 from app.plugins.mediascraper.scrape_metadata import scrape_metadata
 
 
-def scrape(path: str, tmdbscraper: TmdbScraper) -> Any:
+def scrape(src_path, scrape_path: str, tmdbscraper: TmdbScraper) -> Any:
     """
     刮削媒体信息
     """
-    if not path:
+    if not scrape_path:
         return schemas.Response(success=False, message="刮削路径无效")
-    scrape_path = Path(path)
+    scrape_path = Path(scrape_path)
     if not scrape_path.exists():
         return schemas.Response(success=False, message="刮削路径不存在")
     # 识别
     chain = MediaChain()
-    meta = MetaInfoPath(scrape_path)
+    meta = MetaInfoPath(src_path)
     mediainfo = chain.recognize_media(meta)
     if not mediainfo:
         return schemas.Response(success=False, message="刮削失败，无法识别媒体信息")
