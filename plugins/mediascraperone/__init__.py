@@ -30,7 +30,7 @@ class MediaScraperOne(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.6"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -82,7 +82,7 @@ class MediaScraperOne(_PluginBase):
                     try:
                         scrape(
                             src_path=scrape_item["src"],
-                            dest_path=scrape_item["dest"],
+                            dest_path=Path(scrape_item["dest"]),
                             tmdbscraper=self._tmdbscraper,
                         )
                     except Exception as e:

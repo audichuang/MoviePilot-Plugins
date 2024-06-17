@@ -12,7 +12,9 @@ from app.plugins.mediascraperone.scraper import TmdbScraper
 from app.plugins.mediascraperone.scrape_metadata import scrape_metadata
 
 
-def scrape(src_path:str, dest_path: str, tmdbscraper: TmdbScraper, type=None, tmdbid=None) -> Any:
+def scrape(
+    src_path: str, dest_path: str, tmdbscraper: TmdbScraper
+) -> Any:
     """
     刮削媒体信息
     """
@@ -31,7 +33,14 @@ def scrape(src_path:str, dest_path: str, tmdbscraper: TmdbScraper, type=None, tm
         return schemas.Response(success=False, message="刮削失败，无法识别媒体信息")
     mediainfo_tw = Get_TW_info.get_media_info(mediainfo)
     # 刮削
-    scrape_metadata(scraper =tmdbscraper, path=dest_path, mediainfo=mediainfo_tw, transfer_type=settings.TRANSFER_TYPE, force_img=False, force_nfo=True)
+    scrape_metadata(
+        scraper=tmdbscraper,
+        path=dest_path,
+        mediainfo=mediainfo_tw,
+        transfer_type=settings.TRANSFER_TYPE,
+        force_img=False,
+        force_nfo=True,
+    )
     return schemas.Response(success=True, message="刮削完成")
 
 
