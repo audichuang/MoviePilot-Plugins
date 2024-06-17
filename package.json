@@ -12,7 +12,7 @@
         "name": "演員刮削",
         "description": "刮削演員圖片和繁體中文名稱。",
         "labels": "媒体库,刮削",
-        "version": "1.5",
+        "version": "1.0",
         "icon": "actor.png",
         "author": "audichuang",
         "level": 1,
@@ -49,7 +49,7 @@
         "level": 1
     },
     "MediaScraperOne":{
-        "name": "刮削繁體中文",
+        "name": "指定路徑刮削",
         "description": "給指定路徑刮削繁體中文資訊",
         "labels": "媒体库,刮削",
         "version": "0.5",

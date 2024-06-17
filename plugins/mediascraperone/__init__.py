@@ -24,7 +24,7 @@ from pathlib import Path
 
 class MediaScraperOne(_PluginBase):
     # 插件名称
-    plugin_name = "一次性刮"
+    plugin_name = "指定路徑刮削"
     # 插件描述
     plugin_desc = "一次性刮削繁體中文資訊。"
     # 插件图标
