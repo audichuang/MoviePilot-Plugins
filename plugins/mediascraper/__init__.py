@@ -26,7 +26,7 @@ class MediaScraper(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.4"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -128,24 +128,27 @@ class MediaScraper(_PluginBase):
         # 入库数据
         transferinfo: TransferInfo = event_info.get("transferinfo")
         mediainfo: MediaInfo = event_info.get("mediainfo")
-        title = mediainfo.title
-        year = mediainfo.year
-        type = mediainfo.type
-        category = mediainfo.category
-        target_path = transferinfo.target_path
-        src = transferinfo.src
-        dest = transferinfo.dest
-        path = transferinfo.path
-        file_list_new = transferinfo.file_list_new
-        logger.info(
-            f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path},path:{path},file_list_new:{file_list_new},src:{src},dest:{dest}"
-        )
-        for file_path in file_list_new:
-            scrape(
-                src_path=transferinfo.path,
-                scrape_path=file_path,
-                tmdbscraper=self._tmdbscraper,
+        try:
+            title = mediainfo.title
+            year = mediainfo.year
+            type = mediainfo.type
+            category = mediainfo.category
+            target_path = transferinfo.target_path
+            src = transferinfo.src
+            dest = transferinfo.dest
+            path = transferinfo.path
+            file_list_new = transferinfo.file_list_new
+            logger.info(
+                f"title:{title},year:{year},type:{type},category:{category},target_path:{target_path},path:{path},file_list_new:{file_list_new},src:{src},dest:{dest}"
             )
+            for file_path in file_list_new:
+                scrape(
+                    src_path=transferinfo.path,
+                    scrape_path=file_path,
+                    tmdbscraper=self._tmdbscraper,
+                )
+        except Exception as e:
+            logger.error(f"刮削{transferinfo} {mediainfo}發生錯誤：{e}")
 
     def stop_service(self):
         """
