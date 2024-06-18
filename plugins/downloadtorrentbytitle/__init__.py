@@ -23,7 +23,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "0.7"
+    plugin_version = "0.8"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -77,7 +77,10 @@ class DownloadTorrentByTitle(_PluginBase):
             logger.error(f"匹配種子發生錯誤: {e}")
         # 下载种子
         try:
-            torrent_info = TorrentInfo().from_dict(download_torrent_info)
+            torrent_info = TorrentInfo()
+            torrent_info.from_dict(download_torrent_info)
+            logger.info(f"轉換後的torrent_info: {torrent_info}")
+            logger.info(f"torrent_info.title: {torrent_info.title}")
             response = add(torrent_in=torrent_info)
             if response.success:
                 logger.info(f"download_torrent success: {response.message}")
