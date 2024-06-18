@@ -56,6 +56,15 @@
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1
+    },
+    "DownloadTorrentByTitle":{
+        "name": "按標題下載種子",
+        "description": "給種子標題和副標題下載站點種子",
+        "labels": "站点",
+        "version": "0.5",
+        "icon": "scraper.png",
+        "author": "audichuang",
+        "level": 1
     }
     
 }
