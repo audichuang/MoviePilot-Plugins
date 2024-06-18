@@ -14,6 +14,7 @@ from app.core.event import eventmanager, Event
 from app.plugins import _PluginBase
 from app.schemas import TransferInfo, RefreshMediaItem
 from app.schemas.types import EventType
+from app.schemas.types import NotificationType
 from app.log import logger
 from app.db.transferhistory_oper import TransferHistoryOper
 from app.plugins.mediascraperone.do_scrape import scrape
@@ -30,7 +31,7 @@ class MediaScraperOne(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -80,11 +81,22 @@ class MediaScraperOne(_PluginBase):
                 logger.info(f"共有{len(scrape_list)}個需要刮削的檔案")
                 for scrape_item in scrape_list:
                     try:
-                        scrape(
+                        response = scrape(
                             src_path=scrape_item["src"],
                             dest_path=Path(scrape_item["dest"]),
                             tmdbscraper=self._tmdbscraper,
                         )
+                        if response.success is False:
+                            logger.error(
+                                f"刮削 {scrape_item['src']} 失敗: {response.message}"
+                            )
+                            if self._notify:
+                                self.post_message(
+                                    mtype=NotificationType.MediaServer,
+                                    title=f"刮削發生錯誤",
+                                    text=f"源路徑：{scrape_item['src']}\n{response.message}",
+                                )
+
                     except Exception as e:
                         logger.error(f"刮削 {scrape_item['src']} 失敗: {e}")
                 logger.info("刮削完成")
