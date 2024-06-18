@@ -10,9 +10,17 @@ from app.db.transferhistory_oper import TransferHistoryOper
 from app.utils.system import SystemUtils
 from app.core.config import settings
 from app.api.endpoints.site import site_resource
-from app.api.endpoints.download import add
-from pathlib import Path
-from app.core.context import TorrentInfo
+
+
+from app.core.context import TorrentInfo, Context
+from app.core.context import TorrentInfo, Context
+from app import schemas
+from app.chain.download import DownloadChain
+from app.chain.media import MediaChain
+from app.core.metainfo import MetaInfo
+from app.db.models.user import User
+from app.db.userauth import get_current_active_user
+from fastapi import Depends
 
 
 class DownloadTorrentByTitle(_PluginBase):
@@ -23,7 +31,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "0.8"
+    plugin_version = "0.9"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -71,25 +79,38 @@ class DownloadTorrentByTitle(_PluginBase):
                     download_torrent_info = site_torrent
                     break
             if not download_torrent_info:
-                return {"code": 404, "msg": "找不到符合標題和副標題的種子"}
+                logger.error(f"找不到符合標題和副標題的種子")
+                return
             logger.info(f"匹配到的種子訊息: {download_torrent_info}")
         except Exception as e:
             logger.error(f"匹配種子發生錯誤: {e}")
+            return
         # 下载种子
         try:
-            torrent_info = TorrentInfo()
-            torrent_info.from_dict(download_torrent_info)
-            logger.info(f"轉換後的torrent_info: {torrent_info}")
-            logger.info(f"torrent_info.title: {torrent_info.title}")
-            response = add(torrent_in=torrent_info)
-            if response.success:
-                logger.info(f"download_torrent success: {response.message}")
-                return {"code": 200, "msg": "下載成功"}
-            else:
-                logger.error(f"download_torrent error: {response.message}")
-                return {"code": 500, "msg": response.message}
+            torrentinfo = TorrentInfo()
+            torrentinfo.from_dict(download_torrent_info)
+            current_user: User = Depends(get_current_active_user)
         except Exception as e:
-            logger.error(f"download_torrent error: {e}")
+            logger.error(f"下载种子初始化失败: {e}")
+            return
+        # 元数据
+        metainfo = MetaInfo(title=torrentinfo.title, subtitle=torrentinfo.description)
+        # 媒体信息
+        mediainfo = MediaChain().recognize_media(meta=metainfo)
+        if not mediainfo:
+            logger.error(f"無法識別媒體訊息")
+            return
+        # 上下文
+        context = Context(
+            meta_info=metainfo, media_info=mediainfo, torrent_info=torrentinfo
+        )
+        did = DownloadChain().download_single(
+            context=context, username=current_user.name
+        )
+        if not did:
+            logger.error(f"下載種子失敗")
+            return
+        logger.info(f"下載種子成功, did: {did}")
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
