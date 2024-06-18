@@ -31,7 +31,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -80,7 +80,6 @@ class DownloadTorrentByTitle(_PluginBase):
                     break
             if not download_torrent_info:
                 logger.error(f"找不到符合標題和副標題的種子")
-                return
             logger.info(f"匹配到的種子訊息: {download_torrent_info}")
         except Exception as e:
             logger.error(f"匹配種子發生錯誤: {e}")
