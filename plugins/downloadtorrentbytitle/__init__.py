@@ -22,7 +22,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.6"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -64,8 +64,8 @@ class DownloadTorrentByTitle(_PluginBase):
             download_torrent_info = None
             for site_torrent in site_torrents:
                 if (
-                    site_torrent.title == title
-                    and site_torrent.description == sub_title
+                    site_torrent["title"] == title
+                    and site_torrent["description"] == sub_title
                 ):
                     download_torrent_info = site_torrent
                     break
