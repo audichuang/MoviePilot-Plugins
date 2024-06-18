@@ -12,6 +12,7 @@ from app.core.config import settings
 from app.api.endpoints.site import site_resource
 from app.api.endpoints.download import add
 from pathlib import Path
+from app.core.context import TorrentInfo
 
 
 class DownloadTorrentByTitle(_PluginBase):
@@ -22,7 +23,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -76,7 +77,8 @@ class DownloadTorrentByTitle(_PluginBase):
             logger.error(f"匹配種子發生錯誤: {e}")
         # 下载种子
         try:
-            response = add(torrent_in=download_torrent_info)
+            torrent_info = TorrentInfo().from_dict(download_torrent_info)
+            response = add(torrent_in=torrent_info)
             if response.success:
                 logger.info(f"download_torrent success: {response.message}")
                 return {"code": 200, "msg": "下載成功"}
