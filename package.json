@@ -62,7 +62,7 @@
         "description": "給種子標題和副標題下載站點種子",
         "labels": "站点",
         "version": "0.5",
-        "icon": "scraper.png",
+        "icon": "download.png",
         "author": "audichuang",
         "level": 1
     }
