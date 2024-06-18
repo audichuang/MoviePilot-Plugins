@@ -31,7 +31,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "1.2"
+    plugin_version = "1.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -80,14 +80,15 @@ class DownloadTorrentByTitle(_PluginBase):
                     break
             if not download_torrent_info:
                 logger.error(f"找不到符合標題和副標題的種子")
-            logger.info(f"匹配到的種子訊息: {download_torrent_info}")
         except Exception as e:
             logger.error(f"匹配種子發生錯誤: {e}")
+        logger.info(f"匹配到的種子訊息: {download_torrent_info}")
         # 下载种子
         try:
             torrentinfo = TorrentInfo()
             torrentinfo.from_dict(download_torrent_info)
-            current_user: User = Depends(get_current_active_user)
+            current_user = Depends(get_current_active_user)
+            logger.info(f"current_user:{current_user}")
         except Exception as e:
             logger.error(f"下载种子初始化失败: {e}")
         try:
@@ -113,11 +114,13 @@ class DownloadTorrentByTitle(_PluginBase):
         except Exception as e:
             logger.error(f"上下文初始化失败: {e}")
         logger.info(f"上下文信息: {context}")
-        logger.info(f"current_user.name:{current_user.name}")
         try:
-            did = DownloadChain().download_single(
-                context=context, username=current_user.name
-            )
+            username = get_current_active_user().name
+        except Exception as e:
+            logger.error(f"获取用户名失败: {e}")
+        logger.info(f"用户名: {username}")
+        try:
+            did = DownloadChain().download_single(context=context, username=username)
             if not did:
                 logger.error(f"下載種子失敗")
             logger.info(f"下載種子成功, did: {did}")
