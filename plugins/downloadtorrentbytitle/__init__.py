@@ -31,7 +31,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -104,6 +104,7 @@ class DownloadTorrentByTitle(_PluginBase):
                 logger.error(f"無法識別媒體訊息")
         except Exception as e:
             logger.error(f"媒體信息识别失败: {e}")
+        logger.info(f"媒體信息: {mediainfo}")
         try:
             # 上下文
             context = Context(
@@ -111,6 +112,8 @@ class DownloadTorrentByTitle(_PluginBase):
             )
         except Exception as e:
             logger.error(f"上下文初始化失败: {e}")
+        logger.info(f"上下文信息: {context}")
+        logger.info(f"current_user.name:{current_user.name}")
         try:
             did = DownloadChain().download_single(
                 context=context, username=current_user.name
