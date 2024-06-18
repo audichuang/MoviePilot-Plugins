@@ -31,7 +31,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "0.9"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -84,7 +84,6 @@ class DownloadTorrentByTitle(_PluginBase):
             logger.info(f"匹配到的種子訊息: {download_torrent_info}")
         except Exception as e:
             logger.error(f"匹配種子發生錯誤: {e}")
-            return
         # 下载种子
         try:
             torrentinfo = TorrentInfo()
@@ -92,25 +91,36 @@ class DownloadTorrentByTitle(_PluginBase):
             current_user: User = Depends(get_current_active_user)
         except Exception as e:
             logger.error(f"下载种子初始化失败: {e}")
-            return
-        # 元数据
-        metainfo = MetaInfo(title=torrentinfo.title, subtitle=torrentinfo.description)
-        # 媒体信息
-        mediainfo = MediaChain().recognize_media(meta=metainfo)
-        if not mediainfo:
-            logger.error(f"無法識別媒體訊息")
-            return
-        # 上下文
-        context = Context(
-            meta_info=metainfo, media_info=mediainfo, torrent_info=torrentinfo
-        )
-        did = DownloadChain().download_single(
-            context=context, username=current_user.name
-        )
-        if not did:
-            logger.error(f"下載種子失敗")
-            return
-        logger.info(f"下載種子成功, did: {did}")
+        try:
+            # 元数据
+            metainfo = MetaInfo(
+                title=torrentinfo.title, subtitle=torrentinfo.description
+            )
+        except Exception as e:
+            logger.error(f"下载种子元数据初始化失败: {e}")
+        try:
+            # 媒体信息
+            mediainfo = MediaChain().recognize_media(meta=metainfo)
+            if not mediainfo:
+                logger.error(f"無法識別媒體訊息")
+        except Exception as e:
+            logger.error(f"媒體信息识别失败: {e}")
+        try:
+            # 上下文
+            context = Context(
+                meta_info=metainfo, media_info=mediainfo, torrent_info=torrentinfo
+            )
+        except Exception as e:
+            logger.error(f"上下文初始化失败: {e}")
+        try:
+            did = DownloadChain().download_single(
+                context=context, username=current_user.name
+            )
+            if not did:
+                logger.error(f"下載種子失敗")
+            logger.info(f"下載種子成功, did: {did}")
+        except Exception as e:
+            logger.error(f"下载种子失败: {e}")
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
