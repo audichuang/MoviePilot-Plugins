@@ -31,7 +31,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.4"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -115,12 +115,7 @@ class DownloadTorrentByTitle(_PluginBase):
             logger.error(f"上下文初始化失败: {e}")
         logger.info(f"上下文信息: {context}")
         try:
-            username = get_current_active_user().name
-        except Exception as e:
-            logger.error(f"获取用户名失败: {e}")
-        logger.info(f"用户名: {username}")
-        try:
-            did = DownloadChain().download_single(context=context, username=username)
+            did = DownloadChain().download_single(context=context, username="admin")
             if not did:
                 logger.error(f"下載種子失敗")
             logger.info(f"下載種子成功, did: {did}")
