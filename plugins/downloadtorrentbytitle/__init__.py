@@ -31,7 +31,7 @@ class DownloadTorrentByTitle(_PluginBase):
     # 插件图标
     plugin_icon = "download.png"
     # 插件版本
-    plugin_version = "1.4"
+    plugin_version = "1.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -58,8 +58,14 @@ class DownloadTorrentByTitle(_PluginBase):
             )
         except Exception as e:
             logger.error(f"init_plugin error: {e}")
+            return schemas.Response(success=False, message="API密碼錯誤")
 
-    def download_torrent(seld, site_id: str, title: str, sub_title: str) -> Any:
+    def download_torrent(
+        self, key: str, site_id: str, title: str, sub_title: str
+    ) -> Any:
+        if key != self._plugin_key:
+            logger.error(f"download_torrent: plugin_key error: {key}")
+            return None
         logger.info(
             f"download_torrent: site_id: {site_id}, title: {title}, sub_title: {sub_title}"
         )
@@ -118,7 +124,9 @@ class DownloadTorrentByTitle(_PluginBase):
             did = DownloadChain().download_single(context=context, username="admin")
             if not did:
                 logger.error(f"下載種子失敗")
+                return schemas.Response(success=False, message="下載種子失敗")
             logger.info(f"下載種子成功, did: {did}")
+            return schemas.Response(success=True, message="下載種子成功")
         except Exception as e:
             logger.error(f"下载种子失败: {e}")
 
