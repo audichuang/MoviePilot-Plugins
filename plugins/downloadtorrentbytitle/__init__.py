@@ -3,10 +3,6 @@ from typing import Any, List, Dict, Tuple
 
 from app.core.config import settings
 
-
-# from app.modules.emby import Emby
-# from app.modules.jellyfin import Jellyfin
-# from app.modules.plex import Plex
 from app.plugins import _PluginBase
 
 from app.log import logger
@@ -37,6 +33,10 @@ class DownloadTorrentByTitle(_PluginBase):
     plugin_order = 14
     # 可使用的用户级别
     auth_level = 1
+
+    _enable: bool = False
+    _notify: bool = False
+    _plugin_key: str = ""
 
     def init_plugin(self, config: dict = None):
         try:
