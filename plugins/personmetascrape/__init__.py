@@ -31,7 +31,7 @@ from app.utils.common import retry
 from app.utils.http import RequestUtils
 from app.utils.string import StringUtils
 
-from app.plugins.personmeta.get_acter_name_and_biography import (
+from app.plugins.personmetascrape.get_acter_name_and_biography import (
     _get_actor_traditional_chinese_name,
     _get_biography,
 )
@@ -45,7 +45,7 @@ class PersonMetaScrape(_PluginBase):
     # 插件图标
     plugin_icon = "actor.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
