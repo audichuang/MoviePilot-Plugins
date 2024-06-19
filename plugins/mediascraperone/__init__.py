@@ -31,7 +31,7 @@ class MediaScraperOne(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -91,6 +91,7 @@ class MediaScraperOne(_PluginBase):
                                 f"刮削 {scrape_item['src']} 失敗: {response.message}"
                             )
                             if self._notify:
+                                logger.info(f"發送 刮削發生錯誤 通知")
                                 self.post_message(
                                     mtype=NotificationType.MediaServer,
                                     title=f"刮削發生錯誤",
@@ -103,7 +104,11 @@ class MediaScraperOne(_PluginBase):
 
                 self._onlyonce = False
                 self.update_config(
-                    {"onlyonce": self._onlyonce, "scraper_paths": self._scraper_paths}
+                    {
+                        "onlyonce": self._onlyonce,
+                        "notify": self._notify,
+                        "scraper_paths": self._scraper_paths,
+                    }
                 )
 
     @staticmethod

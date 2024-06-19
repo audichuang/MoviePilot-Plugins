@@ -12,9 +12,7 @@ from app.plugins.mediascraperone.scraper import TmdbScraper
 from app.plugins.mediascraperone.scrape_metadata import scrape_metadata
 
 
-def scrape(
-    src_path: str, dest_path: str, tmdbscraper: TmdbScraper
-) -> Any:
+def scrape(src_path: str, dest_path: str, tmdbscraper: TmdbScraper) -> Any:
     """
     刮削媒体信息
     """
@@ -38,7 +36,7 @@ def scrape(
         path=dest_path,
         mediainfo=mediainfo_tw,
         transfer_type=settings.TRANSFER_TYPE,
-        force_img=False,
+        force_img=True,
         force_nfo=True,
     )
     return schemas.Response(success=True, message="刮削完成")

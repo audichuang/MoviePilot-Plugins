@@ -52,10 +52,13 @@
         "name": "指定路徑刮削",
         "description": "給指定路徑刮削繁體中文資訊",
         "labels": "媒体库,刮削",
-        "version": "1.1",
+        "version": "1.2",
         "icon": "scraper.png",
         "author": "audichuang",
-        "level": 1
+        "level": 1,
+        "history": {
+            "v1.2": "強制下載新圖片。"
+        }
     },
     "DownloadTorrentByTitle":{
         "name": "按標題下載種子",
