@@ -27,7 +27,7 @@ class EmbyMetaRefreshed(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/thsrite/MoviePilot-Plugins/main/icons/emby-icon.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -140,20 +140,6 @@ class EmbyMetaRefreshed(_PluginBase):
             logger.info("Emby媒體庫元數據刷新完成")
         except Exception as e:
             logger.error(f"刷新媒體庫元數據失敗：{str(e)}")
-        # # 获取days内入库的媒体
-        # current_date = datetime.now()
-        # # 计算几天前的日期
-        # target_date = current_date - timedelta(days=int(self._days))
-        # transferhistorys = TransferHistoryOper().list_by_date(target_date.strftime('%Y-%m-%d'))
-        # if not transferhistorys:
-        #     logger.error(f"{self._days}天内没有媒体库入库记录")
-        #     return
-
-        # logger.info(f"开始刷新媒体库元数据，最近{self._days}天内入库媒体：{len(transferhistorys)}个")
-        # # 刷新媒体库
-        # for transferinfo in transferhistorys:
-        #     self.__refresh_emby(transferinfo)
-        # logger.info(f"刷新媒体库元数据完成")
 
     def _get_target_date(
         self, cron_expression: str, base_time: datetime = None
@@ -162,9 +148,10 @@ class EmbyMetaRefreshed(_PluginBase):
             base_time = datetime.now()
 
         cron = croniter(cron_expression, base_time)
-        previous_date = cron.get_prev(datetime)
+        cron = croniter(cron_expression, base_time)
+        cron.get_prev(datetime)  # 獲取上一次觸發時間
 
-        return previous_date
+        return cron.get_prev(datetime)
 
     def _is_need_refresh(self, cron_expression: str) -> bool:
         previous_date = self._get_target_date(cron_expression)
