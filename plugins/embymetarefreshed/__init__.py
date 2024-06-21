@@ -1,4 +1,5 @@
 from app.log import logger
+
 try:
     from datetime import datetime, timedelta
     from typing import Optional, Any, List, Dict, Tuple
@@ -26,7 +27,7 @@ class EmbyMetaRefreshed(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/thsrite/MoviePilot-Plugins/main/icons/emby-icon.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -70,10 +71,13 @@ class EmbyMetaRefreshed(_PluginBase):
                     # 立即运行一次
                     if self._onlyonce:
                         logger.info(f"媒體庫元數據刷新服務啓動，立即運行一次")
-                        self._scheduler.add_job(self.refresh, 'date',
-                                                run_date=datetime.now(
-                                                    tz=pytz.timezone(settings.TZ)) + timedelta(seconds=3),
-                                                name="媒體庫元數據")
+                        self._scheduler.add_job(
+                            self.refresh,
+                            "date",
+                            run_date=datetime.now(tz=pytz.timezone(settings.TZ))
+                            + timedelta(seconds=3),
+                            name="媒體庫元數據",
+                        )
 
                         # 关闭一次性开关
                         self._onlyonce = False
@@ -84,9 +88,11 @@ class EmbyMetaRefreshed(_PluginBase):
                     # 周期运行
                     if self._cron:
                         try:
-                            self._scheduler.add_job(func=self.refresh,
-                                                    trigger=CronTrigger.from_crontab(self._cron),
-                                                    name="媒體庫元數據")
+                            self._scheduler.add_job(
+                                func=self.refresh,
+                                trigger=CronTrigger.from_crontab(self._cron),
+                                name="媒體庫元數據",
+                            )
                         except Exception as err:
                             logger.error(f"定時任務配置錯誤：{str(err)}")
                             # 推送實時消息
@@ -120,7 +126,7 @@ class EmbyMetaRefreshed(_PluginBase):
             if "emby" not in settings.MEDIASERVER:
                 logger.error("未配置Emby媒體服務器")
                 return
-            if not self._is_need_refresh():
+            if not self._is_need_refresh(self._cron):
                 logger.info("不需要刷新媒體庫元數據")
                 return
         except Exception as e:
@@ -148,9 +154,10 @@ class EmbyMetaRefreshed(_PluginBase):
         # for transferinfo in transferhistorys:
         #     self.__refresh_emby(transferinfo)
         # logger.info(f"刷新媒体库元数据完成")
-        
-        
-    def _get_target_date(self, cron_expression: str, base_time: datetime = None) -> datetime:
+
+    def _get_target_date(
+        self, cron_expression: str, base_time: datetime = None
+    ) -> datetime:
         if base_time is None:
             base_time = datetime.now()
 
@@ -159,21 +166,18 @@ class EmbyMetaRefreshed(_PluginBase):
 
         return previous_date
 
-
     def _is_need_refresh(self, cron_expression: str) -> bool:
         previous_date = self._get_target_date(cron_expression)
         transferhistorys = TransferHistoryOper().list_by_date(
             previous_date.strftime("%Y-%m-%d %H:%M:%S")
         )
-        logger.info(f"{previous_date} 之前是否有媒體庫入庫記錄：{len(transferhistorys)}个")
+        logger.info(
+            f"{previous_date} 之前是否有媒體庫入庫記錄：{len(transferhistorys)}个"
+        )
         if len(transferhistorys) == 0:
             return False
 
         return True
-    
-    
-
-    
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
@@ -191,85 +195,76 @@ class EmbyMetaRefreshed(_PluginBase):
                 "component": "VForm",
                 "content": [
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'enabled',
-                                            'label': '启用插件',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "enabled",
+                                            "label": "启用插件",
+                                        },
                                     }
-                                ]
+                                ],
                             },
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
                                     {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'onlyonce',
-                                            'label': '立即运行一次',
-                                        }
+                                        "component": "VSwitch",
+                                        "props": {
+                                            "model": "onlyonce",
+                                            "label": "立即运行一次",
+                                        },
                                     }
-                                ]
+                                ],
                             },
-                        ]
+                        ],
                     },
                     {
                         "component": "VRow",
                         "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 6},
+                                "content": [
                                     {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'cron',
-                                            'label': '执行周期',
-                                            'placeholder': '5位cron表达式，留空自动'
-                                        }
+                                        "component": "VTextField",
+                                        "props": {
+                                            "model": "cron",
+                                            "label": "执行周期",
+                                            "placeholder": "5位cron表达式，留空自动",
+                                        },
                                     }
-                                ]
+                                ],
                             }
                         ],
                     },
                     {
-                        'component': 'VRow',
-                        'content': [
+                        "component": "VRow",
+                        "content": [
                             {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
+                                "component": "VCol",
+                                "props": {
+                                    "cols": 12,
                                 },
-                                'content': [
+                                "content": [
                                     {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '查詢入庫記錄，週期請求媒體服務器元數據刷新接口。注：只支持Emby。'
-                                        }
+                                        "component": "VAlert",
+                                        "props": {
+                                            "type": "info",
+                                            "variant": "tonal",
+                                            "text": "查詢入庫記錄，週期請求媒體服務器元數據刷新接口。注：只支持Emby。",
+                                        },
                                     }
-                                ]
+                                ],
                             }
-                        ]
-                    }
+                        ],
+                    },
                 ],
             }
         ], {
