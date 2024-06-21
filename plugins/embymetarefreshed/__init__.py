@@ -26,7 +26,7 @@ class EmbyMetaRefreshed(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/thsrite/MoviePilot-Plugins/main/icons/emby-icon.png"
     # 插件版本
-    plugin_version = "1.2"
+    plugin_version = "1.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -108,7 +108,6 @@ class EmbyMetaRefreshed(_PluginBase):
                 "onlyonce": self._onlyonce,
                 "cron": self._cron,
                 "enabled": self._enabled,
-                "days": self._days
             }
         )
 
