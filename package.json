@@ -79,10 +79,10 @@
         "level": 1
     },
     "ScrapebyHistory":{
-        "name": "根據歷史紀錄刮削",
+        "name": "歷史紀錄刮削",
         "description": "根據正則表達式週期性刮削該段時間入庫影片，強制取代元數據和圖片",
         "labels": "媒体库,刮削",
-        "version": "0.9",
+        "version": "1.0",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1

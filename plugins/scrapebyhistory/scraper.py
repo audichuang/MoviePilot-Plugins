@@ -16,6 +16,7 @@ from app.utils.dom import DomUtils
 from app.utils.http import RequestUtils
 from app.utils.system import SystemUtils
 
+from .scrape_transfer import Get_TW_info
 
 class TmdbScraper:
     tmdb = None

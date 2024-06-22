@@ -29,13 +29,13 @@ except Exception as e:
 
 class ScrapebyHistory(_PluginBase):
     # 插件名称
-    plugin_name = "根據歷史紀錄刮削"
+    plugin_name = "歷史紀錄刮削"
     # 插件描述
     plugin_desc = "根據正則表達式週期性刮削該段時間入庫影片，強制取代元數據和圖片"
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.9"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
