@@ -3,8 +3,7 @@ from typing import Any, List, Dict, Tuple
 
 from app.core.config import settings
 from app.core.context import MediaInfo
-from app.modules.themoviedb.tmdbapi import TmdbApi
-from app.plugins.mediascraperone.scraper import TmdbScraper
+
 
 from app.core.event import eventmanager, Event
 
@@ -17,10 +16,13 @@ from app.schemas.types import EventType
 from app.schemas.types import NotificationType
 from app.log import logger
 from app.db.transferhistory_oper import TransferHistoryOper
-from app.plugins.mediascraperone.do_scrape import scrape
 from app.utils.system import SystemUtils
 from app.core.config import settings
 from pathlib import Path
+
+from app.modules.themoviedb.tmdbapi import TmdbApi
+from app.plugins.mediascraperone.scraper import TmdbScraper
+from app.plugins.mediascraperone.do_scrape import scrape
 
 
 class MediaScraperOne(_PluginBase):
