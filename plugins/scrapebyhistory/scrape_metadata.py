@@ -4,7 +4,7 @@ from app.core.config import settings
 from app.core.context import MediaInfo
 from app.core.meta import MetaBase
 from app.log import logger
-from app.plugins.scrapebyhistory.scraper import TmdbScraper
+from .scraper import TmdbScraper
 
 from app.utils.system import SystemUtils
 

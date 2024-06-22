@@ -7,9 +7,9 @@ from app.core.config import settings
 from app.core.metainfo import MetaInfo, MetaInfoPath
 from app.schemas import MediaType
 
-from app.plugins.scrapebyhistory.scrape_transfer import Get_TW_info
-from app.plugins.scrapebyhistory.scraper import TmdbScraper
-from app.plugins.scrapebyhistory.scrape_metadata import scrape_metadata
+from .scrape_transfer import Get_TW_info
+from .scraper import TmdbScraper
+from .scrape_metadata import scrape_metadata
 
 
 def scrape(src_path: str, dest_path: str, tmdbscraper: TmdbScraper) -> Any:
