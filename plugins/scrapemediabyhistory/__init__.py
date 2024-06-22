@@ -35,7 +35,7 @@ class ScrapeMediaByHistory(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -122,23 +122,29 @@ class ScrapeMediaByHistory(_PluginBase):
         )
 
     def refresh(self):
-        paths = self._get_scrape_paths()
-        logger.info(f"開始分析，共有{len(paths)}個資料夾需要刮削")
-        scrape_list = []
-        for path in paths:
-            scraper_path = Path(path)
-            # 資料夾
-            files = SystemUtils.list_files(scraper_path, settings.RMT_MEDIAEXT)
-            for file in files:
-                transferhistorys = TransferHistoryOper().get_by_title(str(file))
-                for transferhistory in transferhistorys:
-                    scrape_list.append(
-                        {
-                            "src": transferhistory.src,
-                            "dest": transferhistory.dest,
-                        }
-                    )
-        logger.info(f"共有{len(scrape_list)}個需要刮削的檔案")
+        try:
+            paths = self._get_scrape_paths()
+            logger.info(f"開始分析，共有{len(paths)}個資料夾需要刮削")
+            scrape_list = []
+            for path in paths:
+                if path is None:
+                    continue
+                scraper_path = Path(path)
+                # 資料夾
+                files = SystemUtils.list_files(scraper_path, settings.RMT_MEDIAEXT)
+                for file in files:
+                    transferhistorys = TransferHistoryOper().get_by_title(str(file))
+                    for transferhistory in transferhistorys:
+                        scrape_list.append(
+                            {
+                                "src": transferhistory.src,
+                                "dest": transferhistory.dest,
+                            }
+                        )
+            logger.info(f"共有{len(scrape_list)}個需要刮削的檔案")
+        except Exception as e:
+            logger.error(f"分析刮削資料夾發生錯誤：{str(e)}")
+            return
         for scrape_item in scrape_list:
             try:
                 response = scrape(
@@ -167,6 +173,8 @@ class ScrapeMediaByHistory(_PluginBase):
             except Exception as e:
                 logger.error(f"獲取刮削歷史紀錄資料夾發生錯誤：{str(e)}")
         logger.info(f"本次刮削歷史紀錄資料夾數量：{len(scrape_set)}")
+        # 刪除None值
+        scrape_set.discard(None)
         return scrape_set
 
     def _get_target_date(
@@ -295,7 +303,7 @@ class ScrapeMediaByHistory(_PluginBase):
         ], {
             "enabled": False,
             "onlyonce": False,
-            "cron": "5 1 * * *",
+            "cron": "0 1 * * *",
         }
 
     def get_page(self) -> List[dict]:
