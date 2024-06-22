@@ -17,16 +17,17 @@ try:
     from app.schemas.types import EventType
     from croniter import croniter
     from pathlib import Path
-    
+
     from app.modules.themoviedb.tmdbapi import TmdbApi
-    from app.plugins.scrapebyhistory.scraper import TmdbScraper
     from app.utils.system import SystemUtils
+
+    from app.plugins.scrapebyhistory.scraper import TmdbScraper
     from app.plugins.scrapebyhistory.do_scrape import scrape
 except Exception as e:
     logger.error(f"插件導入package失败：{str(e)}")
 
 
-class ScrapeByHistory(_PluginBase):
+class ScrapebyHistory(_PluginBase):
     # 插件名称
     plugin_name = "根據歷史紀錄重新刮削"
     # 插件描述
@@ -34,7 +35,7 @@ class ScrapeByHistory(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.6"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -119,7 +120,7 @@ class ScrapeByHistory(_PluginBase):
                 "enabled": self._enabled,
             }
         )
-        
+
     def refresh(self):
         paths = self._get_scrape_paths()
         logger.info(f"開始分析，共有{len(paths)}個資料夾需要刮削")
@@ -127,9 +128,7 @@ class ScrapeByHistory(_PluginBase):
         for path in paths:
             scraper_path = Path(path)
             # 資料夾
-            files = SystemUtils.list_files(
-                scraper_path, settings.RMT_MEDIAEXT
-            )
+            files = SystemUtils.list_files(scraper_path, settings.RMT_MEDIAEXT)
             for file in files:
                 transferhistorys = TransferHistoryOper().get_by_title(str(file))
                 for transferhistory in transferhistorys:
@@ -148,15 +147,12 @@ class ScrapeByHistory(_PluginBase):
                     tmdbscraper=self._tmdbscraper,
                 )
                 if response.success is False:
-                    logger.error(
-                        f"刮削 {scrape_item['src']} 失敗: {response.message}"
-                    )
+                    logger.error(f"刮削 {scrape_item['src']} 失敗: {response.message}")
 
             except Exception as e:
                 logger.error(f"刮削 {scrape_item['src']} 發生錯誤: {e}")
         logger.info("刮削完成")
-        
-        
+
     def _get_scrape_paths(self):
         """
         刷新媒體庫元數據
@@ -194,10 +190,10 @@ class ScrapeByHistory(_PluginBase):
             f"{previous_date} 之前是否有媒體庫入庫記錄：{len(transferhistorys)}个"
         )
         return transferhistorys
-    
+
     def _extract_year_folder(self, path):
         # 使用正則表達式來匹配包含年份的資料夾名稱
-        match = re.search(r'(/[^/]*\(\d{4}\))', path)
+        match = re.search(r"(/[^/]*\(\d{4}\))", path)
         if match:
             # 提取匹配的資料夾名稱部分
             folder_name = match.group(1)
