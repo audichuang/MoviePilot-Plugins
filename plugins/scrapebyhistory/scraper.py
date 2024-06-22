@@ -11,7 +11,11 @@ from app.core.meta import MetaBase
 from app.core.metainfo import MetaInfo
 from app.log import logger
 from app.schemas.types import MediaType
-from app.utils.common import ret2
+from app.utils.common import retry
+from app.utils.dom import DomUtils
+from app.utils.http import RequestUtils
+from app.utils.system import SystemUtils
+
 
 class TmdbScraper:
     tmdb = None

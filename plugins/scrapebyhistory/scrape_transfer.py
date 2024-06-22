@@ -1,4 +1,4 @@
-from app.plugins.scrapebyhistory.get_tmdb_detail_by_language import (
+from .get_tmdb_detail_by_language import (
     _get_tv_season_details,
     _get_tv_details,
     _get_movie_details,

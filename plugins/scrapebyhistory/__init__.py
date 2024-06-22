@@ -21,8 +21,8 @@ try:
     from app.modules.themoviedb.tmdbapi import TmdbApi
     from app.utils.system import SystemUtils
 
-    from app.plugins.scrapebyhistory.scraper import TmdbScraper
-    from app.plugins.scrapebyhistory.do_scrape import scrape
+    from .scraper import TmdbScraper
+    from .do_scrape import scrape
 except Exception as e:
     logger.error(f"插件導入package失败：{str(e)}")
 
@@ -35,7 +35,7 @@ class ScrapebyHistory(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
