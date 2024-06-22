@@ -18,6 +18,7 @@ from app.utils.system import SystemUtils
 
 from .scrape_transfer import Get_TW_info
 
+
 class TmdbScraper:
     tmdb = None
     _transfer_type = settings.TRANSFER_TYPE

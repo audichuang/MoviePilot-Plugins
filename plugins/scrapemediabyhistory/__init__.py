@@ -27,7 +27,7 @@ except Exception as e:
     logger.error(f"插件導入package失败：{str(e)}")
 
 
-class ScrapebyHistory(_PluginBase):
+class ScrapeMediaByHistory(_PluginBase):
     # 插件名称
     plugin_name = "歷史紀錄刮削"
     # 插件描述
@@ -35,13 +35,13 @@ class ScrapebyHistory(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
     author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
-    plugin_config_prefix = "scrapebyhistory_"
+    plugin_config_prefix = "scrapemediabyhistory_"
     # 加载顺序
     plugin_order = 15
     # 可使用的用户级别
