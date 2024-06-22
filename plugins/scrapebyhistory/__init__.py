@@ -35,7 +35,7 @@ class ScrapebyHistory(_PluginBase):
     # 插件图标
     plugin_icon = "scraper.png"
     # 插件版本
-    plugin_version = "0.7"
+    plugin_version = "0.8"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -167,7 +167,7 @@ class ScrapebyHistory(_PluginBase):
             except Exception as e:
                 logger.error(f"獲取刮削歷史紀錄資料夾發生錯誤：{str(e)}")
         logger.info(f"本次刮削歷史紀錄資料夾數量：{len(scrape_set)}")
-        return
+        return scrape_set
 
     def _get_target_date(
         self, cron_expression: str, base_time: datetime = None
