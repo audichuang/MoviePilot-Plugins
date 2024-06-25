@@ -1,4 +1,4 @@
-from app.plugins.sendmedianotifications.emby_user import EmbyUser
+from .emby_user import EmbyUser
 from app.schemas.types import MediaType
 
 

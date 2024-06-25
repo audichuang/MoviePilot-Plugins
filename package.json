@@ -91,7 +91,7 @@
         "name": "Emby收藏入庫通知",
         "description": "入庫後待Emby加入推送Bark推知給指定的Emby用戶。",
         "labels": "媒体库,消息通知",
-        "version": "1.2",
+        "version": "1.3",
         "icon": "Watchtower_A.png",
         "author": "audichuang",
         "level": 1

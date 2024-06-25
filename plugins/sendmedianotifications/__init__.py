@@ -10,8 +10,8 @@ from app.modules.themoviedb.tmdbapi import TmdbApi
 from app.core.event import eventmanager, Event
 
 from app.modules.emby import Emby
-from app.plugins.sendmedianotifications.emby_user import EmbyUser
-from app.plugins.sendmedianotifications.emby_items import EmbyItems
+from .emby_user import EmbyUser
+from .emby_items import EmbyItems
 
 from app.plugins import _PluginBase
 from app.schemas import TransferInfo, RefreshMediaItem
@@ -30,7 +30,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "1.2"
+    plugin_version = "1.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -250,6 +250,7 @@ class SendMediaNotifications(_PluginBase):
             logger.error(f"存入佇列發生錯誤：{e}")
 
     def consumer(self):
+        logger.info("開始啟用消費者")
         try:
             while True:
                 # 從佇列中取出消息
@@ -289,7 +290,9 @@ class SendMediaNotifications(_PluginBase):
     def periodic_get_user_favorite(self):
         while True:
             # 每五分鐘查詢一次Emby使用者收藏的劇集
+            logger.info(f"開始查詢Emby使用者收藏的劇集")
             self._emby_user_favorite_dict = self._emby_user.get_user_favorite_dict()
+            logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
             time.sleep(300)  # 300秒 = 5分鐘
 
     def bark_send_message(self, server_url, token, title, content, icon):
