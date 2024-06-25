@@ -23,7 +23,7 @@ import queue
 import threading
 
 
-class SendMediaNotifications(_PluginBase):
+class SendMediaNotificationss(_PluginBase):
     # 插件名称
     plugin_name = "Emby收藏入庫通知"
     # 插件描述
@@ -31,13 +31,13 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "0.9"
+    plugin_version = "0.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
     author_url = "https://github.com/audichuang"
     # 插件配置项ID前缀
-    plugin_config_prefix = "sendmedianotifications_"
+    plugin_config_prefix = "sendmedianotificationss_"
     # 加载顺序
     plugin_order = 14
     # 可使用的用户级别
