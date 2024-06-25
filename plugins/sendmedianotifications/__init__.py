@@ -30,7 +30,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "new.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.6"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -189,7 +189,7 @@ class SendMediaNotifications(_PluginBase):
         try:
             type = mediainfo.type
             success = transferinfo.success
-            if not success or type == MediaType.Movie:
+            if not success or type == MediaType.MOVIE:
                 return
             tmdbid = mediainfo.tmdbid
             number_of_seasons = mediainfo.number_of_seasons
