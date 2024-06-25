@@ -30,7 +30,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "1.4"
+    plugin_version = "1.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -291,8 +291,11 @@ class SendMediaNotifications(_PluginBase):
         while True:
             # 每五分鐘查詢一次Emby使用者收藏的劇集
             logger.info(f"開始查詢Emby使用者收藏的劇集")
-            self._emby_user_favorite_dict = self._emby_user.get_user_favorite_dict()
-            logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
+            try:
+                self._emby_user_favorite_dict = self._emby_user.get_user_favorite_dict()
+                logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
+            except Exception as e:
+                logger.error(f"查詢Emby使用者收藏發生錯誤：{e}")
             time.sleep(300)  # 300秒 = 5分鐘
 
     def bark_send_message(self, server_url, token, title, content, icon):
