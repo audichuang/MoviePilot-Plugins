@@ -30,7 +30,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -90,6 +90,8 @@ class SendMediaNotifications(_PluginBase):
                 logger.info(
                     f"Emby收藏入庫通知插件已啟用，收藏者：{self._emby_bark_dict}"
                 )
+                logger.info(f"Bark服務器：{self._bark_server}")
+                logger.info(f"Emby用戶收藏：{self._emby_user_favorite_dict}")
         except Exception as e:
             logger.error(f"讀取配置發生錯誤：{e}")
 
