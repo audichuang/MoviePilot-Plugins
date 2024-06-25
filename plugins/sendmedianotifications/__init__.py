@@ -238,38 +238,41 @@ class SendMediaNotifications(_PluginBase):
             logger.error(f"存入佇列發生錯誤：{e}")
 
     def consumer(self):
-        while True:
-            # 從佇列中取出消息
-            message = self._download_queue.get()
-            logger.info(f"收到入庫處理資訊：{message}")
-            # 等待入庫 要等大約3分鐘
-            time.sleep(180)
-            # 可以發送通知了
-            try:
-                if self._emby_items.is_episode_exist(
-                    tmdbid=message.get("media_tmdbid"),
-                    season_number=message.get("media_season_number"),
-                    episode_number=message.get("media_episode_number"),
-                ):
-                    # 還沒進來 等一段時間
-                    logger.info(
-                        f"劇集 {message.get('media_title')} 第{message.get('media_season_number')}季第{message.get('media_episode_number')}集 未進入Emby，等待30秒"
-                    )
-                    time.sleep(60)
-                for bark_device_key in message.get("bark_device_keys"):
-                    self.bark_send_message(
-                        server_url=self._bark_server,
-                        token=bark_device_key,
-                        title=message.get("bark_title"),
-                        content=message.get("bark_content"),
-                        icon=message.get("bark_image_url"),
-                    )
+        try:
+            while True:
+                # 從佇列中取出消息
+                message = self._download_queue.get()
+                logger.info(f"收到入庫處理資訊：{message}")
+                # 等待入庫 要等大約3分鐘
+                time.sleep(180)
+                # 可以發送通知了
+                try:
+                    if self._emby_items.is_episode_exist(
+                        tmdbid=message.get("media_tmdbid"),
+                        season_number=message.get("media_season_number"),
+                        episode_number=message.get("media_episode_number"),
+                    ):
+                        # 還沒進來 等一段時間
+                        logger.info(
+                            f"劇集 {message.get('media_title')} 第{message.get('media_season_number')}季第{message.get('media_episode_number')}集 未進入Emby，等待30秒"
+                        )
+                        time.sleep(60)
+                    for bark_device_key in message.get("bark_device_keys"):
+                        self.bark_send_message(
+                            server_url=self._bark_server,
+                            token=bark_device_key,
+                            title=message.get("bark_title"),
+                            content=message.get("bark_content"),
+                            icon=message.get("bark_image_url"),
+                        )
 
-            except Exception as e:
-                logger.error(f"Bark發送失敗：{e}")
+                except Exception as e:
+                    logger.error(f"Bark發送失敗：{e}")
 
-            # 通知佇列此消息已處理
-            self._download_queue.task_done()
+                # 通知佇列此消息已處理
+                self._download_queue.task_done()
+        except Exception as e:
+            logger.error(f"佇列取出發生錯誤：{e}")
 
     def periodic_get_user_favorite(self):
         while True:
