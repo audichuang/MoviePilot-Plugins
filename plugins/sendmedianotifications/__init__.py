@@ -227,9 +227,8 @@ class SendMediaNotifications(_PluginBase):
         try:
             # 判斷是否有使用者加入收藏
             logger.info(f"開始檢查是否有使用者收藏")
-            logger.info(
-                f"收藏者：{self._emby_user_favorite_dict} , {type(self._emby_user_favorite_dict)}"
-            )
+            logger.info(f"收藏者：{self._emby_user_favorite_dict}")
+            logger.info(f"{type(self._emby_user_favorite_dict)}")
             device_keys = []
             for (
                 username,
@@ -310,6 +309,7 @@ class SendMediaNotifications(_PluginBase):
                 self._emby_user_favorite_dict = (
                     self._emby_user.get_all_user_favorite_dict()
                 )
+                logger.info(f"{type(self._emby_user_favorite_dict)}")
                 logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
             except Exception as e:
                 logger.error(f"查詢Emby使用者收藏發生錯誤：{e}")
