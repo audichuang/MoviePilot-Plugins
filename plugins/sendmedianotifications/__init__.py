@@ -24,13 +24,13 @@ import threading
 
 class SendMediaNotifications(_PluginBase):
     # 插件名称
-    plugin_name = "入庫後通送通知"
+    plugin_name = "Emby收藏入庫通知"
     # 插件描述
-    plugin_desc = "入庫後待Emby加入推送推知。"
+    plugin_desc = "入庫後待Emby加入推送Bark推知給指定的Emby用戶。"
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
