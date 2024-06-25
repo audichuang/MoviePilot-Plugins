@@ -220,14 +220,16 @@ class SendMediaNotifications(_PluginBase):
         except Exception as e:
             logger.error(f"檢查Emby是否有劇集發生錯誤：{e}")
             return
+
         try:
             # 判斷是否有使用者加入收藏
+            logger.info(f"開始檢查是否有使用者收藏")
             device_keys = []
             for (
                 username,
                 favorite_tv_tmdbid_list,
             ) in self._emby_user_favorite_dict.items():
-                if tmdbid in favorite_tv_tmdbid_list:
+                if str(tmdbid) in favorite_tv_tmdbid_list:
                     logger.info(f"用戶 {username} 收藏了 {tmdbid}")
                     device_keys.append(self._emby_bark_dict.get(username))
             if len(device_keys) > 0:
