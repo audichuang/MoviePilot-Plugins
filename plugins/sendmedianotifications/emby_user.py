@@ -72,14 +72,10 @@ class EmbyUser(Emby):
         return None
 
     def get_all_user_favorite_dict(self):
-        logger.info("獲取全面使用者id")
         user_dict = self.get_all_users_id()
-        logger.info("獲取全面使用者id完成:{user_dict}")
-        logger.info("獲取全面使用者收藏的電視劇")
         favorite_dict = {}
         for user_name, user_id in user_dict.items():
             favorite_dict[user_name] = self.get_user_favorite_tv(user_id)
-        logger.info("獲取全面使用者收藏的電視劇完成:{favorite_dict}")
         return favorite_dict
 
 

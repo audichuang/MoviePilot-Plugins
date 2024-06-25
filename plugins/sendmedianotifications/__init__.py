@@ -239,7 +239,7 @@ class SendMediaNotifications(_PluginBase):
                         continue
                     try:
                         if str(tmdbid) in favorite_tv_tmdbid_list:
-                            logger.info(f"用戶 {username} 收藏了 {tmdbid}")
+                            logger.info(f"用戶 {username} 有收藏 {tmdbid}")
                             device_keys.append(self._emby_bark_dict.get(username))
                     except Exception as e:
                         logger.error(f"判斷使用者{username}是否收藏發生錯誤：{e}")
@@ -308,12 +308,19 @@ class SendMediaNotifications(_PluginBase):
             # 每五分鐘查詢一次Emby使用者收藏的劇集
             logger.info(f"開始查詢Emby使用者收藏的劇集")
             try:
-                self._emby_user_favorite_dict = (
+                emby_user_favorit_itemid = (
                     self._emby_user.get_all_user_favorite_dict()
                 )
-                logger.info(
-                    f"Emby使用者收藏類別：{type(self._emby_user_favorite_dict)}"
-                )
+                for username, item_id_list in emby_user_favorit_itemid.items():
+                    tmdbid_list = []
+                    for item_id in item_id_list:
+                        try:
+                            tmdbid = self._emby_items.get_tmdbid_by_itemid(item_id)
+                            if tmdbid:
+                                tmdbid_list.append(tmdbid)
+                        except Exception as e:
+                            logger.error(f"取得劇集tmdbid發生錯誤：{e}")
+                    self._emby_user_favorite_dict[username] = tmdbid_list
                 logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
             except Exception as e:
                 logger.error(f"查詢Emby使用者收藏發生錯誤：{e}")

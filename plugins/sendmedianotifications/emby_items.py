@@ -1,5 +1,6 @@
 from .emby_user import EmbyUser
 from app.schemas.types import MediaType
+from app.log import logger
 
 
 class EmbyItems(EmbyUser):
@@ -180,8 +181,30 @@ class EmbyItems(EmbyUser):
             if int(item["IndexNumber"]) == episode_number:
                 return True
         return False
-    
-    
+
+    def get_tmdbid_by_itemid(self, itemid: int):
+        """
+        根據Emby項目id獲取電視劇的tmdb_id
+
+        Args:
+            item_id (int): Emby項目id。
+
+        Returns:
+            int: 如果找到項目,返回tmdb_id;否則返回None。
+        """
+        basic_url = f"[HOST]/emby/Users/[USER]/Items/{itemid}"
+        params = {
+            "api_key": "[APIKEY]",
+        }
+        response = self.get_data(self.get_url_by_params(basic_url, params))
+        if 200 <= response.status_code < 300:
+            result = response.json()
+            return result.get("ProviderIds", {}).get("Tmdb", None)
+        else:
+            logger.error(
+                f"tv_itemid_to_tmdbid 請求失敗, status_code: {response.status_code}, error message: {response.text}"
+            )
+        return None
 
 
 if __name__ == "__main__":
@@ -196,4 +219,3 @@ if __name__ == "__main__":
     # print(emby.get_item_info_by_tmdbid(974635, MediaType.MOVIE))
     # print(emby.get_tv_season_info_by_item_id(189657))
     # print(emby.get_tv_season_info_by_tmdbid(94997, 1))
-
