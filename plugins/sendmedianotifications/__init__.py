@@ -30,7 +30,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "0.7"
+    plugin_version = "0.8"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -200,7 +200,9 @@ class SendMediaNotifications(_PluginBase):
         try:
             # 判斷該轉移是否本來就存在於Emby
             if self._emby_items.is_episode_exist(
-                tmdbid=tmdbid, season=number_of_seasons, episode=number_of_episodes
+                tmdbid=tmdbid,
+                season_number=number_of_seasons,
+                episode_number=number_of_episodes,
             ):
                 # 本來就存在 不用提醒
                 return
@@ -244,6 +246,16 @@ class SendMediaNotifications(_PluginBase):
             time.sleep(180)
             # 可以發送通知了
             try:
+                if self._emby_items.is_episode_exist(
+                    tmdbid=message.get("media_tmdbid"),
+                    season_number=message.get("media_season_number"),
+                    episode_number=message.get("media_episode_number"),
+                ):
+                    # 還沒進來 等一段時間
+                    logger.info(
+                        f"劇集 {message.get('media_title')} 第{message.get('media_season_number')}季第{message.get('media_episode_number')}集 未進入Emby，等待30秒"
+                    )
+                    time.sleep(60)
                 for bark_device_key in message.get("bark_device_keys"):
                     self.bark_send_message(
                         server_url=self._bark_server,
@@ -252,6 +264,7 @@ class SendMediaNotifications(_PluginBase):
                         content=message.get("bark_content"),
                         icon=message.get("bark_image_url"),
                     )
+
             except Exception as e:
                 logger.error(f"Bark發送失敗：{e}")
 
