@@ -28,7 +28,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件描述
     plugin_desc = "入庫後待Emby加入推送推知。"
     # 插件图标
-    plugin_icon = "new.png"
+    plugin_icon = "Watchtower_A.png"
     # 插件版本
     plugin_version = "0.6"
     # 插件作者

@@ -92,7 +92,7 @@
         "description": "根據Emby用戶收藏，用Bark發送已經下載通知",
         "labels": "媒体库,消息通知",
         "version": "0.6",
-        "icon": "new.png",
+        "icon": "Watchtower_A.png",
         "author": "audichuang",
         "level": 1
     }
