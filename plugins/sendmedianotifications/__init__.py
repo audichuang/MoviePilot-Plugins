@@ -5,6 +5,7 @@ from urllib.parse import quote
 
 from app.core.config import settings
 from app.core.context import MediaInfo
+from app.core.meta.metabase import MetaBase
 from app.modules.themoviedb.tmdbapi import TmdbApi
 
 from app.core.event import eventmanager, Event
@@ -189,6 +190,7 @@ class SendMediaNotifications(_PluginBase):
         if not event_info:
             return
         # 入库数据
+        transfer_meta: MetaBase = event_info.get("meta")
         transferinfo: TransferInfo = event_info.get("transferinfo")
         mediainfo: MediaInfo = event_info.get("mediainfo")
         try:
@@ -197,8 +199,8 @@ class SendMediaNotifications(_PluginBase):
             if not success or type == MediaType.MOVIE:
                 return
             tmdbid = mediainfo.tmdb_id
-            number_of_seasons = mediainfo.number_of_seasons
-            number_of_episodes = mediainfo.number_of_episodes
+            number_of_seasons = transfer_meta.begin_season
+            number_of_episodes = transfer_meta.begin_episode
             logger.info(f"transferinfo:{transferinfo}")
             logger.info(f"mediainfo:{mediainfo}")
             logger.info(
@@ -229,9 +231,14 @@ class SendMediaNotifications(_PluginBase):
                 username,
                 favorite_tv_tmdbid_list,
             ) in self._emby_user_favorite_dict.items():
-                if str(tmdbid) in favorite_tv_tmdbid_list:
-                    logger.info(f"用戶 {username} 收藏了 {tmdbid}")
-                    device_keys.append(self._emby_bark_dict.get(username))
+                if len(favorite_tv_tmdbid_list) == 0:
+                    continue
+                try:
+                    if str(tmdbid) in favorite_tv_tmdbid_list:
+                        logger.info(f"用戶 {username} 收藏了 {tmdbid}")
+                        device_keys.append(self._emby_bark_dict.get(username))
+                except Exception as e:
+                    logger.error(f"判斷使用者{username}是否收藏發生錯誤：{e}")
             if len(device_keys) > 0:
                 # 有使用者收藏 發送通知
                 data = {
@@ -250,6 +257,7 @@ class SendMediaNotifications(_PluginBase):
                 self._download_queue.put(data)
         except Exception as e:
             logger.error(f"存入佇列發生錯誤：{e}")
+            return
 
     def consumer(self):
         logger.info("開始啟用消費者")
