@@ -191,7 +191,7 @@ class SendMediaNotifications(_PluginBase):
             success = transferinfo.success
             if not success or type == MediaType.MOVIE:
                 return
-            tmdbid = mediainfo.tmdbid
+            tmdbid = mediainfo.tmdb_id
             number_of_seasons = mediainfo.number_of_seasons
             number_of_episodes = mediainfo.number_of_episodes
         except Exception as e:
