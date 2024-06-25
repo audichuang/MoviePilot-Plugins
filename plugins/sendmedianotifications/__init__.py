@@ -31,7 +31,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "1.6"
+    plugin_version = "0.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -227,6 +227,9 @@ class SendMediaNotifications(_PluginBase):
         try:
             # 判斷是否有使用者加入收藏
             logger.info(f"開始檢查是否有使用者收藏")
+            logger.info(
+                f"收藏者：{self._emby_user_favorite_dict} , {type(self._emby_user_favorite_dict)}"
+            )
             device_keys = []
             for (
                 username,
