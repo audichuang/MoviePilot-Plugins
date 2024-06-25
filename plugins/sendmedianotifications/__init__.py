@@ -30,7 +30,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -87,7 +87,9 @@ class SendMediaNotifications(_PluginBase):
                         continue
                     username, bark_device_key = person.split(":")
                     self._emby_bark_dict[username] = bark_device_key
-                logger.info(f"Emby收藏入庫通知插件已啟用，收藏者：{self._emby_bark_dict}")
+                logger.info(
+                    f"Emby收藏入庫通知插件已啟用，收藏者：{self._emby_bark_dict}"
+                )
         except Exception as e:
             logger.error(f"讀取配置發生錯誤：{e}")
 
@@ -195,7 +197,11 @@ class SendMediaNotifications(_PluginBase):
             tmdbid = mediainfo.tmdb_id
             number_of_seasons = mediainfo.number_of_seasons
             number_of_episodes = mediainfo.number_of_episodes
-            logger.info(f"收到入庫資訊：{mediainfo.title} {tmdbid} {number_of_seasons} {number_of_episodes}")
+            logger.info(f"transferinfo:{transferinfo}")
+            logger.info(f"mediainfo:{mediainfo}")
+            logger.info(
+                f"收到入庫資訊：{mediainfo.title} {tmdbid} {number_of_seasons} {number_of_episodes}"
+            )
         except Exception as e:
             logger.error(f"解析資料發生錯誤：{e}")
             return
