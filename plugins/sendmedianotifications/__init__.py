@@ -232,6 +232,7 @@ class SendMediaNotifications(_PluginBase):
                 username,
                 favorite_tv_tmdbid_list,
             ) in self._emby_user_favorite_dict.items():
+                logger.info(f"用戶 {username} 收藏了 {favorite_tv_tmdbid_list}")
                 if len(favorite_tv_tmdbid_list) == 0:
                     continue
                 try:
