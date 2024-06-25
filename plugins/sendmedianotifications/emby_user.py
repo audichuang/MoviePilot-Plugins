@@ -1,4 +1,6 @@
 from app.modules.emby import Emby
+from app.log import logger
+
 
 class EmbyUser(Emby):
     def get_url_by_params(self, url: str, params):
@@ -29,6 +31,7 @@ class EmbyUser(Emby):
 
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()["Items"]
+        logger.error(f"獲取所有使用者信息失敗:{response.status_code}")
         return None
 
     def get_all_users_id(self):
@@ -39,6 +42,7 @@ class EmbyUser(Emby):
                 user_dict[user["Name"]] = user["Id"]
             return user_dict
         else:
+            logger.error("獲取所有使用者id失敗:")
             return None
 
     def get_user_id_by_name(self, user_name: str):
@@ -66,13 +70,18 @@ class EmbyUser(Emby):
                 itemid_list.append(item["Id"])
             return itemid_list
         return None
-    
+
     def get_all_user_favorite_dict(self):
+        logger.info("獲取全面使用者id")
         user_dict = self.get_all_users_id()
+        logger.info("獲取全面使用者id完成:{user_dict}")
+        logger.info("獲取全面使用者收藏的電視劇")
         favorite_dict = {}
         for user_name, user_id in user_dict.items():
             favorite_dict[user_name] = self.get_user_favorite_tv(user_id)
+        logger.info("獲取全面使用者收藏的電視劇完成:{favorite_dict}")
         return favorite_dict
+
 
 if __name__ == "__main__":
     embyuser = EmbyUser()
