@@ -31,7 +31,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "0.7"
+    plugin_version = "0.8"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -228,21 +228,23 @@ class SendMediaNotifications(_PluginBase):
             # 判斷是否有使用者加入收藏
             logger.info(f"開始檢查是否有使用者收藏")
             logger.info(f"收藏者：{self._emby_user_favorite_dict}")
-            logger.info(f"Emby使用者收藏類別：{type(self._emby_user_favorite_dict)}")
             device_keys = []
-            for (
-                username,
-                favorite_tv_tmdbid_list,
-            ) in self._emby_user_favorite_dict.items():
-                logger.info(f"用戶 {username} 收藏了 {favorite_tv_tmdbid_list}")
-                if len(favorite_tv_tmdbid_list) == 0:
-                    continue
-                try:
-                    if str(tmdbid) in favorite_tv_tmdbid_list:
-                        logger.info(f"用戶 {username} 收藏了 {tmdbid}")
-                        device_keys.append(self._emby_bark_dict.get(username))
-                except Exception as e:
-                    logger.error(f"判斷使用者{username}是否收藏發生錯誤：{e}")
+            try:
+                for (
+                    username,
+                    favorite_tv_tmdbid_list,
+                ) in self._emby_user_favorite_dict.items():
+                    logger.info(f"用戶 {username} 收藏了 {favorite_tv_tmdbid_list}")
+                    if len(favorite_tv_tmdbid_list) == 0:
+                        continue
+                    try:
+                        if str(tmdbid) in favorite_tv_tmdbid_list:
+                            logger.info(f"用戶 {username} 收藏了 {tmdbid}")
+                            device_keys.append(self._emby_bark_dict.get(username))
+                    except Exception as e:
+                        logger.error(f"判斷使用者{username}是否收藏發生錯誤：{e}")
+            except Exception as e:
+                logger.error(f"檢查收藏者發生錯誤：{e}")
             if len(device_keys) > 0:
                 # 有使用者收藏 發送通知
                 data = {
