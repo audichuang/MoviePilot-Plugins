@@ -31,7 +31,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -228,7 +228,7 @@ class SendMediaNotifications(_PluginBase):
             # 判斷是否有使用者加入收藏
             logger.info(f"開始檢查是否有使用者收藏")
             logger.info(f"收藏者：{self._emby_user_favorite_dict}")
-            logger.info(f"{type(self._emby_user_favorite_dict)}")
+            logger.info(f"Emby使用者收藏類別：{type(self._emby_user_favorite_dict)}")
             device_keys = []
             for (
                 username,
@@ -309,7 +309,9 @@ class SendMediaNotifications(_PluginBase):
                 self._emby_user_favorite_dict = (
                     self._emby_user.get_all_user_favorite_dict()
                 )
-                logger.info(f"{type(self._emby_user_favorite_dict)}")
+                logger.info(
+                    f"Emby使用者收藏類別：{type(self._emby_user_favorite_dict)}"
+                )
                 logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
             except Exception as e:
                 logger.error(f"查詢Emby使用者收藏發生錯誤：{e}")
