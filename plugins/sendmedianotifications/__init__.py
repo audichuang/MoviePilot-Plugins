@@ -201,9 +201,9 @@ class SendMediaNotifications(_PluginBase):
             tmdbid = mediainfo.tmdb_id
             number_of_seasons = transfer_meta.begin_season
             number_of_episodes = transfer_meta.begin_episode
-            logger.info(f"transfer_meta:{transfer_meta}")
-            logger.info(f"transferinfo:{transferinfo}")
-            logger.info(f"mediainfo:{mediainfo}")
+            # logger.info(f"transfer_meta:{transfer_meta}")
+            # logger.info(f"transferinfo:{transferinfo}")
+            # logger.info(f"mediainfo:{mediainfo}")
             logger.info(
                 f"收到入庫資訊：{mediainfo.title} {tmdbid} {number_of_seasons} {number_of_episodes}"
             )
