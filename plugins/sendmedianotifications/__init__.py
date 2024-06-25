@@ -31,7 +31,7 @@ class SendMediaNotifications(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "0.8"
+    plugin_version = "0.9"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -272,6 +272,7 @@ class SendMediaNotifications(_PluginBase):
                 # 從佇列中取出消息
                 message = self._download_queue.get()
                 logger.info(f"收到入庫處理資訊：{message}")
+                logger.info(f"等待三分鐘")
                 # 等待入庫 要等大約3分鐘
                 time.sleep(180)
                 # 可以發送通知了
@@ -294,6 +295,7 @@ class SendMediaNotifications(_PluginBase):
                             content=message.get("bark_content"),
                             icon=message.get("bark_image_url"),
                         )
+                        logger.info(f"Bark推送 {bark_device_key} 成功")
 
                 except Exception as e:
                     logger.error(f"Bark發送失敗：{e}")
@@ -306,11 +308,9 @@ class SendMediaNotifications(_PluginBase):
     def periodic_get_user_favorite(self):
         while True:
             # 每五分鐘查詢一次Emby使用者收藏的劇集
-            logger.info(f"開始查詢Emby使用者收藏的劇集")
+            # logger.info(f"開始查詢Emby使用者收藏的劇集")
             try:
-                emby_user_favorit_itemid = (
-                    self._emby_user.get_all_user_favorite_dict()
-                )
+                emby_user_favorit_itemid = self._emby_user.get_all_user_favorite_dict()
                 for username, item_id_list in emby_user_favorit_itemid.items():
                     tmdbid_list = []
                     for item_id in item_id_list:
@@ -321,7 +321,7 @@ class SendMediaNotifications(_PluginBase):
                         except Exception as e:
                             logger.error(f"取得劇集tmdbid發生錯誤：{e}")
                     self._emby_user_favorite_dict[username] = tmdbid_list
-                logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
+                # logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
             except Exception as e:
                 logger.error(f"查詢Emby使用者收藏發生錯誤：{e}")
             time.sleep(300)  # 300秒 = 5分鐘

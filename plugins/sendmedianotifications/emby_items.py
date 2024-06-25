@@ -172,12 +172,9 @@ class EmbyItems(EmbyUser):
             bool: 如果集數存在返回True,否則返回False。
         """
         episode_info = self.get_tv_episode_info_by_tmdbid(tmdbid, season_number)
-        print(episode_info)
         if episode_info is None:
             return False
         for item in episode_info:
-            print("AAAA")
-            print(item)
             if int(item["IndexNumber"]) == episode_number:
                 return True
         return False
