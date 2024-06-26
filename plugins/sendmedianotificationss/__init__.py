@@ -32,7 +32,7 @@ class SendMediaNotificationss(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -237,6 +237,8 @@ class SendMediaNotificationss(_PluginBase):
                     if len(favorite_tv_tmdbid_list) == 0:
                         continue
                     try:
+                        logger.info(f"檢查用戶 {username} 是否收藏 {tmdbid}")
+                        logger.info(f"收藏劇集：{favorite_tv_tmdbid_list}")
                         if str(tmdbid) in favorite_tv_tmdbid_list:
                             logger.info(f"用戶 {username} 有收藏 {tmdbid}")
                             device_keys.append(self._emby_bark_dict.get(username))
@@ -244,6 +246,7 @@ class SendMediaNotificationss(_PluginBase):
                         logger.error(f"判斷使用者{username}是否收藏發生錯誤：{e}")
             except Exception as e:
                 logger.error(f"檢查收藏者發生錯誤：{e}")
+            logger.info(f"該劇收藏者的Bark密鑰：{device_keys}")
             if len(device_keys) > 0:
                 # 有使用者收藏 發送通知
                 data = {
