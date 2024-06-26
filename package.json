@@ -32,9 +32,9 @@
     },
     "RefreshEpisode": {
         "name": "訂閱集數更新",
-        "description": "刷新訂閱劇集最新集數",
+        "description": "定期刷新訂閱劇集最新集數",
         "labels": "工具",
-        "version": "0.9",
+        "version": "1.0",
         "icon": "Bookstack_A.png",
         "author": "audichuang",
         "level": 1

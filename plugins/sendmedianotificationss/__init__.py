@@ -246,7 +246,10 @@ class SendMediaNotificationss(_PluginBase):
                         logger.error(f"判斷使用者{username}是否收藏發生錯誤：{e}")
             except Exception as e:
                 logger.error(f"檢查收藏者發生錯誤：{e}")
-            logger.info(f"該劇收藏者的Bark密鑰：{device_keys}")
+            if len(device_keys) == 0:
+                logger.info(f"沒有使用者收藏 {tmdbid}")
+                return
+            logger.info(f"該集需要通知的使用者數：{len(device_keys)}")
             if len(device_keys) > 0:
                 # 有使用者收藏 發送通知
                 data = {

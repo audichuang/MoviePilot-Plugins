@@ -33,7 +33,7 @@ class RefreshEpisode(_PluginBase):
     # 插件图标
     plugin_icon = "Bookstack_A.png"
     # 插件版本
-    plugin_version = "0.9"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -137,7 +137,7 @@ class RefreshEpisode(_PluginBase):
             total_episodes = len(result_dict["episodes"])
             return total_episodes
         except Exception as e:
-            logger.error(f"获取{tmdbid}第{season_number}季集数失败：{str(e)}")
+            logger.error(f"獲取{tmdbid}第{season_number}季集数失败：{str(e)}")
             return 0
 
     def update_subscribe_drama_episode(self, sid, total_episodes):
@@ -183,7 +183,7 @@ class RefreshEpisode(_PluginBase):
         all_subscribe = self._subscribeoper.list()
         drama_subscribe = [s for s in all_subscribe if s.type == "电视剧"]
         all_drama_id = [s.id for s in drama_subscribe]
-        logger.info(f"訂閱劇集，共{len(all_drama_id)}个订阅")
+        logger.info(f"訂閱劇集，共{len(all_drama_id)}個訂閱")
         for subscribe_id in all_drama_id:
             subscribe = self._subscribeoper.get(subscribe_id)
             tmdbid = subscribe.tmdbid
@@ -192,6 +192,11 @@ class RefreshEpisode(_PluginBase):
             year = subscribe.year
             total_epidsodes_old = subscribe.total_episode
             total_episodes = self.get_total_episodes(int(tmdbid), int(season))
+            if total_episodes == 0:
+                logger.info(
+                    f"訂閱id:{subscribe_id} 劇集{name} ({year})第{season}季不存在，跳过"
+                )
+                continue
             if total_episodes > total_epidsodes_old:
                 # 集數不是最新的 重新訂閱
                 logger.info(
@@ -208,35 +213,6 @@ class RefreshEpisode(_PluginBase):
                 )
                 logger.info(f"重新訂閱 {name} ({year})第{season}季 成功")
         logger.info("檢查劇集集數完成")
-
-    # def __refresh_emby(self) -> bool:
-    #     end_date = self.__get_date(-int(self._offset_days))
-    #     url_end_date = f"[HOST]emby/Items?IncludeItemTypes=Episode&MinPremiereDate={end_date}&IsMissing=false&Recursive=true&api_key=[APIKEY]"
-    #     # 有些没有日期的，也做个保底刷新
-    #     url_start_date = f"[HOST]emby/Items?IncludeItemTypes=Episode&MaxPremiereDate=1900-01-01&IsMissing=false&Recursive=true&api_key=[APIKEY]"
-    #     return self._refresh_by_url(url_end_date) and self._refresh_by_url(
-    #         url_start_date
-    #     )
-
-    # def _refresh_by_url(self, url):
-    #     res_g = Emby().get_data(url)
-    #     success = False
-    #     if res_g:
-    #         success = True
-    #         res_items = res_g.json().get("Items")
-    #         if res_items:
-    #             for res_item in res_items:
-    #                 item_id = res_item.get("Id")
-    #                 series_name = res_item.get("SeriesName")
-    #                 name = res_item.get("Name")
-    #                 # 刷新元数据
-    #                 req_url = f"[HOST]emby/Items/{item_id}/Refresh?MetadataRefreshMode=FullRefresh&ImageRefreshMode=FullRefresh&ReplaceAllMetadata=true&ReplaceAllImages=true&api_key=[APIKEY]"
-    #                 res_pos = Emby().post_data(req_url)
-    #                 if res_pos:
-    #                     logger.info(f"刷新元数据：{series_name} - {name}")
-    #                 else:
-    #                     logger.error(f"刷新媒体库对象 {item_id} 失败，无法连接Emby！")
-    #     return success
 
     def get_state(self) -> bool:
         return self._enabled
