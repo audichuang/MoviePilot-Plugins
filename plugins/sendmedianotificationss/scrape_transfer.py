@@ -29,7 +29,10 @@ class Get_TW_info:
         # title
         # 從tmdb_api獲取 tv是name, movie是title
         if cn_media_info.type == MediaType.TV:
-            if tw_media_info["name"] != "":
+            if (
+                tw_media_info["name"] != ""
+                and tw_media_info["name"] != tw_media_info["original_name"]
+            ):
                 cn_media_info.title = Get_TW_info.convert_CN_to_TW(
                     tw_media_info["name"]
                 )
@@ -38,7 +41,10 @@ class Get_TW_info:
             if en_media_info["name"] != "":
                 cn_media_info.original_title = en_media_info["name"]
         elif cn_media_info.type == MediaType.MOVIE:
-            if tw_media_info["title"] != "":
+            if (
+                tw_media_info["title"] != ""
+                and tw_media_info["title"] != tw_media_info["original_title"]
+            ):
                 cn_media_info.title = Get_TW_info.convert_CN_to_TW(
                     tw_media_info["title"]
                 )
