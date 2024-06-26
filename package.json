@@ -43,7 +43,7 @@
         "name": "刮削繁體中文資訊",
         "description": "入庫後自動刮削繁體中文資訊。",
         "labels": "媒体库,刮削",
-        "version": "1.8",
+        "version": "1.9",
         "icon": "scraper.png",
         "author": "audichuang",
         "level": 1
@@ -91,7 +91,7 @@
         "name": "Emby收藏入庫通知",
         "description": "入庫後待Emby加入推送Bark推知給指定的Emby用戶。",
         "labels": "媒体库,消息通知",
-        "version": "0.5",
+        "version": "1.0",
         "icon": "Watchtower_A.png",
         "author": "audichuang",
         "level": 1

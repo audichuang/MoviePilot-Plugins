@@ -13,6 +13,7 @@ from app.core.event import eventmanager, Event
 from app.modules.emby import Emby
 from .emby_user import EmbyUser
 from .emby_items import EmbyItems
+from .scrape_transfer import Get_TW_info
 
 from app.plugins import _PluginBase
 from app.schemas import TransferInfo, RefreshMediaItem
@@ -31,7 +32,7 @@ class SendMediaNotificationss(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "1.0"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -89,10 +90,8 @@ class SendMediaNotificationss(_PluginBase):
                     username, bark_device_key = person.split(":")
                     self._emby_bark_dict[username] = bark_device_key
                 logger.info(
-                    f"Emby收藏入庫通知插件已啟用，收藏者：{self._emby_bark_dict}"
+                    f"Emby收藏入庫通知插件已啟用，輸入emby用戶名稱和Bark密鑰：{self._emby_bark_dict}"
                 )
-                logger.info(f"Bark服務器：{self._bark_server}")
-                logger.info(f"Emby用戶收藏：{self._emby_user_favorite_dict}")
         except Exception as e:
             logger.error(f"讀取配置發生錯誤：{e}")
 
@@ -193,19 +192,20 @@ class SendMediaNotificationss(_PluginBase):
         transfer_meta: MetaBase = event_info.get("meta")
         transferinfo: TransferInfo = event_info.get("transferinfo")
         mediainfo: MediaInfo = event_info.get("mediainfo")
+        mediainfo_tw = Get_TW_info.get_media_info(mediainfo)
         try:
             type = mediainfo.type
             success = transferinfo.success
             if not success or type == MediaType.MOVIE:
                 return
-            tmdbid = mediainfo.tmdb_id
+            tmdbid = mediainfo_tw.tmdb_id
             number_of_seasons = transfer_meta.begin_season
             number_of_episodes = transfer_meta.begin_episode
             # logger.info(f"transfer_meta:{transfer_meta}")
             # logger.info(f"transferinfo:{transferinfo}")
-            # logger.info(f"mediainfo:{mediainfo}")
+            # logger.info(f"mediainfo_tw:{mediainfo_tw}")
             logger.info(
-                f"收到入庫資訊：{mediainfo.title} {tmdbid} {number_of_seasons} {number_of_episodes}"
+                f"收到入庫資訊：{mediainfo_tw.title} {tmdbid} {number_of_seasons} {number_of_episodes}"
             )
         except Exception as e:
             logger.error(f"解析資料發生錯誤：{e}")
@@ -227,14 +227,13 @@ class SendMediaNotificationss(_PluginBase):
         try:
             # 判斷是否有使用者加入收藏
             logger.info(f"開始檢查是否有使用者收藏")
-            logger.info(f"收藏者：{self._emby_user_favorite_dict}")
+            # logger.info(f"收藏者：{self._emby_user_favorite_dict}")
             device_keys = []
             try:
                 for (
                     username,
                     favorite_tv_tmdbid_list,
                 ) in self._emby_user_favorite_dict.items():
-                    logger.info(f"用戶 {username} 收藏了 {favorite_tv_tmdbid_list}")
                     if len(favorite_tv_tmdbid_list) == 0:
                         continue
                     try:
@@ -251,11 +250,11 @@ class SendMediaNotificationss(_PluginBase):
                     "media_tmdbid": tmdbid,
                     "media_season_number": number_of_seasons,
                     "media_episode_number": number_of_episodes,
-                    "media_title": mediainfo.title,
-                    "bark_title": f"{mediainfo.title} 有新增的集數",
-                    "bark_content": f"季數：{number_of_seasons}\n集數：{number_of_episodes}",
+                    "media_title": mediainfo_tw.title,
+                    "bark_title": f"已經更新了 {mediainfo_tw.title} 第{number_of_seasons}季第{number_of_episodes}集",
+                    "bark_content": " ",
                     "bark_device_keys": device_keys,
-                    "bark_image_url": mediainfo.poster_path.replace(
+                    "bark_image_url": mediainfo_tw.poster_path.replace(
                         "/original/", "/w200/"
                     ),
                 }
@@ -277,7 +276,7 @@ class SendMediaNotificationss(_PluginBase):
                 time.sleep(180)
                 # 可以發送通知了
                 try:
-                    if self._emby_items.is_episode_exist(
+                    if not self._emby_items.is_episode_exist(
                         tmdbid=message.get("media_tmdbid"),
                         season_number=message.get("media_season_number"),
                         episode_number=message.get("media_episode_number"),
@@ -295,7 +294,6 @@ class SendMediaNotificationss(_PluginBase):
                             content=message.get("bark_content"),
                             icon=message.get("bark_image_url"),
                         )
-                        logger.info(f"Bark推送 {bark_device_key} 成功")
 
                 except Exception as e:
                     logger.error(f"Bark發送失敗：{e}")
@@ -321,7 +319,7 @@ class SendMediaNotificationss(_PluginBase):
                         except Exception as e:
                             logger.error(f"取得劇集tmdbid發生錯誤：{e}")
                     self._emby_user_favorite_dict[username] = tmdbid_list
-                # logger.info(f"Emby使用者收藏：{self._emby_user_favorite_dict}")
+                logger.info(f"更新Emby使用者收藏：{self._emby_user_favorite_dict}")
             except Exception as e:
                 logger.error(f"查詢Emby使用者收藏發生錯誤：{e}")
             time.sleep(300)  # 300秒 = 5分鐘
