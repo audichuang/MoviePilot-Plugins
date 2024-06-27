@@ -95,6 +95,15 @@
         "icon": "Watchtower_A.png",
         "author": "audichuang",
         "level": 1
+    },
+    "HistoryApi":{
+        "name": "歷史紀錄API",
+        "description": "多個關於歷史紀錄搜尋的接口",
+        "labels": "歷史紀錄",
+        "version": "0.5",
+        "icon": "Vertex_B.png",
+        "author": "audichuang",
+        "level": 1
     }
     
 }
