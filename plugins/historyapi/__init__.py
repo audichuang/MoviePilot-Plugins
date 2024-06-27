@@ -34,7 +34,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "0.7"
+    plugin_version = "0.8"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -85,8 +85,8 @@ class HistoryApi(_PluginBase):
                     tmdbid=tmdbid,
                     mtype=m_type,
                     season=season,
-                    episode=episode,
                 )
+                result = [item for item in result if item.episode == episode]
             elif season and not episode and m_type == "电视剧":
                 # 查詢電視劇某季
                 logger.info(f"search_history_by_tmebid_and_type: 電視劇某季")
