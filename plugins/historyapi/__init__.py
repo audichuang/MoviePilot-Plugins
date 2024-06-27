@@ -34,7 +34,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "0.5"
+    plugin_version = "0.6"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -59,24 +59,43 @@ class HistoryApi(_PluginBase):
                 if config.get("plugin_key")
                 else settings.API_TOKEN
             )
+            logger.info(f"已經設定plugin_key: {self._plugin_key}")
         except Exception as e:
             logger.error(f"init_plugin error: {e}")
             return schemas.Response(success=False, message="API密碼錯誤")
 
-    def search_history_by_tmebid_and_type(self, key: str, tmdbid: int, mtype: str, season: str = None):
+    def search_history_by_tmebid_and_type(
+        self, key: str, tmdbid: int, mtype: str, season: str = None, episode: str = None
+    ):
         if key != self._plugin_key:
             logger.error(f"download_torrent: plugin_key error: {key}")
             return None
         logger.info(
-            f"search_history_by_tmebid_and_type: tmdbid: {tmdbid}, mtype: {mtype}, season: {season}"
+            f"search_history_by_tmebid_and_type: tmdbid: {tmdbid}, mtype: {mtype}, season: {season}, episode: {episode}"
         )
         m_type = {"tv": "电视剧", "movie": "电影"}.get(mtype)
         if not m_type:
             return schemas.Response(success=False, message="Invalid mtype")
-
-        result = TransferHistory.list_by(
-            db=Depends(get_db), tmdbid=tmdbid, mtype=m_type, season=season
-        )
+        try:
+            if not season and not episode:
+                result = TransferHistory.list_by(
+                    db=Depends(get_db), tmdbid=tmdbid, mtype=m_type
+                )
+            elif season and not episode:
+                result = TransferHistory.list_by(
+                    db=Depends(get_db), tmdbid=tmdbid, mtype=m_type, season=season
+                )
+            elif season and episode:
+                result = TransferHistory.list_by(
+                    db=Depends(get_db),
+                    tmdbid=tmdbid,
+                    mtype=m_type,
+                    season=season,
+                    episode=episode,
+                )
+        except Exception as e:
+            logger.error(f"search_history_by_tmebid_and_type error: {e}")
+            return schemas.Response(success=False, message="查詢歷史紀錄失敗")
 
         result_list = [item.to_dict() for item in result]
         total = len(result_list)
