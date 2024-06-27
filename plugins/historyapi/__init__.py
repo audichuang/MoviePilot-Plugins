@@ -34,7 +34,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "0.6"
+    plugin_version = "0.7"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -77,15 +77,9 @@ class HistoryApi(_PluginBase):
         if not m_type:
             return schemas.Response(success=False, message="Invalid mtype")
         try:
-            if not season and not episode:
-                result = TransferHistory.list_by(
-                    db=Depends(get_db), tmdbid=tmdbid, mtype=m_type
-                )
-            elif season and not episode:
-                result = TransferHistory.list_by(
-                    db=Depends(get_db), tmdbid=tmdbid, mtype=m_type, season=season
-                )
-            elif season and episode:
+            if season and episode and m_type == "电视剧":
+                # 查詢電視劇某集
+                logger.info(f"search_history_by_tmebid_and_type: 電視劇某集")
                 result = TransferHistory.list_by(
                     db=Depends(get_db),
                     tmdbid=tmdbid,
@@ -93,6 +87,19 @@ class HistoryApi(_PluginBase):
                     season=season,
                     episode=episode,
                 )
+            elif season and not episode and m_type == "电视剧":
+                # 查詢電視劇某季
+                logger.info(f"search_history_by_tmebid_and_type: 電視劇某季")
+                result = TransferHistory.list_by(
+                    db=Depends(get_db), tmdbid=tmdbid, mtype=m_type, season=season
+                )
+            else:
+                # 查詢電影或電視劇
+                logger.info(f"search_history_by_tmebid_and_type: 電影或電視劇")
+                result = TransferHistory.list_by(
+                    db=Depends(get_db), tmdbid=tmdbid, mtype=m_type
+                )
+
         except Exception as e:
             logger.error(f"search_history_by_tmebid_and_type error: {e}")
             return schemas.Response(success=False, message="查詢歷史紀錄失敗")
