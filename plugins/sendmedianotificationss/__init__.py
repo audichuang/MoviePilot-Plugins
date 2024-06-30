@@ -32,7 +32,7 @@ class SendMediaNotificationss(_PluginBase):
     # 插件图标
     plugin_icon = "Watchtower_A.png"
     # 插件版本
-    plugin_version = "1.2"
+    plugin_version = "1.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -257,7 +257,7 @@ class SendMediaNotificationss(_PluginBase):
                     "media_season_number": number_of_seasons,
                     "media_episode_number": number_of_episodes,
                     "media_title": mediainfo_tw.title,
-                    "bark_title": f"已經更新了 {mediainfo_tw.title} 第{number_of_seasons}季第{number_of_episodes}集",
+                    "bark_title": f"{mediainfo_tw.title} 第{number_of_seasons}季第{number_of_episodes}集］已經更新了",
                     "bark_content": " ",
                     "bark_device_keys": device_keys,
                     "bark_image_url": mediainfo_tw.poster_path.replace(
