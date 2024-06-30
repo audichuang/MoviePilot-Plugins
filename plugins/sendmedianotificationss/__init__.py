@@ -257,7 +257,7 @@ class SendMediaNotificationss(_PluginBase):
                     "media_season_number": number_of_seasons,
                     "media_episode_number": number_of_episodes,
                     "media_title": mediainfo_tw.title,
-                    "bark_title": f"{mediainfo_tw.title} 第{number_of_seasons}季第{number_of_episodes}集］已經更新了",
+                    "bark_title": f"[{mediainfo_tw.title} 第{number_of_seasons}季第{number_of_episodes}集］已經更新了",
                     "bark_content": " ",
                     "bark_device_keys": device_keys,
                     "bark_image_url": mediainfo_tw.poster_path.replace(
