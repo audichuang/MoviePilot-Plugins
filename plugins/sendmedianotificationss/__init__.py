@@ -300,6 +300,7 @@ class SendMediaNotificationss(_PluginBase):
                             content=message.get("bark_content"),
                             icon=message.get("bark_image_url"),
                         )
+                        logger.info(f"Bark推送 {bark_device_key} 成功")
 
                 except Exception as e:
                     logger.error(f"Bark發送失敗：{e}")
@@ -315,6 +316,7 @@ class SendMediaNotificationss(_PluginBase):
             # logger.info(f"開始查詢Emby使用者收藏的劇集")
             try:
                 emby_user_favorit_itemid = self._emby_user.get_all_user_favorite_dict()
+
                 for username, item_id_list in emby_user_favorit_itemid.items():
                     tmdbid_list = []
                     for item_id in item_id_list:
@@ -325,7 +327,8 @@ class SendMediaNotificationss(_PluginBase):
                         except Exception as e:
                             logger.error(f"取得劇集tmdbid發生錯誤：{e}")
                     self._emby_user_favorite_dict[username] = tmdbid_list
-                logger.info(f"更新Emby使用者收藏：{self._emby_user_favorite_dict}")
+                logger.info(f"成功更新emby使用者收藏")
+                # logger.info(f"更新Emby使用者收藏：{self._emby_user_favorite_dict}")
             except Exception as e:
                 logger.error(f"查詢Emby使用者收藏發生錯誤：{e}")
             time.sleep(300)  # 300秒 = 5分鐘

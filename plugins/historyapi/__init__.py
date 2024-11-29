@@ -34,7 +34,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -64,7 +64,7 @@ class HistoryApi(_PluginBase):
             logger.error(f"init_plugin error: {e}")
             return schemas.Response(success=False, message="API密碼錯誤")
 
-    def search_history_by_tmebid_and_type(
+    def search_history_by_tmdbid_and_type(
         self, key: str, tmdbid: int, mtype: str, season: str = None, episode: str = None
     ):
         if key != self._plugin_key:
@@ -92,6 +92,12 @@ class HistoryApi(_PluginBase):
                 logger.info(f"search_history_by_tmebid_and_type: 電視劇某季")
                 result = TransferHistory.list_by(
                     db=Depends(get_db), tmdbid=tmdbid, mtype=m_type, season=season
+                )
+            elif not season and not episode and m_type == "电视剧":
+                # 查詢電視劇全部季集數
+                logger.info(f"search_history_by_tmebid_and_type: 電視劇全部季集")
+                result = TransferHistory.list_by(
+                    db=Depends(get_db), tmdbid=tmdbid, mtype=m_type
                 )
             else:
                 # 查詢電影或電視劇
@@ -123,7 +129,7 @@ class HistoryApi(_PluginBase):
         return [
             {
                 "path": "/searchhistory",
-                "endpoint": self.search_history_by_tmebid_and_type,
+                "endpoint": self.search_history_by_tmdbid_and_type,
                 "methods": ["GET"],
                 "summary": "搜尋歷史紀錄",
                 "description": "根據輸入的tmdbid和mtype，查詢歷史紀錄",
