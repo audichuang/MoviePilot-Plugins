@@ -11,7 +11,6 @@ from app.utils.system import SystemUtils
 from app.core.config import settings
 from app.api.endpoints.site import site_resource
 
-
 from app.core.context import TorrentInfo, Context
 from app import schemas
 from app.chain.download import DownloadChain
@@ -34,7 +33,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -65,7 +64,7 @@ class HistoryApi(_PluginBase):
             return schemas.Response(success=False, message="API密碼錯誤")
 
     def search_history_by_tmdbid_and_type(
-        self, key: str, tmdbid: int, mtype: str, season: str = None, episode: str = None
+            self, key: str, tmdbid: int, mtype: str, season: str = None, episode: str = None
     ):
         if key != self._plugin_key:
             logger.error(f"download_torrent: plugin_key error: {key}")
@@ -121,6 +120,28 @@ class HistoryApi(_PluginBase):
             },
         )
 
+    def search_history_by_title(
+            self, key: str, title: int, page: int = 1, count: int = 30, status: bool = None,
+    ):
+        if key != self._plugin_key:
+            logger.error(f"download_torrent: plugin_key error: {key}")
+            return None
+        logger.info(
+            f"search_history_by_title: title: {title}, page: {page}, count: {count}, status: {status}"
+        )
+        result = TransferHistory.list_by_title(
+            db=Depends(get_db), tmdtitle=title, page=page, count=count, status=status)
+        result_list = [item.to_dict() for item in result]
+        total = len(result_list)
+        logger.info(f"查詢到的歷史紀錄數量: {total}")
+        return schemas.Response(
+            success=True,
+            data={
+                "list": result_list,
+                "total": total,
+            },
+        )
+
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
         pass
@@ -133,6 +154,13 @@ class HistoryApi(_PluginBase):
                 "methods": ["GET"],
                 "summary": "搜尋歷史紀錄",
                 "description": "根據輸入的tmdbid和mtype，查詢歷史紀錄",
+            },
+            {
+                "path": "/searchhistorytitle",
+                "endpoint": self.search_history_by_title(),
+                "methods": ["GET"],
+                "summary": "搜尋歷史紀錄",
+                "description": "根據輸入的關鍵字，查詢歷史紀錄",
             }
         ]
 
