@@ -7,8 +7,10 @@ from app.plugins import _PluginBase
 
 from app.log import logger
 from app.db.transferhistory_oper import TransferHistoryOper
+from app.chain.transfer import TransferChain
 from app.utils.system import SystemUtils
 from app.core.config import settings
+from pathlib import Path
 from app.api.endpoints.site import site_resource
 
 from app.core.context import TorrentInfo, Context
@@ -23,6 +25,8 @@ from app.db.models.transferhistory import TransferHistory
 from fastapi import APIRouter, Depends
 from app.db import get_db
 from app import schemas
+from app.core.event import eventmanager
+from app.schemas.types import EventType
 
 
 class HistoryApi(_PluginBase):
@@ -33,7 +37,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.5"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -129,8 +133,13 @@ class HistoryApi(_PluginBase):
         logger.info(
             f"search_history_by_title: title: {title}, page: {page}, count: {count}, status: {status}"
         )
-        result = TransferHistory.list_by_title(
-            db=Depends(get_db), title=title, page=page, count=count, status=status)
+        try:
+            result = TransferHistory.list_by_title(
+                db=Depends(get_db), title=title, page=page, count=count, status=status)
+        except Exception as e:
+            logger.info(e)
+            return schemas.Response(success=False, message="查詢歷史紀錄失敗")
+
         result_list = [item.to_dict() for item in result]
         total = len(result_list)
         logger.info(f"查詢到的歷史紀錄數量: {total}")
@@ -141,6 +150,91 @@ class HistoryApi(_PluginBase):
                 "total": total,
             },
         )
+
+    def history_delete(self, key: str, id: int):
+        """
+        刪除轉移歷史紀錄
+
+        Args:
+            key (str): 插件金鑰
+            id (int): 歷史記錄ID
+
+        Returns:
+            schemas.Response: 響應結果
+        """
+        try:
+            # 驗證插件金鑰
+            if key != self._plugin_key:
+                logger.error(f"插件金鑰驗證失敗: 預期 {self._plugin_key}, 實際 {key}")
+                return schemas.Response(success=False, msg="插件金鑰驗證失敗")
+
+            logger.info(f"開始刪除歷史記錄 ID: {id}")
+
+            # 獲取歷史記錄
+            try:
+                history = TransferHistory.get(Depends(get_db), id)
+            except Exception as e:
+                logger.error(f"查詢歷史記錄失敗: {str(e)}")
+                return schemas.Response(success=False, msg=f"查詢歷史記錄失敗: {str(e)}")
+
+            if not history:
+                logger.warning(f"歷史記錄不存在: ID {id}")
+                return schemas.Response(success=False, msg="記錄不存在")
+
+            # 刪除目標媒體庫文件
+            if history.dest:
+                try:
+                    logger.info(f"正在刪除目標文件: {history.dest}")
+                    state, msg = TransferChain().delete_files(Path(history.dest))
+                    if not state:
+                        logger.error(f"刪除目標文件失敗: {msg}")
+                        return schemas.Response(success=False, msg=f"刪除目標文件失敗: {msg}")
+                    logger.info(f"目標文件刪除成功: {history.dest}")
+                except Exception as e:
+                    logger.error(f"刪除目標文件時發生異常: {str(e)}")
+                    return schemas.Response(success=False, msg=f"刪除目標文件時發生異常: {str(e)}")
+
+            # 刪除源文件
+            if history.src:
+                try:
+                    logger.info(f"正在刪除源文件: {history.src}")
+                    state, msg = TransferChain().delete_files(Path(history.src))
+                    if not state:
+                        logger.error(f"刪除源文件失敗: {msg}")
+                        return schemas.Response(success=False, msg=f"刪除源文件失敗: {msg}")
+
+                    # 發送文件刪除事件
+                    try:
+                        eventmanager.send_event(
+                            EventType.DownloadFileDeleted,
+                            {
+                                "src": history.src,
+                                "hash": history.download_hash
+                            }
+                        )
+                        logger.info(f"已發送文件刪除事件: {history.src}")
+                    except Exception as e:
+                        logger.error(f"發送文件刪除事件失敗: {str(e)}")
+                        # 這裡我們選擇繼續執行，因為這不是關鍵錯誤
+
+                    logger.info(f"源文件刪除成功: {history.src}")
+                except Exception as e:
+                    logger.error(f"刪除源文件時發生異常: {str(e)}")
+                    return schemas.Response(success=False, msg=f"刪除源文件時發生異常: {str(e)}")
+
+            # 刪除數據庫記錄
+            try:
+                TransferHistory.delete(Depends(get_db), id)
+                logger.info(f"成功刪除歷史記錄 ID: {id}")
+            except Exception as e:
+                logger.error(f"刪除數據庫記錄失敗: {str(e)}")
+                return schemas.Response(success=False, msg=f"刪除數據庫記錄失敗: {str(e)}")
+
+            return schemas.Response(success=True, msg="歷史記錄刪除成功")
+
+        except Exception as e:
+            logger.error(f"刪除歷史記錄時發生未預期的錯誤: {str(e)}")
+            return schemas.Response(success=False, msg=f"刪除歷史記錄時發生未預期的錯誤: {str(e)}")
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
@@ -161,6 +255,13 @@ class HistoryApi(_PluginBase):
                 "methods": ["GET"],
                 "summary": "透過關鍵字搜尋歷史紀錄",
                 "description": "根據輸入的關鍵字，查詢歷史紀錄",
+            },
+            {
+                "path": "/historydelete",
+                "endpoint": self.history_delete(),
+                "methods": ["GET"],
+                "summary": "透過歷史紀錄ID刪除歷史紀錄",
+                "description": "根據輸入的歷史紀錄ID，刪除該條歷史紀錄",
             }
         ]
 
