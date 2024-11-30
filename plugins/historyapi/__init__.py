@@ -33,7 +33,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.2"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -121,7 +121,7 @@ class HistoryApi(_PluginBase):
         )
 
     def search_history_by_title(
-            self, key: str, title: int, page: int = 1, count: int = 30, status: bool = None,
+            self, key: str, title: str, page: int = 1, count: int = 30, status: bool = None,
     ):
         if key != self._plugin_key:
             logger.error(f"download_torrent: plugin_key error: {key}")
