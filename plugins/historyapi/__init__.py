@@ -37,7 +37,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "1.5"
+    plugin_version = "1.6"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -258,7 +258,7 @@ class HistoryApi(_PluginBase):
             },
             {
                 "path": "/historydelete",
-                "endpoint": self.history_delete(),
+                "endpoint": self.history_delete,
                 "methods": ["GET"],
                 "summary": "透過歷史紀錄ID刪除歷史紀錄",
                 "description": "根據輸入的歷史紀錄ID，刪除該條歷史紀錄",
