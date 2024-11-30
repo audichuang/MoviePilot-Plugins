@@ -33,7 +33,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -152,14 +152,14 @@ class HistoryApi(_PluginBase):
                 "path": "/searchhistory",
                 "endpoint": self.search_history_by_tmdbid_and_type,
                 "methods": ["GET"],
-                "summary": "搜尋歷史紀錄",
+                "summary": "透過tmdbid搜尋歷史紀錄",
                 "description": "根據輸入的tmdbid和mtype，查詢歷史紀錄",
             },
             {
                 "path": "/searchhistorytitle",
                 "endpoint": self.search_history_by_title,
                 "methods": ["GET"],
-                "summary": "搜尋歷史紀錄",
+                "summary": "透過關鍵字搜尋歷史紀錄",
                 "description": "根據輸入的關鍵字，查詢歷史紀錄",
             }
         ]
