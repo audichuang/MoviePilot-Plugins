@@ -33,7 +33,7 @@ class HistoryApi(_PluginBase):
     # 插件图标
     plugin_icon = "Vertex_B.png"
     # 插件版本
-    plugin_version = "1.2"
+    plugin_version = "1.3"
     # 插件作者
     plugin_author = "audichuang"
     # 作者主页
@@ -130,7 +130,7 @@ class HistoryApi(_PluginBase):
             f"search_history_by_title: title: {title}, page: {page}, count: {count}, status: {status}"
         )
         result = TransferHistory.list_by_title(
-            db=Depends(get_db), tmdtitle=title, page=page, count=count, status=status)
+            db=Depends(get_db), title=title, page=page, count=count, status=status)
         result_list = [item.to_dict() for item in result]
         total = len(result_list)
         logger.info(f"查詢到的歷史紀錄數量: {total}")
